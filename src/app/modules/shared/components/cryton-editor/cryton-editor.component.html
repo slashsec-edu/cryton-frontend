@@ -1,0 +1,119 @@
+<div class="cryton-editor">
+  <!-- STEPS -->
+  <div class="steps-component" [style.flex]="stepsComponentFlex">
+    <ng-template appComponentHost></ng-template>
+  </div>
+
+  <!-- CREATION OVERVIEW -->
+  <div class="overview">
+    <ng-container *ngIf="!(creatingSubject$.asObservable() | async); else creatingDisplay">
+      <!-- OVERVIEW HEADER -->
+      <header class="overview-header">
+        <h2>{{ itemName | uppercase }} OVERVIEW</h2>
+        <app-cryton-button
+          [value]="'Erase ' + (itemName | lowercase)"
+          icon="delete"
+          class="erase-button"
+          (clicked)="eraseProgress()"
+        >
+        </app-cryton-button>
+      </header>
+
+      <!-- OVERVIEW ITEMS -->
+      <section class="overview-items cryton-scrollbar">
+        <div class="overview-item" *ngFor="let overviewItem of stepOverviewItems; index as i">
+          <h3 class="overview-item--name">
+            <b
+              >{{ overviewItem.name }}
+              <sup *ngIf="overviewItem.required" [class.error]="errorSubject$ | async" class="cryton-editor--required"
+                >*</sup
+              >
+            </b>
+          </h3>
+          <div class="overview-item--data">
+            <ng-container [ngSwitch]="overviewItem.type">
+              <!-- ITEM TYPE: COMPLETION -->
+              <ng-container *ngSwitchCase="0">
+                <ng-container *ngIf="stepOverviewData[i].value; else noData">
+                  <p class="cryton-editor--selectable-lighter data-cell--content data-cell">Complete</p>
+                </ng-container>
+                <ng-template #noData>
+                  <p
+                    class="undefined data-cell--content data-cell"
+                    [@error]="overviewItem.required && (errorSubject$ | async) ? 'error' : 'noError'"
+                  >
+                    Incomplete
+                  </p>
+                </ng-template>
+              </ng-container>
+
+              <!-- ITEM TYPE: CHECKBOX -->
+              <ng-container *ngSwitchCase="1">
+                <ng-container *ngIf="stepOverviewData[i].value as selectables; else noData">
+                  <div
+                    class="cryton-editor--selectable-lighter data-cell"
+                    *ngFor="let selectable of sortedSelectables(selectables)"
+                  >
+                    <span class="data-cell--content" [matTooltip]="selectable.name.length > 13 ? selectable.name : ''">
+                      {{ selectable.name | shortString: 13 }}
+                    </span>
+                    <b *ngIf="selectable.id != null" class="cryton-editor--selectable-darker data-cell--content">{{
+                      selectable.id
+                    }}</b>
+                  </div>
+                </ng-container>
+                <ng-template #noData>
+                  <p
+                    class="data-cell--content undefined data-cell"
+                    [@error]="overviewItem.required && (errorSubject$ | async) ? 'error' : 'noError'"
+                  >
+                    <b>None</b>
+                  </p>
+                </ng-template>
+              </ng-container>
+
+              <div *ngSwitchDefault>Invalid item type.</div>
+            </ng-container>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP CONTROLS -->
+      <div class="stepper center-vertical">
+        <app-cryton-button
+          *ngIf="currentStep$.value > 0"
+          id="prev_btn"
+          value="Previous step"
+          color="primary"
+          (clicked)="changeStep(currentStep$.value - 1)"
+        >
+        </app-cryton-button>
+        <app-cryton-button
+          *ngIf="currentStep$.value < stepCount - 1"
+          id="next_btn"
+          value="Next step"
+          color="primary"
+          (clicked)="changeStep(currentStep$.value + 1)"
+        >
+        </app-cryton-button>
+        <app-cryton-button
+          *ngIf="currentStep$.value === stepCount - 1"
+          id="create_btn"
+          icon="add_circle"
+          color="primary"
+          [value]="'Create ' + (itemName | lowercase)"
+          (clicked)="triggerCreation()"
+        >
+        </app-cryton-button>
+      </div>
+    </ng-container>
+
+    <!-- CREATING DISPLAY -->
+    <ng-template #creatingDisplay>
+      <section class="creating center-both">
+        <mat-spinner></mat-spinner>
+        <h2>{{ 'CREATING ' + (itemName | uppercase) }}</h2>
+      </section>
+    </ng-template>
+  </div>
+</div>

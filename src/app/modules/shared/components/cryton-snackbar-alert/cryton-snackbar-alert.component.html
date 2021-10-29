@@ -1,0 +1,5 @@
+<div *ngIf="data" [class]="[data.type, 'alert-snackbar']">
+  <div [class]="[data.type, 'highlight-bar']"></div>
+  <mat-icon>{{ getAlertIcon(data.type) }}</mat-icon>
+  <span>{{ data.message ? data.message : 'An error occured.' }}</span>
+</div>

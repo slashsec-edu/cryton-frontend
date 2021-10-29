@@ -1,0 +1,67 @@
+<div class="controls">
+  <ng-container *ngIf="!editedStage; else saveChanges">
+    <app-cryton-button
+      color="primary"
+      icon="add_circle"
+      value="Create stage"
+      (clicked)="handleCreateStage()"
+      [disabled]="isCreationDisabled()"
+      [matTooltip]="getCreationErrors()"
+      matTooltipClass="tooltip-error"
+    ></app-cryton-button>
+  </ng-container>
+
+  <ng-template #saveChanges>
+    <app-cryton-button value="Cancel" (clicked)="cancelEditing()"></app-cryton-button>
+
+    <app-cryton-button
+      color="primary"
+      icon="save"
+      value="Save changes"
+      (clicked)="handleSaveChanges()"
+      [disabled]="isCreationDisabled()"
+    ></app-cryton-button>
+  </ng-template>
+</div>
+<main class="tc-responsive-container">
+  <!-- STAGE PARAMETERS -->
+  <div class="flex-section">
+    <div class="params-wrapper">
+      <div class="stage-params cryton-scrollbar">
+        <app-stage-parameters
+          [stageForm]="stageForm"
+          [nodeManager]="parentDepTree.treeNodeManager"
+        ></app-stage-parameters>
+      </div>
+
+      <div class="parameters-buttons">
+        <app-cryton-button icon="delete" value="Erase parameters" (clicked)="stageForm.erase()"></app-cryton-button>
+
+        <div class="showable">
+          <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider [vertical]="true" class="hideable"></mat-divider>
+
+  <!-- EXECUTION TREE PREVIEW -->
+  <div class="flex-section hideable">
+    <div class="tree-preview-wrapper">
+      <div #container id="stage-creator--tree-preview"></div>
+      <div class="flex-end-btn">
+        <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #buildDepTree>
+  <app-cryton-button
+    color="primary"
+    value="Build dependency tree"
+    (clicked)="emitSwapPagesEvent()"
+    id="build-dep-tree-btn"
+  ></app-cryton-button>
+</ng-template>

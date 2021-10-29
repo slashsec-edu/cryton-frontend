@@ -1,0 +1,34 @@
+<div [ngStyle]="{ visibility: (loadingSubject$ | async) ? 'initial' : 'hidden' }">
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
+
+<div class="run-manipulation">
+  <div class="run-manipulation-controls">
+    <div class="left-side">
+      <!-- EXECUTION BUTTONS -->
+      <app-cryton-button
+        *ngFor="let btn of filterActiveButtons(executionButtons); trackBy: trackByID"
+        color="primary"
+        [icon]="btn.icon"
+        [value]="btn.value"
+        (clicked)="handleButtonClick(btn)"
+      >
+      </app-cryton-button>
+
+      <!-- SCHEDULING BUTTONS -->
+      <app-cryton-button
+        *ngFor="let btn of filterActiveButtons(schedulingButtons); trackBy: trackByID"
+        color="primary"
+        [icon]="btn.icon"
+        [value]="btn.value"
+        (clicked)="handleButtonClick(btn)"
+      >
+      </app-cryton-button>
+    </div>
+
+    <!-- DELETE RUN -->
+    <div class="right-side">
+      <app-cryton-button value="Delete run" icon="delete" color="accent" (clicked)="deleteRun()"> </app-cryton-button>
+    </div>
+  </div>
+</div>

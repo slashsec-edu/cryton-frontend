@@ -1,0 +1,5 @@
+<div class="dependency-tree--menu">
+  <button mat-icon-button *ngFor="let tool of tools" [title]="tool.name" (click)="tool.action()">
+    <mat-icon [class.dependency-tree--active]="tool.active ? tool.active() : false">{{ tool.icon }}</mat-icon>
+  </button>
+</div>

@@ -1,0 +1,19 @@
+<div class="timeline-node-params">
+  <div class="cryton-scrollbar stage-params">
+    <app-stage-parameters
+      #stageParameters
+      [nodeManager]="data.stage.parentDepTree.treeNodeManager"
+    ></app-stage-parameters>
+  </div>
+
+  <div class="buttons">
+    <app-cryton-button value="Cancel" (clicked)="close()"></app-cryton-button>
+    <app-cryton-button
+      value="Save"
+      icon="save"
+      color="primary"
+      (clicked)="save()"
+      [disabled]="!stageParameters.valid"
+    ></app-cryton-button>
+  </div>
+</div>

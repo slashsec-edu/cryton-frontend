@@ -1,0 +1,125 @@
+/* TABLE */
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+th.mat-header-cell {
+  font-size: 16px;
+}
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* EMPTY TABLE */
+.empty-table {
+  width: 100%;
+  height: 302px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.empty-table > h2 {
+  color: gray;
+}
+
+/* UTILS */
+.undefined {
+  color: gray;
+}
+.clickable:hover {
+  cursor: pointer;
+  filter: brightness(90%);
+}
+
+/* EXPANDABLE ROWS */
+tr.cryton-table--expandable-row {
+  height: 0;
+}
+tr.cryton-table--expandable td {
+  border: none;
+}
+.row-detail {
+  overflow: hidden;
+}
+.row-detail--content {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+}
+.left-side-detail,
+.right-side-detail {
+  display: flex;
+  align-items: center;
+}
+.left-side-detail > *:not(:first-child) {
+  margin-left: 10px;
+}
+.right-side-detail > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+/* PAGINATOR */
+.paginator {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+app-cryton-error {
+  margin-right: auto;
+}
+
+/* HEADER */
+header > h2 {
+  padding: 0;
+  margin: 0;
+}
+.header-options {
+  display: flex;
+  justify-content: space-between;
+}
+.header-options > div {
+  display: flex;
+  align-items: center;
+}
+.header-left-side > *:first-child,
+form > *:first-child {
+  margin-right: 10px;
+}
+mat-form-field {
+  width: 170px;
+}
+
+/* HIGHLIGHT */
+.highlight {
+  color: white;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.highlight.blue {
+  background: #448aff;
+}
+.highlight.undefined {
+  background: #d8d8d8;
+  color: gray;
+}
+.highlight.yellow {
+  background: #ffd942;
+  color: rgb(48, 48, 48);
+}
+.highlight.red {
+  background: #d50027;
+}
+.highlight.green {
+  background: #71cc55;
+  color: black;
+}
+.highlight.black {
+  background: #000000;
+}
+.highlight.gray {
+  background: #d3d3d3;
+  color: #6d6d6d;
+}

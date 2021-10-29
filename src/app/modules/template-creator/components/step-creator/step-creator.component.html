@@ -1,0 +1,55 @@
+<div class="tc-responsive-page">
+  <ng-template [ngIf]="!isEditingModeOn" [ngIfElse]="editingModeButtons">
+    <div class="buttons">
+      <app-cryton-button (clicked)="stepForm.reset()" icon="delete" value="Erase step"> </app-cryton-button>
+      <app-cryton-button
+        (clicked)="handleCreateStep()"
+        [disabled]="!stepForm.valid"
+        icon="add_circle"
+        value="Create step"
+        color="primary"
+        [matTooltip]="getTooltipErrors()"
+        matTooltipClass="tooltip-error"
+      >
+      </app-cryton-button>
+    </div>
+  </ng-template>
+  <main class="tc-responsive-container">
+    <form [formGroup]="stepForm">
+      <!-- NAME FORM FIELD-->
+      <mat-form-field class="text-input" appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" formControlName="name" />
+        <mat-error>{{ getControlError('name') }}</mat-error>
+      </mat-form-field>
+
+      <!-- ATTACK MODULE FORM FIELD-->
+      <mat-form-field class="text-input" appearance="fill">
+        <mat-label>Attack Module</mat-label>
+        <input matInput placeholder="Attack Module" formControlName="attackModule" />
+        <mat-error>{{ getControlError('attackModule') }}</mat-error>
+      </mat-form-field>
+
+      <!-- ATTACK MODULE ARGS TEXTAREA -->
+      <mat-form-field appearance="fill">
+        <mat-label>Attack Module Args...</mat-label>
+        <textarea matInput rows="7" formControlName="attackModuleArgs" cdkTextareaAutosize appEnableTab></textarea>
+        <mat-error>{{ getControlError('attackModuleArgs') }}</mat-error>
+      </mat-form-field>
+    </form>
+  </main>
+</div>
+
+<ng-template #editingModeButtons>
+  <div class="buttons">
+    <app-cryton-button (clicked)="cancelEditing()" value="Cancel"> </app-cryton-button>
+    <app-cryton-button
+      (clicked)="editStep()"
+      [disabled]="!stepForm.valid"
+      icon="settings"
+      value="Edit Step"
+      color="primary"
+    >
+    </app-cryton-button>
+  </div>
+</ng-template>

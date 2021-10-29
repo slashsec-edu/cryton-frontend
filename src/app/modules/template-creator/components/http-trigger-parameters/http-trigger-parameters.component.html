@@ -1,0 +1,82 @@
+<form *ngIf="httpTriggerForm" [formGroup]="httpTriggerForm.args" class="form-field-wrapper">
+  <mat-form-field appearance="fill">
+    <mat-label>Host</mat-label>
+    <input matInput type="text" formControlName="host" />
+    <mat-error>{{ getControlError('host', httpTriggerForm.args) }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Port</mat-label>
+    <input matInput type="text" formControlName="port" type="number" />
+    <mat-error>{{ getControlError('port', httpTriggerForm.args) }}</mat-error>
+  </mat-form-field>
+
+  <ng-container *ngFor="let route of httpTriggerForm.routes; let i = index">
+    <h2 class="divider">{{ 'Route ' + (i + 1) + ':' }}</h2>
+
+    <div class="fields-with-button">
+      <button
+        mat-icon-button
+        type="button"
+        onclick="this.blur()"
+        class="cancel-btn"
+        [disabled]="httpTriggerForm.routes.length === 1"
+        (click)="triggerForm.removeRoute(route)"
+      >
+        <mat-icon>cancel</mat-icon>
+      </button>
+
+      <form [formGroup]="route.args">
+        <mat-form-field appearance="fill">
+          <mat-label>Path</mat-label>
+          <input matInput type="text" formControlName="path" />
+          <mat-error>{{ getControlError('path', route.args) }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Method</mat-label>
+          <mat-select formControlName="method">
+            <mat-option value="GET">GET</mat-option>
+            <mat-option value="POST">POST</mat-option>
+          </mat-select>
+          <mat-error>{{ getControlError('method', route.args) }}</mat-error>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <ng-container *ngFor="let param of route.parameters; let j = index">
+      <h3>{{ 'Parameter ' + (j + 1) + ':' }}</h3>
+      <div class="fields-with-button">
+        <button
+          mat-icon-button
+          type="button"
+          onclick="this.blur()"
+          class="cancel-btn"
+          [disabled]="route.parameters.length === 1"
+          (click)="triggerForm.removeParameter(param, route)"
+        >
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <form [formGroup]="param">
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" formControlName="name" />
+            <mat-error>{{ getControlError('name', param) }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Value</mat-label>
+            <textarea matInput formControlName="value"></textarea>
+            <mat-error>{{ getControlError('value', param) }}</mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+    </ng-container>
+    <button mat-button class="add-btn" color="primary" (click)="triggerForm.addParameter(route)">
+      <span><mat-icon>add_circle</mat-icon>Add parameter</span>
+    </button>
+  </ng-container>
+  <button mat-button class="add-btn" color="primary" (click)="triggerForm.addRoute()">
+    <span><mat-icon>add_circle</mat-icon>Add route</span>
+  </button>
+</form>

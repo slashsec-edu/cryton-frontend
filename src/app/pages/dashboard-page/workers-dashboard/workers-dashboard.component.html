@@ -1,0 +1,32 @@
+<ng-container
+  *ngIf="{
+    workers: dataSource.dataSubject$ | async,
+    loading: dataSource.loadingSubject$ | async,
+    count: dataSource.itemCount
+  } as data"
+>
+  <section class="workers-dashboard" [hidden]="data.count === 0">
+    <!-- HEADER & PAGINATOR -->
+    <header [ngClass]="{ 'show-border': !data.loading }">
+      <div class="workers-header">
+        <h1>WORKERS</h1>
+        <mat-paginator
+          id="paginator"
+          [hidePageSize]="true"
+          [length]="data.count"
+          [pageSize]="4"
+          [showFirstLastButtons]="true"
+        >
+        </mat-paginator>
+      </div>
+      <mat-progress-bar mode="query" class="progress-bar" *ngIf="data.loading"></mat-progress-bar>
+    </header>
+
+    <!-- WORKER TABLES -->
+    <div class="workers-wrapper" [@renderTrigger]="firstWorkersLoaded ? 'loaded' : 'loading'">
+      <div *ngFor="let worker of data.workers" class="worker">
+        <app-worker-table [data]="worker"> </app-worker-table>
+      </div>
+    </div>
+  </section>
+</ng-container>

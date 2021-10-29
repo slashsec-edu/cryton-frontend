@@ -1,0 +1,31 @@
+<div class="report-card card-header">
+  <div class="left-side">
+    <div class="report-chip">
+      <label>Run state:</label>
+      <span [class]="['state', 'mat-elevation-z1', report.state.toLocaleLowerCase()]">{{ report.state }}</span>
+    </div>
+
+    <div class="report-chip">
+      <label>Used plan:</label>
+      <span class="id-card mat-elevation-z1"
+        ><span class="id">{{ report.plan_id }}</span
+        >{{ report.plan_name | shortString: 20 }}</span
+      >
+    </div>
+  </div>
+
+  <div class="right-side">
+    <div class="report-chip">
+      <label>Start time:</label>
+      <span class="time"><mat-icon color="primary">play_arrow</mat-icon>{{ report.start_time | crytonDatetime }}</span>
+    </div>
+    <div class="report-chip">
+      <label>Pause time:</label>
+      <span class="time"><mat-icon color="primary">pause</mat-icon>{{ report.pause_time | crytonDatetime }}</span>
+    </div>
+    <div class="report-chip">
+      <label>Finish time:</label>
+      <span class="time"><mat-icon color="primary">stop</mat-icon>{{ report.finish_time | crytonDatetime }}</span>
+    </div>
+  </div>
+</div>

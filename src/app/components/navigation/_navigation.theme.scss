@@ -1,0 +1,16 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+
+  // LINK ICON COLOR
+  .navigation-component--active.mat-list-icon {
+    color: map-get($primary, default);
+  }
+
+  // LINK HIGHLIGHT COLOR
+  .navigation-component--highlight-line {
+    background: map-get($primary, default);
+  }
+}

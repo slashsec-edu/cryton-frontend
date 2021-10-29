@@ -1,0 +1,15 @@
+<div [hidden]="isHidden(0)">
+  <app-cryton-table
+    header="Choose Template"
+    [dataSource]="templatesDataSource"
+    [showRadioButtons]="true"
+    [hidePageSize]="true"
+    [eraseEvent$]="eraseEvent$"
+    (radioChange)="setTemplate($event)"
+  >
+  </app-cryton-table>
+</div>
+
+<div [hidden]="isHidden(1)" class="file-upload">
+  <app-cryton-file-uploader (fileChange)="handleUpload($event)" [eraseEvent$]="eraseEvent$"> </app-cryton-file-uploader>
+</div>

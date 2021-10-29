@@ -1,0 +1,49 @@
+<!-- STEP 1: CHOOSING INSTANCE -->
+<div [hidden]="isHidden(0)">
+  <app-cryton-table
+    header="CHOOSE INSTANCE"
+    [dataSource]="instanceDataSource"
+    [showRadioButtons]="true"
+    [hidePageSize]="true"
+    [eraseEvent$]="eraseEvent$"
+    (radioChange)="setInstance($event)"
+  >
+  </app-cryton-table>
+</div>
+
+<!-- STEP 2: CHOOSING WORKERS -->
+<div [hidden]="isHidden(1)">
+  <app-cryton-table
+    header="CHOOSE WORKERS"
+    [dataSource]="workerDataSource"
+    [showCheckboxes]="true"
+    [hidePageSize]="true"
+    [eraseEvent$]="eraseEvent$"
+    (checkboxChange)="setWorkers($event)"
+  >
+  </app-cryton-table>
+</div>
+
+<!-- STEP 3: UPLOADING INVENTORIES -->
+<div [hidden]="isHidden(2)">
+  <app-cryton-table
+    #inventoryTable
+    header="CHOOSE INVENTORY FILES"
+    [dataSource]="inventoriesDataSource"
+    [hidePageSize]="true"
+    [eraseEvent$]="eraseEvent$"
+    [buttons]="inventoriesButtons"
+  >
+  </app-cryton-table>
+</div>
+
+<input
+  #fileInput
+  *ngFor="let worker of workersArray()"
+  [id]="worker.id"
+  (change)="setFiles($event, worker.id)"
+  multiple
+  type="file"
+  name="hidden-input"
+  hidden
+/>

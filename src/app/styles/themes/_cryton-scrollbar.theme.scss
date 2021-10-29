@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $background: map-get($config, background);
+
+  .cryton-scrollbar::-webkit-scrollbar-thumb {
+    background: map-get($background, unselected-chip);
+  }
+}

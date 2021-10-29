@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+
+  .cryton-datetime-picker--time-picker {
+    background: map-get($primary, default);
+  }
+}

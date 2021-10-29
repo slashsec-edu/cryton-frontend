@@ -1,0 +1,65 @@
+<header>
+  <mat-icon>info</mat-icon>
+  <h1>Help</h1>
+</header>
+
+<main>
+  <section>
+    <h3>Color legend</h3>
+
+    <div class="groups-container">
+      <div class="color-group" *ngFor="let colorGroup of colorGroups">
+        <div class="color" [style.background]="colorGroup.color"></div>
+        <ul class="states">
+          <li class="state" *ngFor="let state of colorGroup.states">{{ state | titlecase }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section>
+    <h3>Timeline elements</h3>
+
+    <ul>
+      <li>
+        <b>Step execution</b> - Step execution is displayed as a solid colored rectangle inside the timeline. Step
+        execution starts at the rectangle start and finishes / pauses / continues at the rectangle end.
+      </li>
+      <li>
+        <b>Stage execution</b> - Stage execution is displayed as a transparent rectangle inside the timeline. Each stage
+        is labeled with a label on the left side of the timeline. Steps belonging to a stage are displayed inside it's
+        body.
+      </li>
+      <li><b>Execution</b> - Execution start and finish times are displayed as a solid vertical red line.</li>
+      <li>
+        <b>Coloring</b> - Each stage / step is colored according to it's state as shown in the color legend section.
+      </li>
+    </ul>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section>
+    <h3>Controls</h3>
+
+    <ul>
+      <li><b>Scroll</b> - Moves the report execution up / down.</li>
+      <li><b>Drag</b> - Moves the timeline left / right.</li>
+      <li>
+        <b>Tick size picker:</b>
+        <ul>
+          <li><b>Tick size</b> - Sets the duration of single tick on the timeline.</li>
+          <li><b>Tick unit</b> - Sets the unit of time for tick size.</li>
+        </ul>
+      </li>
+      <li><b>Click on the step / stage label</b> - Displays execution detail next to the tick size picker.</li>
+      <li><b>Paginator</b> - You can switch between run executions with paginator arrows.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <button mat-flat-button (click)="close()">Close</button>
+</footer>

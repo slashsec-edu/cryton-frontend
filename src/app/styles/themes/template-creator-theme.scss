@@ -1,0 +1,11 @@
+@use '../../modules/template-creator/components/dependency-tree-editor/dependency-tree-editor.theme' as dep-tree;
+@use '../../modules/template-creator/components/tree-node-dispenser/tree-node-dispenser.theme.scss' as node-dispenser;
+@use '../../modules/template-creator/components/stage-creator/stage-creator.theme' as stage-creator;
+@use '../../modules/template-creator/components/timeline/timeline.theme' as timeline;
+
+@mixin template-creator-theme($config) {
+  @include dep-tree.color($config);
+  @include node-dispenser.color($config);
+  @include stage-creator.color($config);
+  @include timeline.color($config);
+}

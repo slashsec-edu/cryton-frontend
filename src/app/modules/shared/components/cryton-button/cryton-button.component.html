@@ -1,0 +1,16 @@
+<button
+  mat-flat-button
+  color="{{ color }}"
+  onclick="this.blur()"
+  type="button"
+  class="cryton-button"
+  [disabled]="disabled"
+  (click)="handleClick()"
+>
+  <span class="button bold">
+    <mat-icon *ngIf="icon">
+      {{ icon }}
+    </mat-icon>
+    {{ value }}
+  </span>
+</button>

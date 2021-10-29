@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+
+  .cryton-card--top-bar {
+    border-top: map-get($primary, default) solid 12px;
+  }
+}

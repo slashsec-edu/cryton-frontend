@@ -1,0 +1,34 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $accent: map-get($config, accent);
+  $warn: map-get($config, warn);
+
+  /* WORKER STATES */
+  .worker-table--ready {
+    background: map-get($primary, default);
+    color: mat-color($primary, default-contrast);
+  }
+  .worker-table--ready.aside {
+    background: map-get($primary, 700);
+    color: mat-color($primary, 700-contrast);
+  }
+  .worker-table--down {
+    background: map-get($warn, default);
+    color: mat-color($warn, default-contrast);
+  }
+  .worker-table--down.aside {
+    background: map-get($warn, 700);
+    color: mat-color($warn, 700-contrast);
+  }
+  .worker-table--up {
+    background: map-get($accent, default);
+    color: mat-color($accent, default-contrast);
+  }
+  .worker-table--up.aside {
+    background: map-get($accent, 700);
+    color: mat-color($accent, 700-contrast);
+  }
+}

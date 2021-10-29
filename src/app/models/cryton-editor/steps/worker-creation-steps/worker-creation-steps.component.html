@@ -1,0 +1,21 @@
+<form [formGroup]="workerForm">
+  <h2>FILL OUT WORKER DATA</h2>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="" required formControlName="name" (input)="handleInput()" />
+    <mat-error>Name is required.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>IP Address</mat-label>
+    <input matInput placeholder="" required formControlName="ip" (input)="handleInput()" />
+    <mat-error>IP address is required.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Q-Prefix</mat-label>
+    <input matInput placeholder="" required formControlName="qPrefix" (input)="handleInput()" />
+    <mat-error>Q-Prefix is required.</mat-error>
+  </mat-form-field>
+</form>

@@ -1,0 +1,85 @@
+<app-cryton-card>
+  <div class="report-timeline" [ngSwitch]="currentDisplay">
+    <ng-container *ngSwitchCase="display.LOADING" [ngTemplateOutlet]="loading"></ng-container>
+    <ng-container *ngSwitchCase="display.ERROR" [ngTemplateOutlet]="error"></ng-container>
+    <ng-container *ngSwitchCase="display.DEFAULT" [ngTemplateOutlet]="default"></ng-container>
+    <ng-container *ngSwitchCase="display.NOT_STARTED" [ngTemplateOutlet]="notStarted"></ng-container>
+  </div>
+</app-cryton-card>
+
+<ng-template #default>
+  <h1>
+    Execution on worker:
+    <span class="worker-name">{{ report.plan_executions[paginator.pageIndex].worker_name }}</span>
+  </h1>
+
+  <div class="data-panel">
+    <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
+
+    <div class="report-data" *ngIf="timeline.executionData$ | async as execution">
+      <div class="data-chip">
+        <label>Name:</label>
+        <span>{{ execution.name | shortString: 20 }}</span>
+      </div>
+
+      <div class="data-chip">
+        <label>State:</label>
+        <span>{{ execution.state }}</span>
+      </div>
+
+      <div class="data-chip">
+        <label>Start time:</label>
+        <span><mat-icon color="primary">play_arrow</mat-icon> {{ execution.startTime | crytonDatetime }}</span>
+      </div>
+
+      <div class="data-chip">
+        <label>Pause time:</label>
+        <span><mat-icon color="primary">pause</mat-icon> {{ execution.pauseTime | crytonDatetime }}</span>
+      </div>
+
+      <div class="data-chip">
+        <label>Finish time:</label>
+        <span><mat-icon color="primary">stop</mat-icon> {{ execution.finishTime | crytonDatetime }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tc-responsive-container" appNoScroll>
+    <div #timelineContainer id="timeline-container"></div>
+  </div>
+
+  <div class="footer">
+    <div class="info-container">
+      <app-cryton-button icon="info" value=" Help" (clicked)="openHelp()"></app-cryton-button>
+    </div>
+    <mat-paginator
+      #paginator
+      id="paginator"
+      [hidePageSize]="true"
+      [length]="report.plan_executions.length"
+      [pageSize]="1"
+      [showFirstLastButtons]="true"
+      (page)="changeExecution($event)"
+    >
+    </mat-paginator>
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  <div class="tc-responsive-container center-both">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #error>
+  <div class="tc-responsive-container center-both flex-dir-col">
+    <h2>AN ERROR OCCURED</h2>
+    <h4>Data not available</h4>
+  </div>
+</ng-template>
+
+<ng-template #notStarted>
+  <div class="tc-responsive-container center-both">
+    <h2>RUN HASN'T STARTED YET</h2>
+  </div>
+</ng-template>

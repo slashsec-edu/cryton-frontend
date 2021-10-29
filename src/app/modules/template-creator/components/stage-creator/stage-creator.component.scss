@@ -1,0 +1,101 @@
+$scrollbar-padding: 10px;
+
+/* LAYOUT */
+main {
+  display: flex;
+}
+.flex-section {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tree-preview-wrapper {
+  width: 65%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+.flex-end-btn {
+  align-self: flex-end;
+  margin-top: 1.34375em; /* Same as mat-form-field */
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* STAGE PARAMETERS */
+.stage-params {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 405px;
+  padding-right: $scrollbar-padding;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+.params-wrapper {
+  width: 70%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+.parameters-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: $scrollbar-padding;
+}
+
+/* DEPENDENCY TREE PREVIEW */
+#stage-creator--tree-preview {
+  position: relative;
+  height: 0;
+  width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+/* UTILS */
+.showable {
+  display: none;
+}
+
+@media only screen and (max-width: 1600px) {
+  .hideable {
+    display: none;
+  }
+  .showable {
+    display: flex;
+  }
+  .flex-section {
+    width: 100%;
+  }
+  .params-wrapper {
+    width: 50%;
+  }
+  .stage-params {
+    max-height: 355px;
+  }
+  #build-dep-tree-btn {
+    margin-left: 10px;
+  }
+}
+@media only screen and (max-width: 1400px) {
+  .params-wrapper {
+    width: 60%;
+  }
+  .stage-params {
+    max-height: 305px;
+  }
+}
+@media only screen and (max-width: 1000px) {
+  .params-wrapper {
+    width: 70%;
+  }
+}

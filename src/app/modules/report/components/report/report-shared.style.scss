@@ -1,0 +1,106 @@
+$chip-height: 45px;
+$chip-border-radius: 5px;
+
+/* STATE */
+.state {
+  height: $chip-height;
+  padding: 0 20px;
+  font-weight: 600;
+  width: fit-content;
+  border-radius: $chip-border-radius;
+  display: flex;
+  align-items: center;
+
+  &.paused {
+    background: #96a4ac;
+    color: white;
+  }
+  &.pausing {
+    background: #464849;
+    color: white;
+  }
+  &.finished {
+    background: #5fbb62;
+    color: rgb(40, 40, 40);
+  }
+  &.ignore {
+    background: #ee8349;
+    color: rgb(255, 255, 255);
+  }
+  &.error {
+    background: #ff0000;
+    color: rgb(255, 255, 255);
+  }
+  &.running {
+    background: #448aff;
+    color: white;
+  }
+  &.pending {
+    background: #ffb23b;
+    color: rgb(48, 48, 48);
+  }
+  &.scheduled {
+    background: #ffdb3b;
+    color: rgb(48, 48, 48);
+  }
+}
+
+/* ID CARD */
+.id-card {
+  border-radius: $chip-border-radius;
+  width: 200px;
+  height: $chip-height;
+  display: flex;
+  align-items: center;
+
+  .id {
+    width: $chip-height;
+    height: $chip-height;
+    font-weight: 600;
+    border-radius: $chip-border-radius;
+    color: white;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* REPORT CARD */
+.report-card {
+  padding: 15px 20px;
+  margin: 15px 0;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  .left-side,
+  .right-side {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 5px 0;
+  }
+}
+.card-body {
+  margin-top: 15px;
+  display: flex;
+}
+
+/* REPORT CHIP */
+.report-chip {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    color: #8f8f8f;
+  }
+}
+.time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: -6px;
+}

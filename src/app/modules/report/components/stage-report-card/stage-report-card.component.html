@@ -1,0 +1,46 @@
+<div class="report-card">
+  <div class="card-header">
+    <div class="left-side">
+      <div class="report-chip">
+        <label>Stage state:</label>
+        <span [class]="['state', 'mat-elevation-z1', stage.state.toLocaleLowerCase()]">{{ stage.state }}</span>
+      </div>
+
+      <div class="report-chip">
+        <label>Stage info:</label>
+        <span class="id-card mat-elevation-z1"
+          ><span class="id">{{ stage.id }}</span
+          >{{ stage.stage_name | shortString: 20 }}</span
+        >
+      </div>
+    </div>
+
+    <div class="right-side">
+      <div class="report-chip">
+        <label>Start time:</label>
+        <span class="time"><mat-icon color="primary">play_arrow</mat-icon>{{ stage.start_time | crytonDatetime }}</span>
+      </div>
+      <div class="report-chip">
+        <label>Pause time:</label>
+        <span class="time"><mat-icon color="primary">pause</mat-icon>{{ stage.pause_time | crytonDatetime }}</span>
+      </div>
+      <div class="report-chip">
+        <label>Finish time:</label>
+        <span class="time"><mat-icon color="primary">stop</mat-icon>{{ stage.finish_time | crytonDatetime }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <button mat-button class="show-steps-btn" (click)="this.toggleSteps()">
+      <mat-icon color="primary">{{ this.showSteps ? 'expand_less' : 'expand_more' }}</mat-icon>
+      {{ (this.showSteps ? 'Hide' : 'Show') + ' steps' }}
+    </button>
+  </div>
+</div>
+
+<ng-container *ngIf="showSteps">
+  <div class="nested" *ngFor="let step of stage.step_executions">
+    <app-step-report-card [step]="step"></app-step-report-card>
+  </div>
+</ng-container>

@@ -1,0 +1,92 @@
+<!-- TOP NAVBAR -->
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="toggleSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="topbar-menu">
+    <mat-icon *ngIf="themeService.currentTheme$" class="theme-icon">{{
+      themeToggle.checked ? 'dark_mode' : 'light_mode'
+    }}</mat-icon>
+    <mat-slide-toggle
+      (change)="toggleDarkMode($event)"
+      #themeToggle
+      [checked]="(themeService.currentTheme$ | async).isDark"
+    >
+    </mat-slide-toggle>
+    <button mat-button id="account-button" [matMenuTriggerFor]="accountMenu">
+      <mat-icon class="account-button--icon">account_circle</mat-icon>Account<mat-icon
+        class="account-button--icon expand-arrow"
+        >expand_more</mat-icon
+      >
+    </button>
+
+    <!-- ACCOUNT MENU -->
+    <mat-menu #accountMenu="matMenu">
+      <button mat-menu-item>Settings</button>
+      <button mat-menu-item>Log out</button>
+    </mat-menu>
+  </div>
+</mat-toolbar>
+
+<!-- SIDENAV -->
+<mat-sidenav-container autosize>
+  <mat-sidenav #sidenav opened="true" [mode]="shouldShowOver ? 'over' : 'side'" class="mat-sidenav">
+    <mat-nav-list>
+      <ng-container
+        *ngFor="let route of routes"
+        [ngTemplateOutlet]="route.subroutes ? withSubroutes : withoutSubroutes"
+        [ngTemplateOutletContext]="{ route: route }"
+      >
+      </ng-container>
+
+      <mat-divider></mat-divider>
+
+      <ng-container
+        *ngFor="let route of metaRoutes"
+        [ngTemplateOutlet]="route.subroutes ? withSubroutes : withoutSubroutes"
+        [ngTemplateOutletContext]="{ route: route }"
+      >
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main>
+      <router-outlet></router-outlet>
+      <div class="bottom-spacer"></div>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!-- TEMPLATE: link without subroutes -->
+<ng-template #withoutSubroutes let-route="route">
+  <a mat-list-item [routerLink]="route.href" routerLinkActive="selected" (click)="toggleRoute(route)">
+    <div class="navigation-component--highlight-line" routerLinkActive="navigation-component--active"></div>
+    <span *ngIf="!isSidebarClosed" class="link-text">{{ route.name }}</span>
+    <mat-icon mat-list-icon routerLinkActive="navigation-component--active">{{ route.icon }}</mat-icon>
+  </a>
+</ng-template>
+
+<!-- TEMPLATE: link with subroutes -->
+<ng-template #withSubroutes let-route="route">
+  <a mat-list-item [routerLink]="route.href" routerLinkActive="selected" (click)="toggleRoute(route)">
+    <div class="navigation-component--highlight-line" routerLinkActive="navigation-component--active"></div>
+    <span *ngIf="!isSidebarClosed" class="link-text">{{ route.name }}</span>
+    <mat-icon mat-list-icon routerLinkActive="navigation-component--active">{{ route.icon }}</mat-icon>
+    <mat-icon *ngIf="route.subroutes && !isSidebarClosed" class="expand-arrow" [class.rotated]="openRoute === route"
+      >expand_more</mat-icon
+    >
+  </a>
+
+  <!-- SUBLINKS -->
+  <div
+    *ngIf="route.subroutes && !isSidebarClosed"
+    class="submenu"
+    [@toggleSublinks]="openRoute === route ? 'open' : 'closed'"
+  >
+    <a mat-list-item *ngFor="let subroute of route.subroutes" [routerLink]="subroute.href"
+      ><span class="sublink-filler"></span
+      ><span class="sublink" routerLinkActive="navigation-component--active">{{ subroute.name }}</span></a
+    >
+  </div>
+</ng-template>

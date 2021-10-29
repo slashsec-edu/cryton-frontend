@@ -1,0 +1,43 @@
+// LAYOUT
+section {
+  margin: 10px 0;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// COLOR LEGEND
+.groups-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.color {
+  height: 10px;
+}
+.color-group {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  overflow: hidden;
+  width: 130px;
+}
+.states {
+  background: rgba(0, 0, 0, 0.1);
+  list-style-position: inside;
+  flex: 1;
+  margin: 0;
+  padding: 10px;
+}

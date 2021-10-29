@@ -1,0 +1,37 @@
+<app-cryton-card *ngIf="data" [noPadding]="true" [enableAnimation]="false" [noBorder]="true">
+  <header [ngClass]="['worker-header', getStateColor(data.state)]">
+    <!-- HEADER -->
+    <div class="worker-header--state">
+      <button mat-icon-button onclick="this.blur()" (click)="handleSettings(data)">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <h2>{{ data.state }}</h2>
+    </div>
+
+    <aside [ngClass]="['aside', getStateColor(data.state)]">
+      <h3><b>ID:</b> {{ data.id }}</h3>
+    </aside>
+  </header>
+
+  <!-- TABLE -->
+  <div class="worker-table">
+    <div class="worker-table--row">
+      <b>Name:</b>
+      <p [matTooltip]="getTooltip(data.name)">
+        {{ data.name | shortString: maxStringLength }}
+      </p>
+    </div>
+    <div class="worker-table--row">
+      <b>Address:</b>
+      <p [matTooltip]="getTooltip(data.address)">
+        {{ data.address | shortString: maxStringLength }}
+      </p>
+    </div>
+    <div class="worker-table--row">
+      <b>Q-Prefix:</b>
+      <p [matTooltip]="getTooltip(data.q_prefix)">
+        {{ data.q_prefix | shortString: maxStringLength }}
+      </p>
+    </div>
+  </div>
+</app-cryton-card>

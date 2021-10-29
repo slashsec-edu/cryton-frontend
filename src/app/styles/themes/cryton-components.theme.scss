@@ -1,0 +1,36 @@
+@use '../../components/navigation/navigation.theme.scss' as sidenav;
+@use '../../modules/shared/components/cryton-card/cryton-card.theme' as cryton-card;
+@use '../../components/worker-table/worker-table.theme' as worker-table;
+@use '../../modules/shared/components/cryton-counter/cryton-counter.theme' as cryton-counter;
+@use '../../modules/shared/components/cryton-editor/cryton-editor.theme' as cryton-editor;
+@use '../../modules/shared/components/cryton-table/cryton-table.theme' as cryton-table;
+@use '../../components/theme-color-getter/_theme-color-getter.theme.scss' as color-getter;
+@use '../../modules/shared/components/cryton-file-uploader/cryton-file-uploader.theme' as file-uploader;
+@use '../../modules/report/components/report/report.theme' as report;
+@use '../../modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.theme' as datetime-picker;
+@use '../../modules/template-creator/components/tree-editor-toolbar/tree-editor-toolbar.theme' as tree-editor-toolbar;
+@use './cryton-scrollbar.theme' as scrollbar;
+@use '../../modules/shared/components/cryton-log/cryton-log.theme' as log;
+
+// CRYTON WORKER THEME
+$worker-primary: mat-palette($mat-blue, A200);
+$worker-accent: mat-palette($mat-green, 400);
+$worker-warn: mat-palette($mat-grey, 600);
+$worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
+
+@mixin cryton-components-theme($config) {
+  @include cryton-card.color($config);
+  @include cryton-counter.color($config);
+  @include cryton-editor.color($config);
+  @include sidenav.color($config);
+  @include color-getter.color($config);
+  @include cryton-table.color($config);
+  @include file-uploader.color($config);
+  @include report.color($config);
+  @include scrollbar.color($config);
+  @include datetime-picker.color($config);
+  @include tree-editor-toolbar.color($config);
+  @include log.color($config);
+
+  @include worker-table.color($worker-theme);
+}

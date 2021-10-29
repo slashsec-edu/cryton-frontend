@@ -1,0 +1,40 @@
+$error-color: red;
+$warning-color: orange;
+$success-color: green;
+
+.alert-snackbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &.error {
+    color: $error-color;
+  }
+  &.warning {
+    color: $warning-color;
+  }
+  &.success {
+    color: $success-color;
+  }
+
+  span {
+    margin: 0;
+    margin-left: 10px;
+  }
+}
+
+.highlight-bar {
+  width: 3px;
+  height: 30px;
+  border-radius: 3px;
+
+  &.error {
+    background: $error-color;
+  }
+  &.warning {
+    background: $warning-color;
+  }
+  &.success {
+    background: $success-color;
+  }
+}

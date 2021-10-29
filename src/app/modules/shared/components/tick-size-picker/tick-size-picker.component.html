@@ -1,0 +1,13 @@
+<form class="tick-options" [formGroup]="tickForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Tick size</mat-label>
+    <input type="number" matInput formControlName="size" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Tick unit</mat-label>
+    <mat-select formControlName="unit">
+      <mat-option *ngFor="let option of tickOptions" [value]="option.value">{{ option.display }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

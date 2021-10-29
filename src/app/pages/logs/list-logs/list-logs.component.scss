@@ -1,0 +1,35 @@
+/* LAYOUT */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin-bottom: 0;
+  }
+}
+.logs-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* FILTER */
+#apply-button {
+  margin-right: 10px;
+}
+#filter-field {
+  width: 200px;
+}
+
+/* PAGINATOR */
+mat-paginator {
+  background: none !important;
+}
+
+/* NO ITEMS */
+.no-items {
+  height: 300px;
+  width: 100%;
+}

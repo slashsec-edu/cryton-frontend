@@ -1,0 +1,75 @@
+/* DROPZONE */
+.cryton-file-uploader--dropzone {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  border: 2px dashed rgb(184, 184, 184);
+}
+
+/* HEADER */
+.upload-icon {
+  width: auto;
+  height: auto;
+  font-size: 50px;
+  padding: 0;
+  margin: 0;
+}
+h2 {
+  margin: 0;
+  text-align: center;
+}
+h3 {
+  font-size: 20px;
+}
+
+/* FILE LIST */
+.file-list {
+  margin: 5px 0 20px;
+  max-height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+.cryton-file-uploader--file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 300px;
+  border-radius: 5px;
+  padding-left: 10px;
+  margin: 5px 0;
+  font-size: 12px;
+}
+.cryton-file-uploader--file mat-icon {
+  font-size: 14px;
+  width: auto;
+  height: auto;
+}
+.cryton-file-uploader--file-size {
+  border-radius: 5px;
+  padding: 0 5px;
+  margin-left: 15px;
+}
+
+/* FILE LIST SCROLLBAR */
+.file-list::-webkit-scrollbar {
+  width: 5px;
+}
+.file-list::-webkit-scrollbar-track {
+  background: rgb(238, 238, 238);
+  border-radius: 10px;
+}
+.file-list::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 10px;
+}
+
+/* BUTTONS */
+.cancel-button {
+  margin-left: 7px;
+  padding: 0 5px !important;
+  min-width: 0;
+}

@@ -1,0 +1,18 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+
+  .cryton-editor--required {
+    color: map-get($primary, default);
+  }
+  .cryton-editor--selectable-lighter {
+    background: map-get($primary, default);
+    color: mat-contrast($primary, contrast);
+  }
+  .cryton-editor--selectable-darker {
+    background: map-get($primary, darker);
+    color: mat-contrast($primary, contrast);
+  }
+}

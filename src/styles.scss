@@ -1,0 +1,84 @@
+@import './app/styles/cryton-elements.scss';
+@import './app/styles/themes/light-theme.scss';
+@import './app/styles/themes/dark-theme.scss';
+
+@include mat-core();
+
+/* GLOBAL STYLE */
+body {
+  height: 100vh;
+}
+body,
+html {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+/* UTILS */
+.wrapper {
+  max-width: 1250px;
+  width: 95%;
+}
+.app-no-padding-dialog .mat-dialog-container {
+  padding: 0;
+}
+.unselectable {
+  user-select: none;
+}
+.center-horizontal {
+  display: flex;
+  justify-content: center;
+}
+.center-vertical {
+  display: flex;
+  align-items: center;
+}
+.center-both {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-dir-col {
+  flex-direction: column;
+}
+
+/* MATERIAL ICONS */
+.material-icons.small {
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+  transition: 0.2s;
+}
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'),
+    url('./assets/fonts/MaterialIcons-Regular.ttf') format('truetype'),
+    url('./assets/fonts/MaterialIcons-Regular.woff2') format('woff2'),
+    url('./assets/fonts/MaterialIcons-Regular.woff') format('woff');
+}

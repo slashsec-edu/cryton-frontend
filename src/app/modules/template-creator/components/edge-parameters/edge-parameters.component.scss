@@ -1,0 +1,70 @@
+/* LAYOUT */
+main {
+  display: flex;
+  flex-direction: column;
+  max-height: 700px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+.centering-wrapper {
+  width: 100%;
+}
+.flex-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* CONDITION FORM */
+.edge-parameters {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+mat-form-field {
+  font-size: 12px;
+  width: 500px;
+}
+.inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* BUTTONS */
+.buttons {
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 15px;
+}
+.cancel-btn {
+  height: 44.625px;
+  width: 44.625px;
+  align-self: center;
+  margin-right: 15px;
+}
+.add-btn {
+  align-self: flex-end;
+  font-size: 12px;
+}
+.add-btn span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* PARENT --> CHILD */
+.parent-child {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.arrow {
+  padding: 0 6px;
+}
+.step-name {
+  text-align: center;
+  background: #263238;
+  color: white;
+  border-radius: 5px;
+  padding: 2px 15px;
+}

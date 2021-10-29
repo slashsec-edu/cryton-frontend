@@ -1,0 +1,10 @@
+/* TICK SIZE */
+.tick-options {
+  display: flex;
+  gap: 15px;
+
+  mat-form-field {
+    font-size: 12px;
+    width: 110px;
+  }
+}

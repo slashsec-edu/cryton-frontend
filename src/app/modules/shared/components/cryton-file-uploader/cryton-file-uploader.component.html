@@ -1,0 +1,36 @@
+<div class="cryton-file-uploader--dropzone" appFileUploadDnd (fileDropped)="handleFileInput($event)">
+  <input
+    #fileInput
+    (change)="fileButton.focus(); handleFileInputChange($event)"
+    [multiple]="multipleFiles"
+    onclick="this.value = null"
+    hidden="true"
+    type="file"
+  />
+
+  <!-- ICON & HEADER -->
+  <ng-container *ngIf="!selectedFiles">
+    <mat-icon class="upload-icon" *ngIf="!selectedFiles">backup</mat-icon>
+    <h2>{{ 'Drag & drop file' + (multipleFiles ? 's' : '') + ' here' }}</h2>
+    <h3>or</h3>
+  </ng-container>
+
+  <!-- LIST OF SELECTED FILES -->
+  <section *ngIf="selectedFiles" class="file-list">
+    <div class="cryton-file-uploader--file" *ngFor="let file of selectedFiles">
+      <span>{{ file.name | shortString: 18 }}</span>
+      <span class="cryton-file-uploader--file-size">{{ file.size | fileSize }}</span>
+    </div>
+  </section>
+
+  <!-- UPLOAD & CANCEL BUTTON -->
+  <section>
+    <button #fileButton mat-flat-button color="primary" (click)="fileInput.click()" [title]="fileInput.value">
+      {{ 'Browse for file' + (multipleFiles ? 's' : '') }}
+    </button>
+
+    <button *ngIf="selectedFiles" (click)="discardFiles()" mat-flat-button color="warn" class="cancel-button">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </section>
+</div>

@@ -1,0 +1,14 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $background: map-get($config, background);
+  $primary: map-get($config, primary);
+
+  .timeline--menu {
+    background: map-get($background, selected-button);
+  }
+  .timeline--active {
+    color: map-get($primary, default);
+  }
+}

@@ -1,0 +1,19 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $foreground: map-get($config, foreground);
+  $background: map-get($config, background);
+
+  .cryton-file-uploader--dropzone.active {
+    border: 4px dashed map-get($primary, default);
+  }
+  .cryton-file-uploader--file {
+    background: map-get($background, unselected-chip);
+  }
+  .cryton-file-uploader--file-size {
+    background: map-get($background, app-bar);
+    color: map-get($foreground, text);
+  }
+}

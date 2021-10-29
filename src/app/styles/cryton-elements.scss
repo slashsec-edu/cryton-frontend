@@ -1,0 +1,20 @@
+/* CRYTON ELEMENTS */
+.cryton-section-header {
+  border-bottom: 1px solid rgb(187, 187, 187);
+}
+.cryton-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.cryton-scrollbar::-webkit-scrollbar-track {
+  border-radius: 20px;
+}
+.cryton-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+}
+
+/* TOOLTIP ERROR */
+.tooltip-error {
+  white-space: pre-line;
+  background: #d50027 !important;
+  font-size: 12px;
+}

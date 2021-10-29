@@ -1,0 +1,570 @@
+{
+    "source": "mockoon:1.15.0",
+    "data": [
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "",
+                "lastMigration": 17,
+                "name": "Demo API",
+                "endpointPrefix": "cryton/api/v1",
+                "latency": 0,
+                "port": 8000,
+                "hostname": "0.0.0.0",
+                "routes": [
+                    {
+                        "uuid": "",
+                        "documentation": "Returns mock runs.",
+                        "method": "get",
+                        "endpoint": "runs",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"count\": 7,\n  \"next\": \"\",\n  \"previous\": \"\",\n  \"results\": [\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/1/\",\n      \"id\": 1,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/1/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"SCHEDULED\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/2/\",\n      \"id\": 2,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/2/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"RUNNING\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/3/\",\n      \"id\": 3,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/3/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"PAUSED\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/4/\",\n      \"id\": 4,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/4/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"PENDING\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/5/\",\n      \"id\": 5,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/5/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"PAUSING\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/6/\",\n      \"id\": 6,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/6/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"FINISHED\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/runs/7/\",\n      \"id\": 7,\n      \"plan_executions\": [\"http://localhost:8000/cryton/api/v1/plan_executions/7/\"],\n      \"created_at\": \"2020-06-29T16:45:23.615123\",\n      \"updated_at\": \"2020-06-29T16:45:23.615136\",\n      \"start_time\": \"2020-05-12T16:50:23.615136\",\n      \"pause_time\": null,\n      \"finish_time\": null,\n      \"state\": \"TERMINATED\",\n      \"aps_job_id\": null,\n      \"plan_model\": \"http://localhost:8000/cryton/api/v1/plans/1/\"\n    }\n  ]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "runs/:id/report",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{{# switch (urlParam 'id') }}\r\n  {{# case \"1\" }}\r\n    {\r\n      \"id\": 1,\r\n      \"plan_id\": 1,\r\n      \"plan_name\": \"Example scenario\",\r\n      \"state\": \"FINISHED\",\r\n      \"start_time\": \"2020-11-01T22:20:10.208170\",\r\n      \"finish_time\": null,\r\n      \"pause_time\": null,\r\n      \"plan_executions\": [\r\n        {\r\n          \"id\": 1,\r\n          \"stage_name\": \"Example scenario\",\r\n          \"state\": \"FINISHED\",\r\n          \"start_time\": \"2020-11-01T22:20:09.964302\",\r\n          \"finish_time\": \"2020-11-01T22:21:32.186426\",\r\n          \"pause_time\": null,\r\n          \"worker_id\": 1,\r\n          \"worker_name\": \"test\",\r\n          \"evidence_dir\": \"/root/.cryton/evidence/plan_001-Example_scenario/run_1/worker_test\",\r\n          \"stage_executions\": [\r\n            {\r\n              \"id\": 1,\r\n              \"stage_name\": \"stage-one\",\r\n              \"state\": \"FINISHED\",\r\n              \"start_time\": \"2020-11-01T22:20:14.964302\",\r\n              \"finish_time\": \"2020-11-01T22:21:29.186426\",\r\n              \"pause_time\": null,\r\n              \"step_executions\": [\r\n                {\r\n                  \"id\": 1,\r\n                  \"step_name\": \"scan-localhost-very-long-step-name\",\r\n                  \"state\": \"FINISHED\",\r\n                  \"start_time\": \"2020-11-01T22:20:15.083197\",\r\n                  \"finish_time\": null,\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"open_ports\": {\r\n                      \"ssh\": \"22\"\r\n                    }\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"asd\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 2,\r\n                  \"step_name\": \"bruteforce\",\r\n                  \"state\": \"PENDING\",\r\n                  \"start_time\": null,\r\n                  \"finish_time\": \"2020-11-01T22:21:13.496688\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"password\": \"vagrant\",\r\n                    \"username\": \"vagrant\"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\": \"{'username': 'vagrant', 'password': 'vagrant'}\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"/tmp/1604269273\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 3,\r\n                  \"step_name\": \"ssh-session\",\r\n                  \"state\": \"PAUSED\",\r\n                  \"start_time\": \"2020-11-01T22:21:13.642667\",\r\n                  \"finish_time\": null,\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": null,\r\n                  \"mod_err\": null,\r\n                  \"std_out\":\r\n                    \"RHOSTS => 127.0.0.1\\nPASSWORD => vagrant\\nUSERNAME => vagrant\\n[*] Auxiliary module running as background job 45.\\n[+] 127.0.0.1:22 - Success: 'vagrant:vagrant' ''\\n[*] Command shell session 46 opened (127.0.0.1:46721 -> 127.0.0.1:22) at 2020-11-01 23:21:23 +0100\\n[*] Scanned 1 of 1 hosts (100% complete)\\n\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 4,\r\n                  \"step_name\": \"session-cmd\",\r\n                  \"state\": \"RUNNING\",\r\n                  \"start_time\": \"2020-11-01T22:21:25.028513\",\r\n                  \"finish_time\": \"2020-11-01T22:21:29.186426\",\r\n                  \"result\": \"UNKNOWN\",\r\n                  \"mod_out\": {\r\n                    \"cmd_out\":\r\n                      \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\n\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                }\r\n              ]\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n  {{/ case }}\r\n  {{# case \"2\" }}\r\n    {\r\n      \"id\": 2,\r\n      \"plan_id\": 2,\r\n      \"plan_name\": \"Example scenario\",\r\n      \"state\": \"FINISHED\",\r\n      \"start_time\": \"2020-11-01T22:20:10.208170\",\r\n      \"finish_time\": null,\r\n      \"pause_time\": null,\r\n      \"plan_executions\": [\r\n        {\r\n          \"id\": 1,\r\n          \"stage_name\": \"Example scenario\",\r\n          \"state\": \"FINISHED\",\r\n          \"start_time\": \"2020-11-01T22:20:09.964302\",\r\n          \"finish_time\": null,\r\n          \"pause_time\": null,\r\n          \"worker_id\": 1,\r\n          \"worker_name\": \"test\",\r\n          \"evidence_dir\": \"/root/.cryton/evidence/plan_001-Example_scenario/run_1/worker_test\",\r\n          \"stage_executions\": [\r\n            {\r\n              \"id\": 1,\r\n              \"stage_name\": \"stage-one\",\r\n              \"state\": \"FINISHED\",\r\n              \"start_time\": \"2020-11-01T22:20:14.964302\",\r\n              \"finish_time\": null,\r\n              \"pause_time\": null,\r\n              \"step_executions\": [\r\n                {\r\n                  \"id\": 1,\r\n                  \"step_name\": \"scan-localhost\",\r\n                  \"state\": \"FINISHED\",\r\n                  \"start_time\": \"2020-11-01T22:20:15.083197\",\r\n                  \"finish_time\": \"2020-11-01T22:21:10.279528\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"open_ports\": {\r\n                      \"ssh\": \"22\"\r\n                    }\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"asd\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 2,\r\n                  \"step_name\": \"bruteforce\",\r\n                  \"state\": \"PENDING\",\r\n                  \"start_time\": \"2020-11-01T22:21:10.410417\",\r\n                  \"finish_time\": \"2020-11-01T22:21:13.496688\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"password\": \"vagrant\",\r\n                    \"username\": \"vagrant\"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\": \"{'username': 'vagrant', 'password': 'vagrant'}\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"/tmp/1604269273\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 3,\r\n                  \"step_name\": \"ssh-session\",\r\n                  \"state\": \"PAUSED\",\r\n                  \"start_time\": \"2020-11-01T22:21:13.642667\",\r\n                  \"finish_time\": \"2020-11-01T22:21:24.913794\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": null,\r\n                  \"mod_err\": null,\r\n                  \"std_out\":\r\n                    \"RHOSTS => 127.0.0.1\\nPASSWORD => vagrant\\nUSERNAME => vagrant\\n[*] Auxiliary module running as background job 45.\\n[+] 127.0.0.1:22 - Success: 'vagrant:vagrant' ''\\n[*] Command shell session 46 opened (127.0.0.1:46721 -> 127.0.0.1:22) at 2020-11-01 23:21:23 +0100\\n[*] Scanned 1 of 1 hosts (100% complete)\\n\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 4,\r\n                  \"step_name\": \"session-cmd\",\r\n                  \"state\": \"RUNNING\",\r\n                  \"start_time\": \"2020-11-01T22:21:25.028513\",\r\n                  \"finish_time\": \"2020-11-01T22:21:29.186426\",\r\n                  \"result\": \"UNKNOWN\",\r\n                  \"mod_out\": {\r\n                    \"cmd_out\":\r\n                      \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\n\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                }\r\n              ]\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n  {{/ case }}\r\n  {{# case \"3\" }}\r\n    {\r\n      \"id\": 3,\r\n      \"plan_id\": 3,\r\n      \"plan_name\": \"Example scenario\",\r\n      \"state\": \"FINISHED\",\r\n      \"start_time\": \"2020-11-01T22:20:10.208170\",\r\n      \"finish_time\": null,\r\n      \"pause_time\": null,\r\n      \"plan_executions\": [\r\n        {\r\n          \"id\": 1,\r\n          \"stage_name\": \"Example scenario\",\r\n          \"state\": \"FINISHED\",\r\n          \"start_time\": \"2020-11-01T22:20:09.964302\",\r\n          \"finish_time\": null,\r\n          \"pause_time\": null,\r\n          \"worker_id\": 1,\r\n          \"worker_name\": \"test\",\r\n          \"evidence_dir\": \"/root/.cryton/evidence/plan_001-Example_scenario/run_1/worker_test\",\r\n          \"stage_executions\": [\r\n            {\r\n              \"id\": 1,\r\n              \"stage_name\": \"stage-one\",\r\n              \"state\": \"FINISHED\",\r\n              \"start_time\": \"2020-11-01T22:20:14.964302\",\r\n              \"finish_time\": null,\r\n              \"pause_time\": null,\r\n              \"step_executions\": [\r\n                {\r\n                  \"id\": 1,\r\n                  \"step_name\": \"scan-localhost\",\r\n                  \"state\": \"FINISHED\",\r\n                  \"start_time\": \"2020-11-01T22:20:15.083197\",\r\n                  \"finish_time\": \"2020-11-01T22:21:10.279528\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"open_ports\": {\r\n                      \"ssh\": \"22\"\r\n                    }\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"asd\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 2,\r\n                  \"step_name\": \"bruteforce\",\r\n                  \"state\": \"PENDING\",\r\n                  \"start_time\": \"2020-11-01T22:21:10.410417\",\r\n                  \"finish_time\": \"2020-11-01T22:21:13.496688\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"password\": \"vagrant\",\r\n                    \"username\": \"vagrant\"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\": \"{'username': 'vagrant', 'password': 'vagrant'}\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"/tmp/1604269273\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 3,\r\n                  \"step_name\": \"ssh-session\",\r\n                  \"state\": \"PAUSED\",\r\n                  \"start_time\": \"2020-11-01T22:21:13.642667\",\r\n                  \"finish_time\": \"2020-11-01T22:21:24.913794\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": null,\r\n                  \"mod_err\": null,\r\n                  \"std_out\":\r\n                    \"RHOSTS => 127.0.0.1\\nPASSWORD => vagrant\\nUSERNAME => vagrant\\n[*] Auxiliary module running as background job 45.\\n[+] 127.0.0.1:22 - Success: 'vagrant:vagrant' ''\\n[*] Command shell session 46 opened (127.0.0.1:46721 -> 127.0.0.1:22) at 2020-11-01 23:21:23 +0100\\n[*] Scanned 1 of 1 hosts (100% complete)\\n\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 4,\r\n                  \"step_name\": \"session-cmd\",\r\n                  \"state\": \"RUNNING\",\r\n                  \"start_time\": \"2020-11-01T22:21:25.028513\",\r\n                  \"finish_time\": \"2020-11-01T22:21:29.186426\",\r\n                  \"result\": \"UNKNOWN\",\r\n                  \"mod_out\": {\r\n                    \"cmd_out\":\r\n                      \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\n\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                }\r\n              ]\r\n            },\r\n            {\r\n              \"id\": 2,\r\n              \"stage_name\": \"stage-two\",\r\n              \"state\": \"PENDING\",\r\n              \"start_time\": \"2020-11-01T22:20:14.964302\",\r\n              \"finish_time\": \"2020-11-01T22:21:30.964302\",\r\n              \"pause_time\": null,\r\n              \"step_executions\": [\r\n                {\r\n                  \"id\": 1,\r\n                  \"step_name\": \"scan-localhost\",\r\n                  \"state\": \"PENDING\",\r\n                  \"start_time\": \"2020-11-01T22:20:15.083197\",\r\n                  \"finish_time\": \"2020-11-01T22:20:50.279528\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"open_ports\": {\r\n                      \"ssh\": \"22\"\r\n                    }\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"asd\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 2,\r\n                  \"step_name\": \"bruteforce\",\r\n                  \"state\": \"PENDING\",\r\n                  \"start_time\": \"2020-11-01T22:20:55.410417\",\r\n                  \"finish_time\": null,\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": {\r\n                    \"password\": \"vagrant\",\r\n                    \"username\": \"vagrant\"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\": \"{'username': 'vagrant', 'password': 'vagrant'}\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"/tmp/1604269273\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 3,\r\n                  \"step_name\": \"ssh-session\",\r\n                  \"state\": \"PAUSED\",\r\n                  \"start_time\": \"2020-11-01T22:21:13.642667\",\r\n                  \"finish_time\": \"2020-11-01T22:21:24.913794\",\r\n                  \"result\": \"OK\",\r\n                  \"mod_out\": null,\r\n                  \"mod_err\": null,\r\n                  \"std_out\":\r\n                    \"RHOSTS => 127.0.0.1\\nPASSWORD => vagrant\\nUSERNAME => vagrant\\n[*] Auxiliary module running as background job 45.\\n[+] 127.0.0.1:22 - Success: 'vagrant:vagrant' ''\\n[*] Command shell session 46 opened (127.0.0.1:46721 -> 127.0.0.1:22) at 2020-11-01 23:21:23 +0100\\n[*] Scanned 1 of 1 hosts (100% complete)\\n\",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                },\r\n                {\r\n                  \"id\": 4,\r\n                  \"step_name\": \"session-cmd\",\r\n                  \"state\": \"RUNNING\",\r\n                  \"start_time\": \"2020-11-01T22:21:25.028513\",\r\n                  \"finish_time\": \"2020-11-01T22:21:29.186426\",\r\n                  \"result\": \"UNKNOWN\",\r\n                  \"mod_out\": {\r\n                    \"cmd_out\":\r\n                      \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \"\r\n                  },\r\n                  \"mod_err\": \"No error\",\r\n                  \"std_out\":\r\n                    \"Linux kali 5.3.0-kali2-amd64 #1 SMP Debian 5.3.9-3kali1 (2019-11-20) x86_64\\n\\nThe programs included with the Kali GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright.\\nKali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ... \",\r\n                  \"std_err\": null,\r\n                  \"evidence_file\": \"No evidence\",\r\n                  \"valid\": false\r\n                }\r\n              ]\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n  {{/ case }}\r\n  {{# default }}null{{/ default }}\r\n{{/ switch}}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "plans",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"count\": 2,\n  \"previous\": null,\n  \"next\": null,\n  \"results\": [\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/plans/1/\",\n      \"id\": 1,\n      \"runs\": [\n        \"http://localhost:8000/cryton/api/v1/runs/1/\",\n        \"http://localhost:8000/cryton/api/v1/runs/3/\"\n      ],\n      \"stages\": [\"http://localhost:8000/cryton/api/v1/stages/2/\"],\n      \"created_at\": \"2020-08-24T12:22:55.909039\",\n      \"updated_at\": \"2020-08-24T12:22:56.024864\",\n      \"name\": \"Example scenario\",\n      \"owner\": \"your name\",\n      \"evidence_dir\": \"/root/.cryton/evidence/plan_002-Example_scenario\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/plans/2/\",\n      \"id\": 2,\n      \"runs\": [\n        \"http://localhost:8000/cryton/api/v1/runs/3/\"\n      ],\n      \"stages\": [\"http://localhost:8000/cryton/api/v1/stages/1/\"],\n      \"created_at\": \"2020-08-24T14:22:55.909039\",\n      \"updated_at\": \"2020-08-24T15:22:56.024864\",\n      \"name\": \"Example scenario\",\n      \"owner\": \"your name\",\n      \"evidence_dir\": \"/root/.cryton/evidence/plan_002-Example_scenario\"\n    }\n  ]\n}",
+                                "latency": 500,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "workers",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"count\": 3,\n  \"previous\": null,\n  \"next\": null,\n  \"results\": [\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/workers/1/\",\n      \"id\": 1,\n      \"name\": \"Worker 1\",\n      \"address\": \"127.0.0.1\",\n      \"q_prefix\": \"15\",\n      \"state\": \"UP\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/workers/2/\",\n      \"id\": 2,\n      \"name\": \"Worker 2\",\n      \"address\": \"252.3.15.8\",\n      \"q_prefix\": \"20\",\n      \"state\": \"DOWN\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/workers/2/\",\n      \"id\": 3,\n      \"name\": \"Worker 3\",\n      \"address\": \"251.3.16.8\",\n      \"q_prefix\": \"3\",\n      \"state\": \"READY\"\n    }\n  ]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "templates",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"count\": 3,\n  \"previous\": null,\n  \"next\": null,\n  \"results\": [\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/templates/1/\",\n      \"id\": 1,\n      \"file\": \"http://localhost:8000/uploads/plan-template_1.yaml\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/templates/2/\",\n      \"id\": 2,\n      \"file\": \"http://localhost:8000/uploads/plan-template_2.yaml\"\n    },\n    {\n      \"url\": \"http://localhost:8000/cryton/api/v1/templates/3/\",\n      \"id\": 3,\n      \"file\": \"http://localhost:8000/uploads/plan-template_3.yaml\"\n    }\n  ]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "templates/:id/get_template",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"detail\": {\n    \"template_model_id\": {{urlParam 'id'}},\n    \"template\": {{# switch (urlParam 'id') }}\n  {{# case \"1\" }}\n    {\n      \"plan\": {\n        \"name\": \"Example scenario\",\n        \"owner\": \"your name\",\n        \"stages\": [\n          {\n            \"name\": \"stage-one\",\n            \"trigger_type\": \"delta\",\n            \"trigger_args\": {\n              \"seconds\": 5\n            },\n            \"steps\": [\n              {\n                \"name\": \"scan-localhost\",\n                \"is_init\": true,\n                \"attack_module\": \"mod_nmap/mod_nmap\",\n                \"attack_module_args\": {\n                  \"target\": \"127.0.0.1\",\n                  \"ports\": [\n                    22\n                  ]\n                },\n                \"next\": [\n                  {\n                    \"type\": \"result\",\n                    \"value\": \"OK\",\n                    \"step\": \"bruteforce\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"bruteforce\",\n                \"attack_module\": \"mod_medusa/mod_medusa\",\n                \"attack_module_args\": {\n                  \"target\": \"127.0.0.1\",\n                  \"open_ports\": \"$parent.open_ports\",\n                  \"username\": \"vagrant\",\n                  \"password\": \"vagrant\"\n                },\n                \"next\": [\n                  {\n                    \"type\": \"result\",\n                    \"value\": \"OK\",\n                    \"step\": \"ssh-session\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"ssh-session\",\n                \"create_named_session\": \"session_to_target_1\",\n                \"attack_module\": \"mod_msf/mod_msf\",\n                \"attack_module_args\": {\n                  \"exploit\": \"auxiliary/scanner/ssh/ssh_login\",\n                  \"exploit_arguments\": {\n                    \"RHOSTS\": \"127.0.0.1\",\n                    \"USERNAME\": \"$parent.username\",\n                    \"PASSWORD\": \"$parent.password\"\n                  }\n                },\n                \"next\": [\n                  {\n                    \"type\": \"result\",\n                    \"value\": \"OK\",\n                    \"step\": \"session-cmd\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"session-cmd\",\n                \"attack_module\": \"mod_cmd/mod_cmd\",\n                \"use_named_session\": \"session_to_target_1\",\n                \"attack_module_args\": {\n                  \"cmd\": \"cat /etc/passwd\"\n                }\n              }\n            ]\n          }\n        ]\n      }\n    }\n  {{/ case }}\n  {{# case \"2\" }}\n    {\n      \"plan\": {\n        \"name\": \"Example scenario\",\n        \"owner\": \"your name\",\n        \"stages\": [\n          {\n            \"name\": \"Stage three\",\n            \"trigger_type\": \"Delta\",\n            \"trigger_args\": {\n              \"hours\": 0,\n              \"minutes\": 0,\n              \"seconds\": 5\n            },\n            \"steps\": [\n              {\n                \"name\": \"scan-localhost\",\n                \"attack_module\": \"mod_nmap/mod_nmap\",\n                \"attack_module_args\": {\n                  \"target\": \"127.0.0.1\",\n                  \"ports\": [\n                    22\n                  ]\n                },\n                \"is_init\": true,\n                \"next\": [\n                  {\n                    \"step\": \"bruteforce\",\n                    \"type\": \"result\",\n                    \"value\": \"OK\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"bruteforce\",\n                \"attack_module\": \"mod_medusa/mod_medusa\",\n                \"attack_module_args\": {\n                  \"target\": \"127.0.0.1\",\n                  \"open_ports\": \"$parent.open_ports\",\n                  \"username\": \"vagrant\",\n                  \"password\": \"vagrant\"\n                },\n                \"next\": [\n                  {\n                    \"step\": \"ssh-session\",\n                    \"type\": \"result\",\n                    \"value\": \"OK\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"ssh-session\",\n                \"attack_module\": \"mod_msf/mod_msf\",\n                \"attack_module_args\": {\n                  \"exploit\": \"auxiliary/scanner/ssh/ssh_login\",\n                  \"exploit_arguments\": {\n                    \"RHOSTS\": \"127.0.0.1\",\n                    \"USERNAME\": \"$parent.username\",\n                    \"PASSWORD\": \"$parent.password\"\n                  }\n                },\n                \"next\": [\n                  {\n                    \"step\": \"session-cmd\",\n                    \"type\": \"result\",\n                    \"value\": \"OK\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"session-cmd\",\n                \"attack_module\": \"mod_cmd/mod_cmd\",\n                \"attack_module_args\": {\n                  \"cmd\": \"cat /etc/passwd\"\n                }\n              }\n            ]\n          },\n          {\n            \"name\": \"Stage one\",\n            \"trigger_type\": \"Delta\",\n            \"trigger_args\": {\n              \"hours\": 0,\n              \"minutes\": 30,\n              \"seconds\": 0\n            },\n            \"steps\": [\n              {\n                \"name\": \"a\",\n                \"attack_module\": \"a\",\n                \"attack_module_args\": \"a\",\n                \"is_init\": true,\n                \"next\": [\n                  {\n                    \"step\": \"b\",\n                    \"type\": \"return_code\",\n                    \"value\": \"5\"\n                  },\n                  {\n                    \"step\": \"c\",\n                    \"type\": \"result\",\n                    \"value\": \"OK\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"b\",\n                \"attack_module\": \"b\",\n                \"attack_module_args\": \"b\"\n              },\n              {\n                \"name\": \"c\",\n                \"attack_module\": \"c\",\n                \"attack_module_args\": \"c\"\n              }\n            ],\n            \"depends_on\": [\n              \"Stage three\"\n            ]\n          },\n          {\n            \"name\": \"Stage two\",\n            \"trigger_type\": \"Delta\",\n            \"trigger_args\": {\n              \"hours\": 0,\n              \"minutes\": 45,\n              \"seconds\": 30\n            },\n            \"steps\": [\n              {\n                \"name\": \"a\",\n                \"attack_module\": \"a\",\n                \"attack_module_args\": \"a\",\n                \"next\": [\n                  {\n                    \"step\": \"f\",\n                    \"type\": \"return_code\",\n                    \"value\": \"4\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"s\",\n                \"attack_module\": \"s\",\n                \"attack_module_args\": \"s\"\n              },\n              {\n                \"name\": \"d\",\n                \"attack_module\": \"d\",\n                \"attack_module_args\": \"d\"\n              },\n              {\n                \"name\": \"f\",\n                \"attack_module\": \"f\",\n                \"attack_module_args\": \"f\"\n              },\n              {\n                \"name\": \"g\",\n                \"attack_module\": \"g\",\n                \"attack_module_args\": \"g\",\n                \"next\": [\n                  {\n                    \"step\": \"s\",\n                    \"type\": \"state\",\n                    \"value\": \"ss\"\n                  },\n                  {\n                    \"step\": \"d\",\n                    \"type\": \"result\",\n                    \"value\": \"2\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"h\",\n                \"attack_module\": \"h\",\n                \"attack_module_args\": \"h\",\n                \"is_init\": true,\n                \"next\": [\n                  {\n                    \"step\": \"a\",\n                    \"type\": \"return_code\",\n                    \"value\": \"2\"\n                  },\n                  {\n                    \"step\": \"g\",\n                    \"type\": \"return_code\",\n                    \"value\": \"3\"\n                  },\n                  {\n                    \"step\": \"s\",\n                    \"type\": \"return_code\",\n                    \"value\": \"5\"\n                  }\n                ]\n              }\n            ],\n            \"depends_on\": [\n              \"Stage three\"\n            ]\n          },\n          {\n            \"name\": \"asd\",\n            \"trigger_type\": \"Delta\",\n            \"trigger_args\": {\n              \"hours\": 2,\n              \"minutes\": 0,\n              \"seconds\": 0\n            },\n            \"steps\": [\n              {\n                \"name\": \"Special Step\",\n                \"attack_module\": \"a\",\n                \"attack_module_args\": \"a\",\n                \"is_init\": true\n              }\n            ]\n          }\n        ]\n      }\n    }\n  {{/ case }}\n  {{# case \"3\" }}\n    {\n      \"plan\": {\n        \"name\": \"Example scenario\",\n        \"owner\": \"your name\",\n        \"stages\": [\n          {\n            \"name\": \"Stage two\",\n            \"trigger_type\": \"Delta\",\n            \"trigger_args\": {\n              \"hours\": 0,\n              \"minutes\": 45,\n              \"seconds\": 30\n            },\n            \"steps\": [\n              {\n                \"name\": \"a\",\n                \"attack_module\": \"a\",\n                \"attack_module_args\": \"a\",\n                \"next\": [\n                  {\n                    \"step\": \"f\",\n                    \"type\": \"return_code\",\n                    \"value\": \"4\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"s\",\n                \"attack_module\": \"s\",\n                \"attack_module_args\": \"s\"\n              },\n              {\n                \"name\": \"d\",\n                \"attack_module\": \"d\",\n                \"attack_module_args\": \"d\"\n              },\n              {\n                \"name\": \"f\",\n                \"attack_module\": \"f\",\n                \"attack_module_args\": \"f\"\n              },\n              {\n                \"name\": \"g\",\n                \"attack_module\": \"g\",\n                \"attack_module_args\": \"g\",\n                \"next\": [\n                  {\n                    \"step\": \"s\",\n                    \"type\": \"state\",\n                    \"value\": \"ss\"\n                  },\n                  {\n                    \"step\": \"d\",\n                    \"type\": \"result\",\n                    \"value\": \"2\"\n                  }\n                ]\n              },\n              {\n                \"name\": \"h\",\n                \"attack_module\": \"h\",\n                \"attack_module_args\": \"h\",\n                \"is_init\": true,\n                \"next\": [\n                  {\n                    \"step\": \"a\",\n                    \"type\": \"return_code\",\n                    \"value\": \"2\"\n                  },\n                  {\n                    \"step\": \"g\",\n                    \"type\": \"return_code\",\n                    \"value\": \"3\"\n                  },\n                  {\n                    \"step\": \"s\",\n                    \"type\": \"return_code\",\n                    \"value\": \"5\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    }\n  {{/ case }}\n  {{# default }}null{{/ default }}\n{{/ switch}}\n  }\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "workers",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 5000,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 1000,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "delete",
+                        "endpoint": "runs/:id",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 200,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs/:id/reschedule",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 500,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs/:id/pause",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 1000,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 1000,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": true,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs/:id/unpause",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs/:id/execute",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "runs/:id/unschedule",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "delete",
+                        "endpoint": "templates/:id",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 300,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "delete",
+                        "endpoint": "workers/:id",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 500,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "delete",
+                        "endpoint": "plans/:id",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 500,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "plans",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 500,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "templates",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 500,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "proxyRemovePrefix": false,
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Access-Control-Allow-Origin",
+                        "value": "*"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        }
+    ]
+}

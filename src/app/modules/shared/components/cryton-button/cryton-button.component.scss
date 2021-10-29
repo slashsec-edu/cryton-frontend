@@ -1,0 +1,11 @@
+.button {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.button > .material-icons {
+  margin-right: 5px;
+}
+.mat-flat-button {
+  width: 100%;
+}
