@@ -43,7 +43,7 @@ export class CrytonStageEdge extends CrytonEdge {
   destroy(): void {
     super.destroy();
 
-    this.childNode.timelineNode.updateX();
+    this.childNode?.timelineNode.updateX();
 
     if (this.timelineEdge) {
       this.timelineEdge.konvaObject.destroy();
