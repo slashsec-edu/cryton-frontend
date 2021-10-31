@@ -117,7 +117,7 @@ export class TickManager {
     while (this._lastTickIndex < wantedLastIndex) {
       this._addTick(this._lastTickIndex, height, tickSeconds, theme, true);
     }
-    while (this._lastTickIndex > wantedLastIndex) {
+    while (this._firstTickIndex !== this._minIndex && this._lastTickIndex > wantedLastIndex) {
       this._addTick(this._firstTickIndex - 1, height, tickSeconds, theme, false);
     }
   }
