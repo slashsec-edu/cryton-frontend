@@ -32,7 +32,7 @@ export class NodeTimemark extends Konva.Group {
     this._timeMarkBG = new Konva.Rect({
       width: this._timeMark.width() + LT_PADDING[1] * 2,
       height: LT_FONT_SIZE + LT_PADDING[0] * 2,
-      fill: 'gray',
+      fill: config.theme.templateCreator.labelBG,
       cornerRadius: 5,
       listening: false
     });
@@ -55,6 +55,6 @@ export class NodeTimemark extends Konva.Group {
 
   changeTheme(theme: Theme): void {
     this._timeMark.changeTheme(theme);
-    this._timeMarkBG.fill(theme.templateCreator.nodeTimemarkBG);
+    this._timeMarkBG.fill(theme.templateCreator.labelBG);
   }
 }

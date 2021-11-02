@@ -6,7 +6,7 @@ export interface TCTheme {
   timelineEdgeHover: string;
   treeEdge: string;
   treeNodeRect: string;
-  nodeTimemarkBG: string;
+  labelBG: string;
   nodeTimemarkTick: string;
   paddingMaskTop: string;
   background: string;
