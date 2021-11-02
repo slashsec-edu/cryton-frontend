@@ -2,14 +2,12 @@ import { InstanceService } from './instance.service';
 import { of } from 'rxjs';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { Endpoint } from '../models/enums/endpoint.enum';
 import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 
 describe('InstanceService', () => {
   let service: InstanceService;
 
-  const endpoint = `${environment.baseUrl}${Endpoint.INSTANCES}`;
+  const endpoint = `http://localhost:8000/cryton/api/v1/plans/`;
 
   httpClientStub.post.and.returnValue(of({}));
   httpClientStub.delete.and.returnValue(of({}));

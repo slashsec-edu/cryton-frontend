@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CrytonDataService } from '../generics/cryton-data.service';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
 import { TemplateDetail } from '../models/api-responses/template-detail.interface';
 import { Template } from '../models/api-responses/template.interface';
@@ -8,14 +8,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { Observable } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { Endpoint } from '../models/enums/endpoint.enum';
+import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TemplateService extends CrytonDataService<Template> {
-  protected endpoint = `${environment.baseUrl}${Endpoint.TEMPLATES}`;
+export class TemplateService extends CrytonRESTApiService<Template> {
+  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.TEMPLATES, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -37,7 +36,7 @@ export class TemplateService extends CrytonDataService<Template> {
     }
 
     return this.http
-      .get<CrytonResponse<Template>>(this.endpoint, { params })
+      .get<CrytonResponse<Template>>(this._endpoint, { params })
       .pipe(
         // Extracting file name from file url
         tap(items => {
@@ -51,7 +50,7 @@ export class TemplateService extends CrytonDataService<Template> {
           );
         }),
         map(items => ({ count: items.count, data: items.results } as TableData<Template>)),
-        catchError(this.handleError)
+        catchError(this.handleDatasetError)
       );
   }
 
@@ -70,8 +69,8 @@ export class TemplateService extends CrytonDataService<Template> {
 
   getTemplateDetail(templateID: number): Observable<TemplateDetail | string> {
     return this.http
-      .get<TemplateDetail>(`${this.endpoint}${templateID}/get_template/`)
-      .pipe(catchError(err => this.handleBasicError(err, `Template detail couldn't be fetched.`)));
+      .get<TemplateDetail>(`${this._endpoint}${templateID}/get_template/`)
+      .pipe(catchError(err => this.handleItemError(err, `Template detail couldn't be fetched.`)));
   }
 
   private _getFileName(url: string): string {

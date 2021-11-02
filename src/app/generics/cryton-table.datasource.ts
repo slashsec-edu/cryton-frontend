@@ -2,7 +2,7 @@ import { DataSource } from '@angular/cdk/collections/data-source';
 import { BehaviorSubject } from 'rxjs';
 import { Observable, of, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CrytonDataService } from './cryton-data.service';
+import { CrytonRESTApiService } from './cryton-rest-api-service';
 import { Column } from '../models/cryton-table/interfaces/column.interface';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
@@ -17,7 +17,7 @@ export abstract class CrytonTableDataSource<T extends HasID> implements DataSour
   abstract highlightDictionary: Record<string, string>;
   abstract columns: Column[];
 
-  constructor(private _service?: CrytonDataService<T>) {}
+  constructor(private _service?: CrytonRESTApiService<T>) {}
 
   connect(): Observable<T[]> {
     return this._dataSubject$.asObservable();

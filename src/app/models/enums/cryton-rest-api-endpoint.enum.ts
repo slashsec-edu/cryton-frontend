@@ -1,4 +1,4 @@
-export enum Endpoint {
+export enum CrytonRESTApiEndpoint {
   RUNS = 'runs/',
   EXECUTION_VARS = 'execution_variables/',
   INSTANCES = 'plans/',
