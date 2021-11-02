@@ -215,7 +215,7 @@ export class TimelineNode {
     }
 
     this._nameText.fill(theme.templateCreator.timemarkText);
-    this._nameBG.fill(theme.templateCreator.nodeTimemarkBG);
+    this._nameBG.fill(theme.templateCreator.labelBG);
   }
 
   /**
@@ -395,7 +395,7 @@ export class TimelineNode {
     });
 
     if (this.timeline.theme) {
-      nameBG.fill(this.timeline.theme.templateCreator.nodeTimemarkBG);
+      nameBG.fill(this.timeline.theme.templateCreator.labelBG);
     }
 
     return nameBG;

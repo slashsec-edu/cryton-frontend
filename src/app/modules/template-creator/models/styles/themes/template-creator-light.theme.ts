@@ -5,10 +5,10 @@ export const tcLightTheme: TCTheme = {
   treeEdge: 'black',
   tick: '#DEDEDE',
   leadingTick: '#96A4AC',
-  timemarkText: '#646464',
+  timemarkText: '##171717',
   timelineEdge: '#DEDEDE',
   timelineEdgeHover: 'gray',
-  nodeTimemarkBG: '#F2F2F2',
+  labelBG: '#cccccc',
   nodeTimemarkTick: '#646464',
   paddingMaskTop: '#EDEDED',
   background: '#F5F5F5'

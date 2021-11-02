@@ -23,6 +23,7 @@ export class AlertService {
   private _showSnackbar(message: string, type: string): void {
     this._snackBar.openFromComponent(CrytonSnackbarAlertComponent, {
       data: { message, type },
+      panelClass: ['white-snackbar'],
       duration: 5000
     });
   }
