@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CrytonDataService } from '../generics/cryton-data.service';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { Instance } from '../models/api-responses/instance.interface';
 import { Observable } from 'rxjs';
 import { catchError, mapTo } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { Endpoint } from '../models/enums/endpoint.enum';
+import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InstanceService extends CrytonDataService<Instance> {
-  protected endpoint = `${environment.baseUrl}${Endpoint.INSTANCES}`;
+export class InstanceService extends CrytonRESTApiService<Instance> {
+  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.INSTANCES, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -27,9 +26,9 @@ export class InstanceService extends CrytonDataService<Instance> {
       }
     }
 
-    return this.http.post(this.endpoint, formData).pipe(
+    return this.http.post(this._endpoint, formData).pipe(
       mapTo('Instance created successfully.'),
-      catchError(err => this.handleBasicError(err, 'Instance creation failed.'))
+      catchError(err => this.handleItemError(err, 'Instance creation failed.'))
     );
   }
 }

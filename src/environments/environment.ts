@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:8000/cryton/api/v1/'
+  crytonRESTApiHost: 'localhost',
+  crytonRESTApiPort: 8000
 };
 
 /*

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CrytonDataService } from '../generics/cryton-data.service';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { PlanExecution } from '../models/api-responses/plan-execution.interface';
 import { Run } from '../models/api-responses/run.interface';
 import { catchError, concatAll, first, mapTo, mergeMap, pluck, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { Report } from '../models/api-responses/report/report.interface';
-import { environment } from 'src/environments/environment';
-import { Endpoint } from '../models/enums/endpoint.enum';
+import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 
 export interface RunResponse {
   detail: {
@@ -19,9 +18,9 @@ export interface RunResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class RunService extends CrytonDataService<Run> {
-  protected endpoint = `${environment.baseUrl}${Endpoint.RUNS}`;
-  private _variablesUrl = `${environment.baseUrl}${Endpoint.EXECUTION_VARS}`;
+export class RunService extends CrytonRESTApiService<Run> {
+  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.RUNS, 'v1');
+  private _variablesEndpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.EXECUTION_VARS, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -32,7 +31,7 @@ export class RunService extends CrytonDataService<Run> {
 
     return this._runAction(runID, 'schedule', body).pipe(
       mapTo(`Run with ID: ${runID} scheduled successfully.`),
-      catchError(err => this.handleBasicError(err, `Scheudling run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Scheudling run with ID: ${runID} failed.`))
     );
   }
 
@@ -41,35 +40,35 @@ export class RunService extends CrytonDataService<Run> {
 
     return this._runAction(runID, 'reschedule', body).pipe(
       mapTo(`Run with ID: ${runID} rescheduled successfully.`),
-      catchError(err => this.handleBasicError(err, `Rescheduling run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Rescheduling run with ID: ${runID} failed.`))
     );
   }
 
   unscheduleRun(runID: number): Observable<string> {
     return this._runAction(runID, 'unschedule').pipe(
       mapTo(`Run with ID: ${runID} unscheduled successfully.`),
-      catchError(err => this.handleBasicError(err, `Unscheduling run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Unscheduling run with ID: ${runID} failed.`))
     );
   }
 
   pauseRun(runID: number): Observable<string> {
     return this._runAction(runID, 'pause').pipe(
       mapTo(`Run with ID: ${runID} paused successfully.`),
-      catchError(err => this.handleBasicError(err, `Pausing run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Pausing run with ID: ${runID} failed.`))
     );
   }
 
   unpauseRun(runID: number): Observable<string> {
     return this._runAction(runID, 'unpause').pipe(
       mapTo(`Run with ID: ${runID} unpaused successfully.`),
-      catchError(err => this.handleBasicError(err, `Unpausing run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Unpausing run with ID: ${runID} failed.`))
     );
   }
 
   executeRun(runID: number): Observable<string> {
     return this._runAction(runID, 'execute').pipe(
       mapTo(`Execution of run run with ID: ${runID} started successfully.`),
-      catchError(err => this.handleBasicError(err, `Execution of run with ID: ${runID} failed.`))
+      catchError(err => this.handleItemError(err, `Execution of run with ID: ${runID} failed.`))
     );
   }
 
@@ -81,7 +80,7 @@ export class RunService extends CrytonDataService<Run> {
    * @param inventoryFiles Selected inventory files (execution variables).
    */
   postRun(body: Record<string, any>, inventoryFiles: Record<string, any>): Observable<string> {
-    return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
+    return this.http.post<Record<string, any>>(this._endpoint, body).pipe(
       switchMap((run: RunResponse) => this.http.get(run.detail.link)),
       pluck('plan_executions'),
       concatAll(),
@@ -94,7 +93,7 @@ export class RunService extends CrytonDataService<Run> {
           return of(workersFiles).pipe(
             mergeMap(files => {
               const formData = this._createFormData(execution.id, files);
-              return this.http.post(this._variablesUrl, formData);
+              return this.http.post(this._variablesEndpoint, formData);
             })
           );
         } else {
@@ -102,7 +101,7 @@ export class RunService extends CrytonDataService<Run> {
         }
       }),
       mapTo('Run created successfully.'),
-      catchError(err => this.handleBasicError(err, 'Run creation failed.'))
+      catchError(err => this.handleItemError(err, 'Run creation failed.'))
     );
   }
 
@@ -113,7 +112,7 @@ export class RunService extends CrytonDataService<Run> {
    * @returns Observable of the report from a run.
    */
   fetchReport(runID: number): Observable<Report> {
-    return this.http.get<Report>(`${this.endpoint}/${runID}/report`);
+    return this.http.get<Report>(`${this._endpoint}/${runID}/report`);
   }
 
   downloadReport(runID: number): void {
@@ -164,7 +163,7 @@ export class RunService extends CrytonDataService<Run> {
   }
 
   private _runAction(runID: number, action: string, body: Record<string, any> = {}): Observable<Record<string, any>> {
-    const runUrl = `${this.endpoint}${runID}/${action}/`;
+    const runUrl = `${this._endpoint}${runID}/${action}/`;
 
     return this.http.post<Record<string, any>>(runUrl, body);
   }

@@ -3,18 +3,17 @@ import { Worker } from '../models/api-responses/worker.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { CrytonDataService } from '../generics/cryton-data.service';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { Observable } from 'rxjs';
 import { map, catchError, filter, mergeMap, toArray } from 'rxjs/operators';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
-import { environment } from 'src/environments/environment';
-import { Endpoint } from '../models/enums/endpoint.enum';
+import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WorkerInventoriesService extends CrytonDataService<Worker> {
-  protected endpoint = `${environment.baseUrl}${Endpoint.WORKERS}`;
+export class WorkerInventoriesService extends CrytonRESTApiService<Worker> {
+  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.WORKERS, 'v1');
   private _workers: Worker[] = [];
 
   constructor(protected http: HttpClient) {
@@ -49,7 +48,7 @@ export class WorkerInventoriesService extends CrytonDataService<Worker> {
     }
 
     return this.http
-      .get<CrytonResponse<Worker>>(this.endpoint, { params })
+      .get<CrytonResponse<Worker>>(this._endpoint, { params })
       .pipe(
         mergeMap(items => items.results),
         filter((item: Worker) =>
@@ -59,7 +58,7 @@ export class WorkerInventoriesService extends CrytonDataService<Worker> {
         ),
         toArray(),
         map(items => ({ count: items.length, data: items } as TableData<Worker>)),
-        catchError(err => this.handleError(err))
+        catchError(err => this.handleDatasetError(err))
       );
   }
 }

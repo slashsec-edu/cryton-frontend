@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
-import { Endpoint } from '../models/enums/endpoint.enum';
+import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 
 export type LogsResponse = CrytonResponse<string>;
 
@@ -11,7 +11,7 @@ export type LogsResponse = CrytonResponse<string>;
   providedIn: 'root'
 })
 export class LogService {
-  endpoint = `${environment.baseUrl}/${Endpoint.LOGS}`;
+  private _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.LOGS, 'v1');
 
   constructor(private _http: HttpClient) {}
 
@@ -21,6 +21,6 @@ export class LogService {
       .set('limit', limit?.toString() ?? '0')
       .set('filter', filter ?? '');
 
-    return this._http.get<LogsResponse>(this.endpoint, { params });
+    return this._http.get<LogsResponse>(this._endpoint, { params });
   }
 }
