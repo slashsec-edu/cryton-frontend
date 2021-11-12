@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { CrytonStep } from '../../classes/cryton-node/cryton-step';
-import { Subject } from 'rxjs';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
-import { TabsRouter, Tabs } from '../../classes/utils/tabs-router';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { getControlError } from './step-creator.errors';
+import { AlertService } from 'src/app/services/alert.service';
+import { CrytonNode } from '../../classes/cryton-node/cryton-node';
 
 @Component({
   selector: 'app-step-creator',
@@ -17,14 +18,15 @@ import { getControlError } from './step-creator.errors';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StepCreatorComponent implements OnInit, OnDestroy {
-  isEditingModeOn = false;
-
   private _destroy$ = new Subject<void>();
   private _stepManager: NodeManager;
   private _parentDepTree: DependencyTree;
 
   get stepForm(): FormGroup {
-    return this._state.stepParametersFormGroup;
+    return this._state.stepForm;
+  }
+  set stepForm(value: FormGroup) {
+    this._state.stepForm = value;
   }
 
   get editedStep(): CrytonStep {
@@ -34,10 +36,18 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     this._state.editedStep = value;
   }
 
-  constructor(private _treeManager: DependencyTreeManagerService, private _state: TemplateCreatorStateService) {}
+  constructor(
+    private _treeManager: DependencyTreeManagerService,
+    private _state: TemplateCreatorStateService,
+    private _alertService: AlertService
+  ) {}
 
   ngOnInit(): void {
-    this._createTreeSub();
+    this._createDepTreeSub();
+
+    if (!this.editedStep) {
+      this._state.restoreStepForm();
+    }
   }
 
   ngOnDestroy(): void {
@@ -52,41 +62,48 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @returns Form control error.
    */
   getControlError(controlName: string): string {
-    return getControlError(this._state.stepParametersFormGroup, controlName);
+    return getControlError(this._state.stepForm, controlName);
   }
 
   /**
    * Creates step and resets step form.
    */
   handleCreateStep(): void {
-    const step: CrytonStep = this._createStep();
-    this._stepManager.moveToDispenser(step);
-    this.stepForm.reset();
+    if (this.stepForm.valid) {
+      const step: CrytonStep = this._createStep();
+      this._stepManager.moveToDispenser(step);
+      this.stepForm.reset();
+      this._alertService.showSuccess('Step created successfully');
+    } else {
+      this._alertService.showError('Step form is invalid.');
+    }
   }
 
   /**
-   * Resets step form and switches tab back to create stage tab.
+   * Resets form and edited step.
    */
   cancelEditing(): void {
-    this._stepManager.editNode$.next();
-    TabsRouter.selectIndex(Tabs.CREATE_STAGE);
+    this.editedStep = null;
 
-    setTimeout(() => {
-      this.isEditingModeOn = false;
-      this.editedStep = null;
+    if (!this._state.restoreStepForm()) {
       this.stepForm.reset();
-    }, 500);
+    }
   }
 
   /**
-   * Edits currently edited step.
+   * Cancels editing and switches tab back to create stage tab.
    */
-  editStep(): void {
+  handleCancelClick(): void {
+    this._stepManager.clearEditNode();
+  }
+
+  /**
+   * Saves changes to currently edited step and cancels editing.
+   */
+  handleSaveChanges(): void {
     const { name, attackModule, attackModuleArgs } = this.stepForm.value as Record<string, string>;
     this.editedStep.edit(name, attackModule, attackModuleArgs);
-    this.editedStep.treeNode.draw();
-
-    this.cancelEditing();
+    this._stepManager.clearEditNode();
   }
 
   /**
@@ -101,15 +118,17 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initializes editing of the step passed in argument.
+   * Initializes editing of the step passed in the argument.
    *
    * @param step Step to edit.
    */
   private _moveToEditor(step: CrytonStep): void {
-    if (step) {
-      this.editedStep = step;
-      this.isEditingModeOn = true;
+    if (step !== this.editedStep) {
+      if (!this.editedStep) {
+        this._state.backupStepForm();
+      }
       this._fillFormWithStepData(step);
+      this.editedStep = step;
     }
   }
 
@@ -139,33 +158,34 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *
-   * Taps into current stage creation dependency tree subject.
-   * - Saves current tree.
-   * - Initializes unique name validator.
-   *
-   * Subscribes to edit node subject.
+   * Subscribes to stage creation dep. tree subject in manager.
    *
    * On every next():
-   * - Fills step form with edited step data.
+   * - Saves current dep. tree and node manager to a local variable.
+   * - Creates edit node subscription.
    */
-  private _createTreeSub(): void {
+  private _createDepTreeSub(): void {
     this._treeManager
       .getCurrentTree(DepTreeRef.STAGE_CREATION)
       .pipe(
         takeUntil(this._destroy$),
-        tap(depTree => {
-          this._parentDepTree = depTree;
-          this._stepManager = depTree.treeNodeManager;
-          this._state.stepParametersFormGroup
-            .get('name')
-            .setValidators([Validators.required, this._uniqueNameValidator]);
-        }),
-        switchMap(depTree => depTree.treeNodeManager.editNode$)
+        tap(depTree => this._createEditNodeSub(depTree.treeNodeManager.editNode$))
       )
-      .subscribe((step: CrytonStep) => {
-        this._moveToEditor(step);
+      .subscribe(depTree => {
+        this._parentDepTree = depTree;
+        this._stepManager = depTree.treeNodeManager;
+        this._state.stepForm.get('name').setValidators([Validators.required, this._uniqueNameValidator]);
       });
+  }
+
+  private _createEditNodeSub(editNode$: Observable<CrytonNode>): void {
+    editNode$.pipe(takeUntil(this._destroy$)).subscribe((step: CrytonStep) => {
+      if (step) {
+        this._moveToEditor(step);
+      } else if (this._state.editedStep) {
+        this.cancelEditing();
+      }
+    });
   }
 
   /**

@@ -1,5 +1,5 @@
 <div class="tc-responsive-page">
-  <ng-template [ngIf]="!isEditingModeOn" [ngIfElse]="editingModeButtons">
+  <ng-template [ngIf]="!editedStep" [ngIfElse]="editingModeButtons">
     <div class="buttons">
       <app-cryton-button (clicked)="stepForm.reset()" icon="delete" value="Erase step"> </app-cryton-button>
       <app-cryton-button
@@ -42,12 +42,12 @@
 
 <ng-template #editingModeButtons>
   <div class="buttons">
-    <app-cryton-button (clicked)="cancelEditing()" value="Cancel"> </app-cryton-button>
+    <app-cryton-button (clicked)="handleCancelClick()" value="Cancel"> </app-cryton-button>
     <app-cryton-button
-      (clicked)="editStep()"
+      (clicked)="handleSaveChanges()"
       [disabled]="!stepForm.valid"
       icon="settings"
-      value="Edit Step"
+      value="Save changes"
       color="primary"
     >
     </app-cryton-button>

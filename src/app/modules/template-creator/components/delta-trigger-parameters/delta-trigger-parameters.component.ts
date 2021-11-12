@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { DeltaForm } from '../../classes/stage-creation/forms/delta-form';
 import { TriggerParameters } from '../../classes/stage-creation/trigger-parameters';
 import { ERROR_MESSAGES } from './delta-trigger.errors';
@@ -10,16 +9,10 @@ import { ERROR_MESSAGES } from './delta-trigger.errors';
   styleUrls: ['./delta-trigger-parameters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DeltaTriggerParametersComponent extends TriggerParameters implements OnInit {
+export class DeltaTriggerParametersComponent extends TriggerParameters {
   @Input() triggerForm: DeltaForm;
-
-  formGroup: FormGroup;
 
   constructor() {
     super(ERROR_MESSAGES);
-  }
-
-  ngOnInit(): void {
-    this.formGroup = this.triggerForm.getArgsForm();
   }
 }

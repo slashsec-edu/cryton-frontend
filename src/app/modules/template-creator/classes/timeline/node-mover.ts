@@ -3,7 +3,6 @@ import { TICK_WIDTH } from 'src/app/modules/shared/classes/timeline-constants';
 import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
 import { NodeOrganizer } from '../utils/node-organizer';
 import { TemplateTimeline } from './template-timeline';
-import { TimelineEdge } from './timeline-edge';
 import { TimelineNode } from './timeline-node';
 
 export class NodeMover {
@@ -41,19 +40,9 @@ export class NodeMover {
     if (this._timeline.toolState.isTreeMoveEnabled) {
       NodeOrganizer.moveTree(draggedNode, 0, yIncrement);
     } else if (this._timeline.selectedNodes.size > 0) {
-      this._timeline.selectedNodes.forEach(node => {
-        if (node !== draggedNode) {
-          node.y += yIncrement;
-        }
-      });
+      this._moveSelectedNodes(draggedNode, 0, yIncrement);
     } else if (yIncrement !== 0) {
-      NodeOrganizer.moveTree(
-        draggedNode,
-        0,
-        yIncrement,
-        false,
-        (edge: TimelineEdge) => edge.childNode.crytonNode.trigger.getStartTime() === null
-      );
+      this._moveChildNSNodes(draggedNode, 0, yIncrement);
     }
 
     return {
@@ -121,18 +110,15 @@ export class NodeMover {
    * @param xIncrement X increment.
    */
   private _moveHorizontally(draggedNode: TimelineNode, xIncrement: number): void {
+    if (xIncrement === 0) {
+      return;
+    }
     if (this._timeline.toolState.isTreeMoveEnabled) {
       NodeOrganizer.moveTree(draggedNode, xIncrement, 0);
     } else if (draggedNode.selected && this._timeline.selectedNodes.size > 0) {
       this._moveSelectedNodes(draggedNode, xIncrement, 0);
-    } else if (!this._timeline.toolState.isTreeMoveEnabled) {
-      NodeOrganizer.moveTree(
-        draggedNode,
-        xIncrement,
-        0,
-        false,
-        (edge: TimelineEdge) => edge.childNode.crytonNode.trigger.getStartTime() === null
-      );
+    } else {
+      this._moveChildNSNodes(draggedNode, xIncrement, 0);
     }
   }
 
@@ -144,11 +130,11 @@ export class NodeMover {
    * @param yIncrement Y increment.
    */
   private _moveSelectedNodes(draggedNode: TimelineNode, xIncrement: number, yIncrement: number): void {
-    const movedNodes = [];
+    const movedNodes: TimelineNode[] = [];
     const uniqueNSNodes = new Set<TimelineNode>();
 
     this._timeline.selectedNodes.forEach(node => {
-      if (node !== draggedNode && node.x + xIncrement >= draggedNode.crytonNode.timeline.timelinePadding[3]) {
+      if (xIncrement && node.x + xIncrement >= draggedNode.crytonNode.timeline.timelinePadding[3]) {
         try {
           node.checkTriggerStart(TimelineUtils.calcSecondsFromX(node.x + xIncrement, this._timeline.getParams()));
           if (node.crytonNode.trigger.getStartTime() === null) {
@@ -159,18 +145,28 @@ export class NodeMover {
           }
         } catch (e) {}
       }
+      if (yIncrement) {
+        if (node !== draggedNode) {
+          node.y += yIncrement;
+        }
+        movedNodes.push(node);
+      }
     });
 
     try {
       draggedNode.checkTriggerStart(
         TimelineUtils.calcSecondsFromX(draggedNode.x + xIncrement, this._timeline.getParams())
       );
-      movedNodes.push(this);
+      movedNodes.push(draggedNode);
     } catch (e) {}
 
     movedNodes.forEach(node => {
       const childHttpNodes = this._findAllChildNSNodes(node);
-      childHttpNodes.forEach(childNode => uniqueNSNodes.add(childNode));
+      childHttpNodes.forEach(childNode => {
+        if (!this._timeline.selectedNodes.has(childNode)) {
+          uniqueNSNodes.add(childNode);
+        }
+      });
     });
 
     uniqueNSNodes.forEach(node => {
@@ -183,24 +179,44 @@ export class NodeMover {
    * Finds all NS nodes in a tree with a given root node.
    *
    * @param rootNode Root node of a tree.
-   * @param visited Set of visited nodes.
    * @returns NS nodes.
    */
-  private _findAllChildNSNodes(rootNode: TimelineNode, visited = new Set<TimelineNode>()): TimelineNode[] {
+  private _findAllChildNSNodes(rootNode: TimelineNode): TimelineNode[] {
+    const nodes: TimelineNode[] = [];
+
+    rootNode.childEdges.forEach(childEdge => {
+      if (childEdge.childNode.crytonNode.trigger.getStartTime() === null) {
+        nodes.push(...this._findAllChildNSNodesHelper(childEdge.childNode));
+      }
+    });
+
+    return nodes;
+  }
+
+  private _findAllChildNSNodesHelper(rootNode: TimelineNode, visited = new Set<TimelineNode>()) {
     if (visited.has(rootNode)) {
       return [];
     }
-    visited.add(rootNode);
-    const NSNodes: TimelineNode[] = [];
 
     if (rootNode.crytonNode.trigger.getStartTime() === null) {
-      NSNodes.push(rootNode);
+      visited.add(rootNode);
+
+      rootNode.childEdges.forEach(edge => {
+        this._findAllChildNSNodesHelper(edge.childNode, visited);
+      });
     }
 
-    rootNode.childEdges.forEach(edge => {
-      NSNodes.push(...this._findAllChildNSNodes(edge.childNode));
-    });
+    return visited;
+  }
 
-    return NSNodes;
+  private _moveChildNSNodes(rootNode: TimelineNode, xIncrement: number, yIncrement: number): void {
+    rootNode.childEdges.forEach(edge => {
+      if (edge.childNode.crytonNode.trigger.getStartTime() === null) {
+        edge.childNode.x += xIncrement;
+        edge.childNode.y += yIncrement;
+
+        this._moveChildNSNodes(edge.childNode, xIncrement, yIncrement);
+      }
+    });
   }
 }

@@ -36,6 +36,7 @@ export class DeltaForm implements TriggerForm {
 
   erase(): void {
     this._triggerArgsForm.reset();
+    this._triggerArgsForm.setValue({ hours: 0, minutes: 0, seconds: 0 });
   }
 
   fill(stage: CrytonStage): void {
@@ -48,7 +49,11 @@ export class DeltaForm implements TriggerForm {
     return copyForm;
   }
 
+  markAsUntouched(): void {
+    this._triggerArgsForm.markAsUntouched();
+  }
+
   isNotEmpty(): boolean {
-    return FormUtils.someValueDefined(this._triggerArgsForm.value);
+    return FormUtils.someValueOtherThan(this._triggerArgsForm.value, 0);
   }
 }

@@ -27,14 +27,7 @@
             <mat-form-field appearance="fill">
               <mat-label>Type</mat-label>
               <mat-select formControlName="type">
-                <mat-option [value]="'return_code'">RETURN_CODE</mat-option>
-                <mat-option [value]="'state'">STATE</mat-option>
-                <mat-option [value]="'result'">RESULT</mat-option>
-                <mat-option [value]="'std_out'">STD_OUT</mat-option>
-                <mat-option [value]="'std_err'">STD_ERR</mat-option>
-                <mat-option [value]="'mod_out'">MOD_OUT</mat-option>
-                <mat-option [value]="'mod_err'">MOD_ERR</mat-option>
-                <mat-option [value]="'any'">ANY</mat-option>
+                <mat-option *ngFor="let option of typeOptions" [value]="option.type">{{ option.display }}</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -60,6 +53,8 @@
         value="Save"
         (clicked)="saveEdge()"
         [disabled]="!isValid()"
+        [matTooltip]="isValid() ? null : invalidError"
+        matTooltipClass="tooltip-error"
       ></app-cryton-button>
     </div>
   </div>

@@ -1,4 +1,4 @@
-<form *ngIf="formGroup" [formGroup]="formGroup" class="form-field-wrapper">
+<form *ngIf="triggerForm && triggerForm.getArgsForm() as formGroup" [formGroup]="formGroup" class="form-field-wrapper">
   <mat-form-field appearance="fill">
     <mat-label>Hours</mat-label>
     <input matInput type="number" formControlName="hours" min="0" />

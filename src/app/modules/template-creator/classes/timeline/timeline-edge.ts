@@ -5,6 +5,7 @@ import { TimelineNode } from './timeline-node';
 import { NS_EDGE_DASH, NODE_RADIUS } from './timeline-node-constants';
 import { Vector } from '../utils/vector';
 import { Theme } from '../../models/interfaces/theme';
+import { EDGE_ARROW_NAME } from './timeline-edge-constants';
 
 export class TimelineEdge {
   crytonEdge: CrytonStageEdge;
@@ -66,7 +67,8 @@ export class TimelineEdge {
       pointerWidth: 4,
       pointerLength: 6,
       hitStrokeWidth: 10,
-      shadowForStrokeEnabled: false
+      shadowForStrokeEnabled: false,
+      name: EDGE_ARROW_NAME
     });
 
     if (this.timeline.theme) {
@@ -130,7 +132,7 @@ export class TimelineEdge {
     let v = endPoint.subtract(origin);
     const lineLength = v.length();
     if (lineLength === 0) {
-      throw new Error('Length has to be positive');
+      return origin;
     }
     v = v.normalize();
     return origin.add(v.multiplyScalar(radius));
@@ -140,7 +142,7 @@ export class TimelineEdge {
    * Removes dash from the edge.
    */
   private _removeDash(): void {
-    this.konvaObject.dash([]);
+    this.konvaObject.dash(null);
   }
 
   /**

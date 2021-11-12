@@ -58,7 +58,7 @@ export class TemplateConverterService {
     const parentDepTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
     const stageOrganizer = new NodeOrganizer(OrganizerNodeType.STAGE);
 
-    this._state.templateParametersFormGroup.setValue({
+    this._state.templateForm.setValue({
       name: template.plan.name,
       owner: template.plan.owner
     });
@@ -90,8 +90,8 @@ export class TemplateConverterService {
    */
   exportYAMLTemplate(): string {
     const templateDepTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
-    const name = this._state.templateParametersFormGroup.get('name').value as string;
-    const owner = this._state.templateParametersFormGroup.get('owner').value as string;
+    const name = this._state.templateForm.get('name').value as string;
+    const owner = this._state.templateForm.get('owner').value as string;
 
     const template: TemplateDescription = { plan: { name, owner, stages: [] } };
 

@@ -2,7 +2,6 @@ import Konva from 'konva';
 import { DependencyTree } from './dependency-tree';
 import { ShortStringPipe } from '../../../shared/pipes/short-string.pipe';
 import { StrokeAnimation } from '../../animations/stroke.animation';
-import { RippleAnimation } from '../../animations/ripple.animation';
 import { Cursor } from './cursor-state';
 import { NodeConnector } from './node-connector';
 import { SettingsButton, SETTINGS_BTN_PADDING } from './settings-button';
@@ -15,6 +14,9 @@ import { CANVAS_PADDING } from './dependency-tree-constants';
 
 export const NODE_WIDTH = 170;
 export const NODE_HEIGHT = 40;
+export const TREE_NODE_NAME = 'treeNode';
+export const TREE_NODE_RECT_NAME = 'treeNodeRect';
+export const TREE_NODE_TEXT_NAME = 'treeNodeName';
 
 export class TreeNode {
   crytonNode: CrytonNode;
@@ -92,11 +94,7 @@ export class TreeNode {
 
   changeTheme(theme: Theme): void {
     this._nodeRect.fill(theme.templateCreator.treeNodeRect);
-    this._changeConnectorTheme(theme.primary);
-  }
-
-  private _changeConnectorTheme(primaryColor: string): void {
-    this._connector.connectorCircle.fill(primaryColor);
+    this._connector.changeTheme(theme);
   }
 
   /**
@@ -116,7 +114,7 @@ export class TreeNode {
    * Initializes node konva object.
    */
   private _initKonvaObject(): void {
-    this.konvaObject = new Konva.Group({ objectType: 'treeNode' });
+    this.konvaObject = new Konva.Group({ name: TREE_NODE_NAME });
     this._nodeRect = this._createNodeRect();
     const settingsButton = new SettingsButton(this.depTree, NODE_HEIGHT).konvaObject;
     const connector = this._createNodeConnector();
@@ -175,6 +173,8 @@ export class TreeNode {
       } else if (this.depTree.toolState.isDeleteEnabled) {
         this.strokeAnimation.activate(this.depTree.theme.primary);
         this.depTree.cursorState.setCursor(Cursor.POINTER);
+      } else if (this.depTree.toolState.isMoveNodeEnabled) {
+        this.depTree.cursorState.setCursor(Cursor.GRAB);
       }
     });
     this.konvaObject.on('mouseleave', () => {
@@ -182,7 +182,7 @@ export class TreeNode {
         this.depTree.cursorState.unsetCursor(Cursor.POINTER);
       }
       if (this.depTree.toolState.isMoveNodeEnabled) {
-        this.depTree.cursorState.unsetCursor(Cursor.POINTER);
+        this.depTree.cursorState.unsetCursor(Cursor.GRAB);
       }
     });
     settingsButton.on('click', () => {
@@ -198,7 +198,8 @@ export class TreeNode {
   private _createNodeRect(): Konva.Rect {
     const rect = new Konva.Rect({
       width: NODE_WIDTH,
-      height: NODE_HEIGHT
+      height: NODE_HEIGHT,
+      name: TREE_NODE_RECT_NAME
     });
 
     if (this.depTree.theme) {
@@ -210,11 +211,12 @@ export class TreeNode {
         this.strokeAnimation.deactivate();
         this.depTree.treeNodeManager.moveToDispenser(this.crytonNode);
         this.crytonNode.unattach();
-        this.depTree.cursorState.unsetCursor(Cursor.POINTER);
+        this.depTree.cursorState.resetCursor();
       } else if (this.depTree.toolState.isDeleteEnabled) {
         this.depTree.treeNodeManager.removeCanvasNode(this.crytonNode);
+        this.depTree.treeNodeManager.clearEditNode();
         this.crytonNode.destroy();
-        this.depTree.cursorState.unsetCursor(Cursor.POINTER);
+        this.depTree.cursorState.resetCursor();
       }
     });
 
@@ -225,33 +227,8 @@ export class TreeNode {
    * Creates a red connector circle.
    */
   private _createNodeConnector(): Konva.Group {
-    this._connector = new NodeConnector(NODE_WIDTH, NODE_HEIGHT);
-    const konvaObject = this._connector.konvaObject;
-
-    this._connector.rippleAnimation = new RippleAnimation(this._connector.rippleCircle, this.depTree.treeLayer);
-
-    konvaObject.on('mouseenter', () => {
-      this.depTree.cursorState.setCursor(Cursor.POINTER);
-    });
-
-    konvaObject.on('mouseleave', () => {
-      this.depTree.cursorState.unsetCursor(Cursor.POINTER);
-      this._connector.unanimateRipple();
-    });
-
-    konvaObject.on('click', event => {
-      if (this.depTree.draggedEdge || this.depTree.toolState.isDeleteEnabled || this.depTree.toolState.isSwapEnabled) {
-        return;
-      }
-      event.cancelBubble = true;
-
-      this.depTree.clickedNode = this;
-      this.depTree.createDraggedEdge(this.crytonNode);
-    });
-    konvaObject.on('mousedown', () => this._connector.animateRipple(15, 0.2));
-    konvaObject.on('mouseup', () => this._connector.unanimateRipple());
-
-    return konvaObject;
+    this._connector = new NodeConnector(NODE_WIDTH, NODE_HEIGHT, this.depTree, this.crytonNode);
+    return this._connector.konvaObject;
   }
 
   /**
@@ -271,6 +248,7 @@ export class TreeNode {
       fontStyle: '500',
       fill: 'white',
       listening: false,
+      name: TREE_NODE_TEXT_NAME,
       x,
       y
     });

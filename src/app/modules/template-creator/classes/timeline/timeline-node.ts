@@ -431,7 +431,7 @@ export class TimelineNode {
   private _calcX(): number {
     const triggerStart = this.crytonNode.trigger.getStartTime();
 
-    return triggerStart
+    return triggerStart != null
       ? TimelineUtils.calcXFromSeconds(triggerStart, this.timeline.getParams())
       : this._calcNoStartX();
   }

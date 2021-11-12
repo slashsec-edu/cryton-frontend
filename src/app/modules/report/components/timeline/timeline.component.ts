@@ -126,7 +126,7 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private _initTimeline(report: Report): void {
-    this.timeline.initKonva('timeline-container', this.timelineContainer, this._themeService.currentTheme$);
+    this.timeline.initKonva(this.timelineContainer.nativeElement, this._themeService.currentTheme$);
     this.timeline.renderExecution(report.plan_executions[0]);
     this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
   }

@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EdgeCondition } from '../../models/interfaces/edge-condition';
 import { CrytonStepEdge } from '../../classes/cryton-edge/cryton-step-edge';
 import { first } from 'rxjs/operators';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-edge-parameters',
@@ -16,16 +17,29 @@ import { first } from 'rxjs/operators';
 })
 export class EdgeParametersComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
-
   conditions: FormGroup[] = [];
 
+  typeOptions: { type: string; display: string }[] = [
+    { type: 'return_code', display: 'RETURN_CODE' },
+    { type: 'state', display: 'STATE' },
+    { type: 'result', display: 'RESULT' },
+    { type: 'std_out', display: 'STD_OUT' },
+    { type: 'std_err', display: 'STD_ERR' },
+    { type: 'mod_out', display: 'MOD_OUT' },
+    { type: 'mod_err', display: 'MOD_ERR' },
+    { type: 'any', display: 'ANY' }
+  ];
+
+  invalidError = 'Invalid conditions.';
+
   constructor(
+    private _alert: AlertService,
     private _dialogRef: MatDialogRef<EdgeParametersComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { edge: CrytonStepEdge }
   ) {}
 
   ngOnInit(): void {
-    this._loadEdgeConditions();
+    this._loadEdgeConditions(this.data.edge);
     this._createAfterClosedSub();
   }
 
@@ -45,8 +59,12 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    * Saves edge data and closes the dialog window.
    */
   saveEdge(): void {
-    this.data.edge.conditions = this.conditions.map(condition => condition.value as EdgeCondition);
-    this.close();
+    if (this.isValid()) {
+      this.data.edge.conditions = this.conditions.map(condition => condition.value as EdgeCondition);
+      this.close();
+    } else {
+      this._alert.showError('Conditions are invalid.');
+    }
   }
 
   /**
@@ -67,9 +85,13 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    * @param condition Condition to remove.
    */
   removeCondition(condition: FormGroup): void {
-    const conditionIndex = this.conditions.indexOf(condition);
-    if (conditionIndex !== -1) {
-      this.conditions.splice(conditionIndex, 1);
+    if (this.conditions.length > 1) {
+      const conditionIndex = this.conditions.indexOf(condition);
+      if (conditionIndex !== -1) {
+        this.conditions.splice(conditionIndex, 1);
+      }
+    } else {
+      this._alert.showError('Step edge must contain at least 1 condition.');
     }
   }
 
@@ -121,9 +143,11 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
   /**
    * Loads all edge conditions and fills the form fields with them.
    * At least one condition form group must be always present.
+   *
+   * @param edge Step edge from MAT_DIALOG_DATA.
    */
-  private _loadEdgeConditions(): void {
-    this.data.edge.conditions.forEach(condition => {
+  private _loadEdgeConditions(edge: CrytonStepEdge): void {
+    edge.conditions.forEach(condition => {
       this.conditions.push(
         new FormGroup({
           type: new FormControl(condition.type, Validators.required),
@@ -132,7 +156,7 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
       );
     });
 
-    if (this.data.edge.conditions.length === 0) {
+    if (edge.conditions.length === 0) {
       this.conditions.push(
         new FormGroup({
           type: new FormControl('', [Validators.required]),

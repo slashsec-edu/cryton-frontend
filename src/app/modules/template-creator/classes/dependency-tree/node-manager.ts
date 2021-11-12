@@ -1,4 +1,4 @@
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { CrytonNode } from '../cryton-node/cryton-node';
 import { CrytonStage } from '../cryton-node/cryton-stage';
 
@@ -6,11 +6,25 @@ export class NodeManager {
   /**
    * Triggers when a node is edited moved to editor.
    */
-  editNode$ = new ReplaySubject<CrytonNode>(1);
-  dispenserNodes$ = new BehaviorSubject<CrytonNode[]>([]);
+  editNode$: Observable<CrytonNode>;
+  dispenserNodes$: Observable<CrytonNode[]>;
   canvasNodes: CrytonNode[] = [];
 
-  constructor() {}
+  private _editNode$ = new ReplaySubject<CrytonNode>(1);
+  private _dispenserNodes$ = new BehaviorSubject<CrytonNode[]>([]);
+
+  constructor() {
+    this._editNode$.next(null);
+    this.editNode$ = this._editNode$.asObservable();
+    this.dispenserNodes$ = this._dispenserNodes$.asObservable();
+  }
+
+  /**
+   * Emits empty value from editNode$, prevents emitting old values.
+   */
+  clearEditNode(): void {
+    this._editNode$.next(null);
+  }
 
   /**
    * Returns an array of all nodes which manager remembers.
@@ -19,7 +33,7 @@ export class NodeManager {
    */
   getAllNodes(): CrytonNode[] {
     const allNodes = [...this.canvasNodes];
-    allNodes.push(...this.dispenserNodes$.value);
+    allNodes.push(...this._dispenserNodes$.value);
     return allNodes;
   }
 
@@ -30,7 +44,7 @@ export class NodeManager {
    */
   moveToDispenser(node: CrytonNode): void {
     this.removeCanvasNode(node);
-    this.dispenserNodes$.next(this.dispenserNodes$.value.concat(node));
+    this._dispenserNodes$.next(this._dispenserNodes$.value.concat(node));
   }
 
   /**
@@ -54,7 +68,7 @@ export class NodeManager {
    * @param node Node to edit.
    */
   editNode(node: CrytonNode): void {
-    this.editNode$.next(node);
+    this._editNode$.next(node);
   }
 
   /**
@@ -63,8 +77,8 @@ export class NodeManager {
    * @param node Node to remove.
    */
   removeDispenserNode(node: CrytonNode): void {
-    const withoutNode = this.dispenserNodes$.value.filter(s => s !== node);
-    this.dispenserNodes$.next(withoutNode);
+    const withoutNode = this._dispenserNodes$.value.filter(s => s !== node);
+    this._dispenserNodes$.next(withoutNode);
   }
 
   /**
@@ -80,12 +94,12 @@ export class NodeManager {
    * Checks if node name is unique.
    *
    * @param name Node name.
-   * @param ignoredName Doesn't check this name if provided.
+   * @param editedNodeName Doesn't check this name if provided.
    * @returns True if node name is unique.
    */
-  isNodeNameUnique(name: string, ignoredName?: string): boolean {
+  isNodeNameUnique(name: string, editedNodeName?: string): boolean {
     for (const node of this.getAllNodes()) {
-      if (node.name === name && (!ignoredName || (ignoredName && ignoredName !== name))) {
+      if (node.name !== editedNodeName && node.name === name) {
         return false;
       }
     }

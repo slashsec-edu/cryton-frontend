@@ -35,7 +35,7 @@ export class StageForm {
 
   get httpListenerArgs(): HTTPListenerArgs {
     const host = this.formHttpListenerArgs.args.get('host').value as string;
-    const port = this.formHttpListenerArgs.args.get('port').value as string;
+    const port = Number(this.formHttpListenerArgs.args.get('port').value);
     const routes: HTTPListenerRoute[] = [];
 
     this.formHttpListenerArgs.routes.forEach(route => {

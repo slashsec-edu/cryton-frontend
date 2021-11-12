@@ -1,4 +1,3 @@
-import { DebugElement } from '@angular/core';
 import Konva from 'konva';
 import { Observable } from 'rxjs';
 import { NodeType } from '../../models/enums/node-type';
@@ -19,15 +18,10 @@ export class PreviewDependencyTree extends DependencyTree {
    * @param containerID ID of container.
    * @param container Container element.
    */
-  initPreview(
-    previewedTree: DependencyTree,
-    containerID: string,
-    container: DebugElement,
-    currentTheme$: Observable<Theme>
-  ): void {
+  initPreview(previewedTree: DependencyTree, container: HTMLDivElement, currentTheme$: Observable<Theme>): void {
     this._previewedTree = previewedTree;
     this.treeLayer = previewedTree.treeLayer.clone() as Konva.Layer;
-    super.initKonva(containerID, container, currentTheme$);
+    super.initKonva(container, currentTheme$);
 
     this.stage.listening(false);
     this.stage.draggable(false);

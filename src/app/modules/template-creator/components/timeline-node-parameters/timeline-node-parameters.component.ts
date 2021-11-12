@@ -31,7 +31,7 @@ export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.stageParams.ignoreName(this.data.stage.name);
+    this.stageParams.setEditedNodeName(this.data.stage.name);
 
     this.stageParams.fillFromStage(this.data.stage);
     this._cd.detectChanges();
@@ -41,7 +41,7 @@ export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
    * Closes dialog window.
    */
   close(): void {
-    this.stageParams.ignoreName(null);
+    this.stageParams.setEditedNodeName(null);
     this._dialogRef.close();
   }
 

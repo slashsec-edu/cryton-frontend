@@ -67,7 +67,7 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this._state.timeline.initKonva('timeline-container', this.canvasContainer, this._themeService.currentTheme$);
+    this._state.timeline.initKonva(this.canvasContainer.nativeElement, this._themeService.currentTheme$);
     this.timeline.updateDimensions();
     this._updateTickSize();
     this._cd.detectChanges();

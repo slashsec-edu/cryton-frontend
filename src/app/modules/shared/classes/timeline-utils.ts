@@ -1,4 +1,4 @@
-import { TimelineParams } from '../models/interfaces/timeline-shape.interface';
+import { TimelineParams } from '../models/interfaces/timeline-params.interface';
 import { TICK_WIDTH } from './timeline-constants';
 
 export class TimelineUtils {
@@ -12,14 +12,18 @@ export class TimelineUtils {
   }
 
   static calcXFromSeconds(seconds: number, params: TimelineParams): number {
-    return ((seconds - params.secondsAtZero) / params.tickSeconds) * TICK_WIDTH + params.leftPadding;
+    return ((seconds - params.secondsAtZero) / params.tickSeconds) * TICK_WIDTH + params.padding[3];
   }
 
   static calcSecondsFromX(x: number, params: TimelineParams): number {
-    return ((x - params.leftPadding) / TICK_WIDTH) * params.tickSeconds + params.secondsAtZero;
+    return ((x - params.padding[3]) / TICK_WIDTH) * params.tickSeconds + params.secondsAtZero;
   }
 
   static calcWidthFromDuration(duration: number, params: TimelineParams): number {
     return (duration / params.tickSeconds) * TICK_WIDTH;
+  }
+
+  static calcDurationFromWidth(width: number, params: TimelineParams): number {
+    return (width / TICK_WIDTH) * params.tickSeconds;
   }
 }

@@ -18,6 +18,8 @@ export const SETTINGS_BTN_RADIUS = 16;
  */
 export const SETTINGS_BTN_PADDING = 10;
 
+export const SETTINGS_BTN_NAME = 'nodeSettingsBtn';
+
 /**
  * Cogwheel svg path.
  */
@@ -37,7 +39,7 @@ const COGWHEEL_PATH = `M19.5,12c0-0.23-0.01-0.45-0.03-0.68l1.86-1.41c0.4-0.3,0.5
   3.5,3.5S13.97,15.5,12.04,15.5z`;
 
 export class SettingsButton {
-  konvaObject = new Konva.Group();
+  konvaObject = new Konva.Group({ name: SETTINGS_BTN_NAME });
   rippleAnimation: RippleAnimation;
   rippleCircle: Konva.Circle;
 

@@ -29,5 +29,10 @@ export class CrytonStep extends CrytonNode {
     this.attackModuleArgs = attackModuleArgs;
 
     this.treeNode.changeName(name);
+
+    // Only draw if the node is attached to stage
+    if (this.treeNode.konvaObject.getStage()) {
+      this.treeNode.draw();
+    }
   }
 }

@@ -1,11 +1,10 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core';
 import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
-import { Subject } from 'rxjs';
-import { mergeMap, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { CrytonStage } from '../../classes/cryton-node/cryton-stage';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
-import { TabsRouter, Tabs } from '../../classes/utils/tabs-router';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
@@ -16,6 +15,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { PreviewDependencyTree } from '../../classes/dependency-tree/preview-dependency-tree';
 import { TriggerFactory } from '../../classes/cryton-node/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
+import { CrytonNode } from '../../classes/cryton-node/cryton-node';
 
 @Component({
   selector: 'app-stage-creator',
@@ -69,11 +69,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stageForm = this._createStageForm();
     }
     this.previewDepTree = new PreviewDependencyTree(NodeType.CRYTON_STEP);
-    this._createEditSubscription();
+    this._createDepTreeSub();
 
-    if (this._state.stageFormBackup && !this.editedStage) {
-      this.stageForm = this._state.stageFormBackup;
-      this._state.stageFormBackup = null;
+    if (!this.editedStage) {
+      this._state.restoreStageForm();
     }
   }
 
@@ -98,12 +97,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   createTreePreview(): void {
     const originalTree: DependencyTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
 
-    this.previewDepTree.initPreview(
-      originalTree,
-      'stage-creator--tree-preview',
-      this.canvasContainer,
-      this._themeService.currentTheme$
-    );
+    this.previewDepTree.initPreview(originalTree, this.canvasContainer.nativeElement, this._themeService.currentTheme$);
     this.previewDepTree.fitScreen();
     this.previewDepTree.stage.listening(false);
   }
@@ -122,26 +116,33 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Edits stage and cancels editing.
+   * Saves changes to currently edited stage and cancels editing.
    */
   handleSaveChanges(): void {
     this.stageParams.editStage(this.editedStage);
-    this.cancelEditing();
+
+    const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
+    this.editedStage.editChildDepTree(childDepTree);
+    this._stageManager.clearEditNode();
   }
 
   /**
-   * Erases stage parameters form and switches tabs back to build template tab.
+   * Switches tabs back to build template tab and erases stage parameters form after the tabs finish switching.
+   */
+  handleCancelClick(): void {
+    this._stageManager.clearEditNode();
+  }
+
+  /**
+   * Clears stage form and edited stage info.
+   * Restores previous state from backup.
    */
   cancelEditing(): void {
-    this._stageManager.editNode$.next();
-    TabsRouter.selectIndex(Tabs.BUILD_TEMPLATE);
-    this.stageForm.ignoredName = null;
-
-    setTimeout(() => {
-      this.editedStage = null;
-      this.stageForm.erase();
-      this._treeManager.restoreTree(DepTreeRef.STAGE_CREATION);
-    }, 500);
+    this.editedStage = null;
+    if (!this._state.restoreStageForm()) {
+      this.stageForm.cancelEditing();
+    }
+    this._treeManager.restoreTree(DepTreeRef.STAGE_CREATION);
   }
 
   /**
@@ -155,7 +156,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   isCreationDisabled(): boolean {
     const stageCreationDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
 
-    return !this.areParametersValid() || !stageCreationDepTree.isCorrect();
+    return !this.areParametersValid() || !stageCreationDepTree.isValid();
   }
 
   /**
@@ -192,6 +193,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   detectChanges(): void {
     this._cd.detectChanges();
+  }
+
+  eraseParameters(): void {
+    this.stageForm.erase();
   }
 
   /**
@@ -234,41 +239,59 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Subscribes to edit node replaySubject in current template creation dependency tree node manager.
+   * Subscribes to template creation dep. tree subject in manager.
    *
    * On every next():
-   * - Backs up current contents of template creator.
-   * - Loads edited stage into the template creator.
+   * - Saves current dep. tree and node manager to a local variable.
+   * - Creates edit node subscription.
    */
-  private _createEditSubscription(): void {
+  private _createDepTreeSub(): void {
     this._treeManager
       .getCurrentTree(DepTreeRef.TEMPLATE_CREATION)
       .pipe(
         takeUntil(this._destroy$),
         tap(depTree => {
-          this.parentDepTree = depTree;
-          this._stageManager = depTree.treeNodeManager;
-        }),
-        mergeMap(depTree => depTree.treeNodeManager.editNode$.pipe(takeUntil(this._destroy$)))
+          this._createEditNodeSub(depTree.treeNodeManager.editNode$);
+        })
       )
-      .subscribe((stage: CrytonStage) => {
-        // Fill stage creator only if no stage is currently being
-        // edited to prevent erasing progress by switching tabs.
-        if (stage) {
-          this.stageForm.ignoredName = stage.name;
-          this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value.treeNodeManager.editNode$.next(null);
-
-          // Backup stage creator state so we can load it back after editing is complete.
-          if (this.stageForm.isNotEmpty()) {
-            this._state.stageFormBackup = this.stageForm.copy();
-          }
-
-          this.stageForm.fill(stage);
-
-          this._treeManager.editTree(DepTreeRef.STAGE_CREATION, stage.childDepTree, this.editedStage == null);
-          this.editedStage = stage;
-        }
+      .subscribe(depTree => {
+        this.parentDepTree = depTree;
+        this._stageManager = depTree.treeNodeManager;
       });
+  }
+
+  /**
+   * Subscribes to currently edited node and handles editing initialization and cancelling.
+   *
+   * @param editNode$ Edit node observable from tree node manager
+   */
+  private _createEditNodeSub(editNode$: Observable<CrytonNode>): void {
+    editNode$.pipe(takeUntil(this._destroy$)).subscribe((stage: CrytonStage) => {
+      if (stage) {
+        this._moveToEditor(stage);
+      } else if (this.editedStage) {
+        this.cancelEditing();
+      }
+    });
+  }
+
+  /**
+   * Initializes editing of the stage passed in the argument.
+   *
+   * @param stage Stage to edit.
+   */
+  private _moveToEditor(stage: CrytonStage): void {
+    if (stage !== this.editedStage) {
+      // Don't back up empty form or edited stage.
+      if (!this.editedStage) {
+        this._state.backupStageForm();
+        this.stageForm = this._createStageForm();
+      }
+      this.stageForm.fillWithEditedStage(stage);
+
+      this._treeManager.editTree(DepTreeRef.STAGE_CREATION, stage.childDepTree, this.editedStage == null);
+      this.editedStage = stage;
+    }
   }
 
   /**

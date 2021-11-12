@@ -106,10 +106,14 @@ export class TemplateTimeline extends Timeline {
 
   /**
    * Recalculates all node positions.
+   * Has to recalculate positions in order from nodes with smallest x to the biggest
+   * because they may depend on each other.
    */
   private _recalculateNodePositions(): void {
-    this._nodes.forEach(node => {
-      node.updateX();
-    });
+    this._nodes
+      .sort((a, b) => a.x - b.x)
+      .forEach(node => {
+        node.updateX();
+      });
   }
 }
