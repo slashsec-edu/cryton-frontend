@@ -85,7 +85,7 @@ export class DependencyTreeManagerService {
       this._treesBackup[key] = new DependencyTree(this._currentTrees[key].value.nodeType);
     }
 
-    this.setCurrentTree(DepTreeRef.STAGE_CREATION, depTree.copy());
+    this.setCurrentTree(key, depTree.copy());
   }
 
   /**

@@ -1,24 +1,23 @@
-import { DebugElement } from '@angular/core';
 import { KonvaWrapper } from '../../template-creator/classes/konva/konva-wrapper';
 import Konva from 'konva';
 import { Vector2d } from 'konva/types/types';
-import { TICK_WIDTH, RECYCLER_RADIUS } from './timeline-constants';
 import { KonvaEventObject } from 'konva/types/Node';
 import { TickManager } from './tick-manager';
 import { PaddingMask } from './padding-mask';
-import { TimelineParams, TimelineShape } from '../models/interfaces/timeline-shape.interface';
+import { TimelineShape } from '../models/interfaces/timeline-shape.interface';
+import { TimelineParams } from '../models/interfaces/timeline-params.interface';
+import { TimelineUtils } from './timeline-utils';
 
-export abstract class Timeline extends KonvaWrapper {
+export class Timeline extends KonvaWrapper {
   // Konva layers
   mainLayer = new Konva.Layer();
   tickLayer = new Konva.Layer({ listening: false });
   paddingMask: PaddingMask;
   timeMarkLayer = new Konva.Layer({ listening: false });
-
   tickManager: TickManager;
 
   // Indexes: top, right, bottom, left
-  timelinePadding = [30, 0, 10, 30];
+  timelinePadding: [number, number, number, number] = [30, 0, 10, 30];
 
   protected _maxX = 0;
   protected _useUTC: boolean;
@@ -55,9 +54,9 @@ export abstract class Timeline extends KonvaWrapper {
 
   set startSeconds(value: number) {
     this._startSeconds = value;
-    this._maxX += (this._startSeconds / this.tickSeconds) * TICK_WIDTH;
+    this._maxX += TimelineUtils.calcWidthFromDuration(this._startSeconds, this.getParams());
     this.tickManager.changeStartSeconds(value, this.tickSeconds);
-    this.tickManager.handleWindowResize(this.height, this.stageX, this.tickSeconds, this.theme);
+    this.tickManager.recreateTicks(this.width, this.height, this.stageX, this.tickSeconds, this.theme);
     this.stage.draw();
   }
 
@@ -77,8 +76,7 @@ export abstract class Timeline extends KonvaWrapper {
 
     super.updateDimensions();
     this.paddingMask.updateDimensions(this.width, this.height);
-    this.tickManager.windowSize = this._calcTickWindowSize();
-    this.tickManager.handleWindowResize(this.height, this.stageX, this.tickSeconds, this.theme);
+    this.tickManager.recreateTicks(this.width, this.height, this.stageX, this.tickSeconds, this.theme);
     this.stage.draw();
   }
 
@@ -110,7 +108,7 @@ export abstract class Timeline extends KonvaWrapper {
     return {
       secondsAtZero: this.startSeconds,
       tickSeconds: this.tickSeconds,
-      leftPadding: this.timelinePadding[3]
+      padding: this.timelinePadding
     };
   }
 
@@ -139,14 +137,13 @@ export abstract class Timeline extends KonvaWrapper {
   /**
    * Creates the main Konva stage with ticks inside the container.
    *
-   * @param containerID ID of the container.
    * @param container Container element.
    */
-  protected _createStage(containerID: string, container: DebugElement): void {
+  protected _createStage(container: HTMLDivElement): void {
     const { width, height } = this._getBoundingRect(container);
 
     this.stage = new Konva.Stage({
-      container: containerID,
+      container,
       width,
       height,
       draggable: true,
@@ -163,13 +160,7 @@ export abstract class Timeline extends KonvaWrapper {
 
     this.stage.add(this.tickLayer).add(this.mainLayer).add(this.paddingMask).add(this.timeMarkLayer);
 
-    this.tickManager = new TickManager(
-      this.tickLayer,
-      this.timeMarkLayer,
-      this._calcTickWindowSize(),
-      this.timelinePadding,
-      this._useUTC
-    );
+    this.tickManager = new TickManager(this.width, this.tickLayer, this.timeMarkLayer, this.getParams(), this._useUTC);
     this.tickManager.createTicks(height, this._tickSeconds, this.theme);
   }
 
@@ -178,7 +169,7 @@ export abstract class Timeline extends KonvaWrapper {
    */
   protected _initKonvaEvents(): void {
     this.stage.on('dragmove', () =>
-      this.tickManager.renderTick(this.height, this.stageX, this.tickSeconds, this.theme)
+      this.tickManager.renderTicks(this.height, this.stageX, this.tickSeconds, this.theme)
     );
 
     this.stage.on('wheel', (e: KonvaEventObject<WheelEvent>) => {
@@ -202,7 +193,7 @@ export abstract class Timeline extends KonvaWrapper {
    * @returns Position where it will actually be moved.
    */
   protected _stageDrag = (pos: Vector2d): Vector2d => {
-    const x = pos.x > this._maxX ? this._maxX : pos.x;
+    const x = this._useUTC || pos.x < this._maxX ? pos.x : this._maxX;
 
     this.paddingMask.x(-x);
     this._horizontallyStatic.forEach(shape => shape.x(-x));
@@ -212,10 +203,6 @@ export abstract class Timeline extends KonvaWrapper {
       y: 0
     };
   };
-
-  private _calcTickWindowSize(): number {
-    return Math.ceil((this.width + 2 * RECYCLER_RADIUS) / TICK_WIDTH);
-  }
 
   private _updateElements(): void {
     this._elements.forEach((el: TimelineShape) => el.updatePoints(this.getParams()));

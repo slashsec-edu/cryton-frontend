@@ -11,12 +11,15 @@ export interface TimeMarkConfig extends TextConfig {
   useUTC?: boolean;
 }
 
+export const TIME_MARK_NAME = 'timeMark';
+
 export class TimeMark extends Konva.Text {
   constructor(config: TimeMarkConfig) {
     super({
       fontSize: config.fontSize ?? 11,
       fontFamily: config.fontFamily ?? 'Roboto',
       listening: config.listening ?? false,
+      name: TIME_MARK_NAME,
       ...config
     });
 
@@ -43,6 +46,7 @@ export class TimeMark extends Konva.Text {
 
     let newText: string;
 
+    this.setAttr('totalSeconds', totalSeconds);
     if (constantText) {
       newText = constantText;
     } else if (useUTC) {
@@ -64,10 +68,19 @@ export class TimeMark extends Konva.Text {
   }
 
   private _calcStandard(totalSeconds: number): string {
-    const hours = Math.floor(totalSeconds / 3600).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-    totalSeconds -= parseInt(hours, 10) * 3600;
-    const minutes = Math.floor(totalSeconds / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-    const seconds = (totalSeconds % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+    const hours = Math.floor(totalSeconds / 3600).toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    });
+    totalSeconds -= Number(hours) * 3600;
+    const minutes = Math.floor(totalSeconds / 60).toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    });
+    const seconds = (totalSeconds % 60).toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    });
 
     return `${hours}:${minutes}:${seconds}`;
   }
@@ -75,7 +88,6 @@ export class TimeMark extends Konva.Text {
   private _calcUTC(totalSeconds: number): string {
     const date = new Date(totalSeconds * 1000);
     const datePipe = new CrytonDatetimePipe();
-
     return datePipe.transform(date.toString());
   }
 }

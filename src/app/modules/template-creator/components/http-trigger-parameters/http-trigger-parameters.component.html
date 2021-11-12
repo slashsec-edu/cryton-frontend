@@ -1,17 +1,21 @@
-<form *ngIf="httpTriggerForm" [formGroup]="httpTriggerForm.args" class="form-field-wrapper">
+<form
+  *ngIf="triggerForm && triggerForm.getArgsForm() as formGroup"
+  [formGroup]="formGroup.args"
+  class="form-field-wrapper"
+>
   <mat-form-field appearance="fill">
     <mat-label>Host</mat-label>
     <input matInput type="text" formControlName="host" />
-    <mat-error>{{ getControlError('host', httpTriggerForm.args) }}</mat-error>
+    <mat-error>{{ getControlError('host', formGroup.args) }}</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Port</mat-label>
     <input matInput type="text" formControlName="port" type="number" />
-    <mat-error>{{ getControlError('port', httpTriggerForm.args) }}</mat-error>
+    <mat-error>{{ getControlError('port', formGroup.args) }}</mat-error>
   </mat-form-field>
 
-  <ng-container *ngFor="let route of httpTriggerForm.routes; let i = index">
+  <div class="route" *ngFor="let route of formGroup.routes; let i = index">
     <h2 class="divider">{{ 'Route ' + (i + 1) + ':' }}</h2>
 
     <div class="fields-with-button">
@@ -20,7 +24,7 @@
         type="button"
         onclick="this.blur()"
         class="cancel-btn"
-        [disabled]="httpTriggerForm.routes.length === 1"
+        [disabled]="formGroup.routes.length === 1"
         (click)="triggerForm.removeRoute(route)"
       >
         <mat-icon>cancel</mat-icon>
@@ -44,7 +48,7 @@
       </form>
     </div>
 
-    <ng-container *ngFor="let param of route.parameters; let j = index">
+    <div class="parameter" *ngFor="let param of route.parameters; let j = index">
       <h3>{{ 'Parameter ' + (j + 1) + ':' }}</h3>
       <div class="fields-with-button">
         <button
@@ -71,12 +75,12 @@
           </mat-form-field>
         </form>
       </div>
-    </ng-container>
-    <button mat-button class="add-btn" color="primary" (click)="triggerForm.addParameter(route)">
+    </div>
+    <button mat-button class="add-btn add-parameter" color="primary" (click)="triggerForm.addParameter(route)">
       <span><mat-icon>add_circle</mat-icon>Add parameter</span>
     </button>
-  </ng-container>
-  <button mat-button class="add-btn" color="primary" (click)="triggerForm.addRoute()">
+  </div>
+  <button mat-button id="add-route" class="add-btn" color="primary" (click)="triggerForm.addRoute()">
     <span><mat-icon>add_circle</mat-icon>Add route</span>
   </button>
 </form>

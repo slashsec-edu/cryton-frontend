@@ -1,5 +1,4 @@
 import { CrytonNode } from '../cryton-node/cryton-node';
-import { Cursor, CursorState } from './cursor-state';
 
 export class ToolState {
   isSwapEnabled = false;
@@ -18,20 +17,12 @@ export class ToolState {
     return this.isDeleteEnabled;
   }
 
-  flipMoveNodeTool(nodes: CrytonNode[], cursorState: CursorState): boolean {
-    const isEnabled = this._toolClick(this.isMoveNodeEnabled);
+  flipMoveNodeTool(nodes: CrytonNode[]): boolean {
+    this.isMoveNodeEnabled = this._toolClick(this.isMoveNodeEnabled);
 
-    nodes.forEach(node => node.treeNode.konvaObject.draggable(isEnabled));
+    nodes.forEach(node => node.treeNode.konvaObject.draggable(this.isMoveNodeEnabled));
 
-    this.isMoveNodeEnabled = isEnabled;
-
-    if (isEnabled) {
-      cursorState.setCursor(Cursor.GRAB);
-    } else {
-      cursorState.unsetCursor(Cursor.GRAB);
-    }
-
-    return isEnabled;
+    return this.isMoveNodeEnabled;
   }
 
   /**

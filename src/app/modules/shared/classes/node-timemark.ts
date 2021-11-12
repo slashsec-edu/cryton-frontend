@@ -50,6 +50,7 @@ export class NodeTimemark extends Konva.Group {
   }
 
   recalculate(totalSeconds: number): void {
+    this.setAttr('totalSeconds', totalSeconds);
     this._timeMark.recalculate(totalSeconds);
   }
 

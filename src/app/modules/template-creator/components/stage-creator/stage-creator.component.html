@@ -12,7 +12,7 @@
   </ng-container>
 
   <ng-template #saveChanges>
-    <app-cryton-button value="Cancel" (clicked)="cancelEditing()"></app-cryton-button>
+    <app-cryton-button value="Cancel" (clicked)="handleCancelClick()"></app-cryton-button>
 
     <app-cryton-button
       color="primary"
@@ -29,13 +29,14 @@
     <div class="params-wrapper">
       <div class="stage-params cryton-scrollbar">
         <app-stage-parameters
+          *ngIf="parentDepTree?.treeNodeManager"
           [stageForm]="stageForm"
           [nodeManager]="parentDepTree.treeNodeManager"
         ></app-stage-parameters>
       </div>
 
       <div class="parameters-buttons">
-        <app-cryton-button icon="delete" value="Erase parameters" (clicked)="stageForm.erase()"></app-cryton-button>
+        <app-cryton-button icon="delete" value="Erase parameters" (clicked)="eraseParameters()"></app-cryton-button>
 
         <div class="showable">
           <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>

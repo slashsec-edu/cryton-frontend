@@ -14,18 +14,20 @@ export class TemplateCreatorStateService {
   isDependencyTreeDisplayed: boolean;
   editedStage: CrytonStage;
   stageForm: StageForm;
-  stageFormBackup: StageForm;
 
   // BUILD TEMPLATE TAB
   buildTemplateDisplayedComponent: BuildTemplateDisplay;
-  templateParametersFormGroup: FormGroup;
+  templateForm: FormGroup;
 
   // CREATE STEP TAB
-  stepParametersFormGroup: FormGroup;
+  stepForm: FormGroup;
   editedStep: CrytonStep;
 
   // Timeline
   timeline: TemplateTimeline;
+
+  private _stageFormBackup: StageForm;
+  private _stepFormValueBackup: Record<string, string>;
 
   constructor() {
     this._initState();
@@ -37,9 +39,50 @@ export class TemplateCreatorStateService {
   clear(): void {
     this.editedStage = null;
     this.stageForm = null;
-    this.stageFormBackup = null;
+    this._stageFormBackup = null;
+    this._stepFormValueBackup = null;
 
     this._initState();
+  }
+
+  /**
+   * Restores stage form from backup, returns true if there was a backed up form.
+   */
+  restoreStageForm(): boolean {
+    if (this._stageFormBackup) {
+      this.stageForm = this._stageFormBackup;
+      this.stageForm.markAsUntouched();
+      this._stageFormBackup = null;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Restores step form from backup, returns true if there was a backed up form value.
+   */
+  restoreStepForm(): boolean {
+    if (this._stepFormValueBackup) {
+      this.stepForm.setValue(this._stepFormValueBackup);
+      this.stepForm.markAsUntouched();
+      this._stepFormValueBackup = null;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Backs up stage form.
+   */
+  backupStageForm(): void {
+    this._stageFormBackup = this.stageForm;
+  }
+
+  /**
+   * Backs up step form.
+   */
+  backupStepForm(): void {
+    this._stepFormValueBackup = JSON.parse(JSON.stringify(this.stepForm.value)) as Record<string, string>;
   }
 
   /**
@@ -48,15 +91,23 @@ export class TemplateCreatorStateService {
   private _initState(): void {
     this.isDependencyTreeDisplayed = false;
     this.buildTemplateDisplayedComponent = BuildTemplateDisplay.BUILD_TEMPLATE;
-    this.templateParametersFormGroup = new FormGroup({
+    this.templateForm = this._createTemplateForm();
+    this.stepForm = this._createStepForm();
+    this.timeline = new TemplateTimeline();
+  }
+
+  private _createTemplateForm(): FormGroup {
+    return new FormGroup({
       name: new FormControl(null, Validators.required),
       owner: new FormControl(null, Validators.required)
     });
-    this.stepParametersFormGroup = new FormGroup({
+  }
+
+  private _createStepForm(): FormGroup {
+    return new FormGroup({
       name: new FormControl(null, [Validators.required]),
       attackModule: new FormControl(null, [Validators.required]),
       attackModuleArgs: new FormControl(null, [Validators.required])
     });
-    this.timeline = new TemplateTimeline();
   }
 }

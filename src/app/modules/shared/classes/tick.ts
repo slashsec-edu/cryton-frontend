@@ -5,6 +5,8 @@ import { VerticalLine, VLineConfig } from './vertical-line';
 
 type TimeMarkType = TimeMark | NodeTimemark;
 
+export const TICK_NAME = 'tick';
+
 export interface TickConfig extends VLineConfig {
   isLeading: boolean;
   theme: Theme;
@@ -15,6 +17,7 @@ export class Tick extends VerticalLine {
   constructor(config: TickConfig) {
     super({
       timeMark: config.timeMark,
+      name: TICK_NAME,
       ...config
     });
 

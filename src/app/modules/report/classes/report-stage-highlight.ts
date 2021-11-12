@@ -2,7 +2,8 @@ import Konva from 'konva';
 import { ShapeConfig } from 'konva/types/Shape';
 import { TimelineUtils } from '../../shared/classes/timeline-utils';
 import { VerticalLine } from '../../shared/classes/vertical-line';
-import { TimelineParams, TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
+import { TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
+import { TimelineParams } from '../../shared/models/interfaces/timeline-params.interface';
 
 const STROKE_WIDTH = 2;
 const RECT_OPACITY = 0.2;

@@ -9,6 +9,7 @@ import { NodeType } from '../../models/enums/node-type';
 import { Theme } from '../../models/interfaces/theme';
 
 export const EDGE_POINTER_LENGTH = 10;
+export const TREE_EDGE_NAME = 'treeEdge';
 
 export class TreeEdge {
   crytonEdge: CrytonEdge;
@@ -98,7 +99,7 @@ export class TreeEdge {
 
     // Factor in the arrow length so it doesn't stick out
     points[0] = x;
-    points[1] = y + EDGE_POINTER_LENGTH / 2;
+    points[1] = y;
 
     this._moveEdge(points);
   }
@@ -127,7 +128,7 @@ export class TreeEdge {
       points: this.getDefaultPoints(),
       listening: false,
       hitStrokeWidth: 15,
-      objectType: 'edge',
+      name: TREE_EDGE_NAME,
       shadowForStrokeEnabled: false
     });
 

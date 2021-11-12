@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { CrytonNode } from '../../classes/cryton-node/cryton-node';
 import { ThemeService } from 'src/app/services/theme.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tree-node-dispenser',
@@ -15,7 +16,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   @Input() depTreeRef: DepTreeRef = DepTreeRef.STAGE_CREATION;
 
-  nodeSubject: BehaviorSubject<CrytonNode[]>;
+  nodeSubject$: Observable<CrytonNode[]>;
 
   private _destroy$ = new Subject<void>();
   private _nodeManager: NodeManager;
@@ -23,10 +24,13 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   constructor(private _treeManager: DependencyTreeManagerService, public themeService: ThemeService) {}
 
   ngOnInit(): void {
-    this._treeManager.getCurrentTree(this.depTreeRef).subscribe((depTree: DependencyTree) => {
-      this._nodeManager = depTree.treeNodeManager;
-      this.nodeSubject = depTree.treeNodeManager.dispenserNodes$;
-    });
+    this._treeManager
+      .getCurrentTree(this.depTreeRef)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((depTree: DependencyTree) => {
+        this._nodeManager = depTree.treeNodeManager;
+        this.nodeSubject$ = depTree.treeNodeManager.dispenserNodes$;
+      });
   }
 
   ngOnDestroy(): void {

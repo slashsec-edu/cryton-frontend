@@ -2,7 +2,8 @@ import Konva from 'konva';
 import { ShapeConfig } from 'konva/types/Shape';
 import { StepExecutionReport } from 'src/app/models/api-responses/report/step-execution-report.interface';
 import { TimelineUtils } from '../../shared/classes/timeline-utils';
-import { TimelineParams, TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
+import { TimelineParams } from '../../shared/models/interfaces/timeline-params.interface';
+import { TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
 import { Cursor, CursorState } from '../../template-creator/classes/dependency-tree/cursor-state';
 import { Theme } from '../../template-creator/models/interfaces/theme';
 import { FILL_MAP } from './report-constants';
@@ -27,19 +28,14 @@ export class ReportStep extends Konva.Group implements TimelineShape {
   private _labelText: Konva.Text;
   private _body: Konva.Rect | Konva.Circle;
 
-  get startSeconds(): number {
-    return this.getAttr('startSeconds') as number;
-  }
-
-  get endSeconds(): number {
-    return this.getAttr('endSeconds') as number;
-  }
-
   get duration(): number {
-    if (!this.startSeconds || !this.endSeconds) {
+    const startSeconds = this.getAttr('startSeconds') as number;
+    const endSeconds = this.getAttr('endSeconds') as number;
+
+    if (!startSeconds || !endSeconds) {
       return 0;
     }
-    return this.endSeconds - this.startSeconds;
+    return endSeconds - startSeconds;
   }
 
   constructor(config: ReportStepConfig) {
@@ -47,6 +43,22 @@ export class ReportStep extends Konva.Group implements TimelineShape {
 
     this._initKonvaObject(config);
     this._initKonvaEvents(config.cursorState);
+  }
+
+  /**
+   * Calculates step duration in seconds.
+   *
+   * @param step Step execution report data.
+   * @returns Step duration.
+   */
+  static calcStepDuration(step: StepExecutionReport): number {
+    if (!step.start_time || !step.finish_time) {
+      return 0;
+    }
+
+    const startSeconds = new Date(step.start_time).getTime() / 1000;
+    const endSeconds = new Date(step.finish_time).getTime() / 1000;
+    return endSeconds - startSeconds;
   }
 
   /**

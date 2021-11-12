@@ -1,11 +1,12 @@
 import Konva from 'konva';
+import { Tick } from 'src/app/modules/shared/classes/tick';
 
 export class ListNode {
-  value: Konva.Line;
+  value: Tick;
   next: ListNode;
   previous: ListNode;
 
-  constructor(value: Konva.Line) {
+  constructor(value: Tick) {
     this.value = value;
     this.next = null;
     this.previous = null;
@@ -17,7 +18,7 @@ export class TickLinkedList {
   tail: ListNode;
   length = 1;
 
-  constructor(value: Konva.Line) {
+  constructor(value: Tick) {
     this.head = {
       value,
       next: null,
@@ -27,7 +28,7 @@ export class TickLinkedList {
   }
 
   // Insert node at end of the list
-  append(value: Konva.Line): void {
+  append(value: Tick): void {
     const newNode = new ListNode(value);
 
     this.tail.next = newNode;
@@ -37,7 +38,7 @@ export class TickLinkedList {
   }
 
   // Insert node at the start of the list
-  prepend(value: Konva.Line): void {
+  prepend(value: Tick): void {
     const newNode = new ListNode(value);
 
     newNode.next = this.head;
@@ -68,7 +69,7 @@ export class TickLinkedList {
     this.length--;
   }
 
-  private _destroyTick(tick: Konva.Line): void {
+  private _destroyTick(tick: Tick): void {
     (tick.getAttr('timeMark') as Konva.Text)?.destroy();
     tick.destroy();
   }

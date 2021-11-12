@@ -1,4 +1,3 @@
-import { DebugElement } from '@angular/core';
 import Konva from 'konva';
 import { Vector2d } from 'konva/types/types';
 import { Subject } from 'rxjs';
@@ -19,7 +18,11 @@ import { Theme } from '../../models/interfaces/theme';
 import { Queue } from 'src/app/modules/shared/utils/queue';
 import { CANVAS_PADDING } from './dependency-tree-constants';
 
+export const MIN_SCALE = 0.1;
+export const MAX_SCALE = 1.5;
+
 export class DependencyTree extends KonvaWrapper {
+  id = Math.round(Math.random() * 50);
   alert$ = new Subject<Alert>();
   treeLayerUpdate$ = new Subject<Konva.Layer>();
 
@@ -58,7 +61,7 @@ export class DependencyTree extends KonvaWrapper {
   rescale(increment: number): void {
     const newScale = this.stage.scale().x + increment;
 
-    if (newScale >= 0.1 && newScale <= 1.5) {
+    if (newScale >= MIN_SCALE && newScale <= MAX_SCALE) {
       this.stage.scale({ x: newScale, y: newScale });
       this.treeLayer.draw();
     }
@@ -74,8 +77,8 @@ export class DependencyTree extends KonvaWrapper {
     }
     this.stage.x(0).y(0);
 
-    const nodes = this.getNodesOfType('treeNode', this.treeLayer) as Konva.Group[];
-    const edges = this.getNodesOfType('edge', this.treeLayer) as Konva.Arrow[];
+    const nodes = this.findNodesByName('treeNode', this.treeLayer) as Konva.Group[];
+    const edges = this.findNodesByName('treeEdge', this.treeLayer) as Konva.Arrow[];
     const rect = this._getNodesRect(nodes);
 
     if (!nodes || !rect) {
@@ -172,6 +175,10 @@ export class DependencyTree extends KonvaWrapper {
 
     [treeCopy.scale, treeCopy.stageX, treeCopy.stageY] = [this.scale, this.stageX, this.stageY];
 
+    if (!rootNode) {
+      return treeCopy;
+    }
+
     const queue = new Queue<CrytonNode>();
     queue.enqueue(rootNode);
     const copyMap: Record<string, CrytonNode> = {};
@@ -204,11 +211,11 @@ export class DependencyTree extends KonvaWrapper {
   }
 
   /**
-   * Checks if the dependency tree is correctly built.
+   * Checks if the dependency tree is valid.
    *
-   * @returns True if dependency tree is correctly built.
+   * @returns True if dependency tree is valid.
    */
-  isCorrect(): boolean {
+  isValid(): boolean {
     const nodeCount = this.treeNodeManager.canvasNodes.length;
 
     if (nodeCount === 0) {
@@ -244,13 +251,11 @@ export class DependencyTree extends KonvaWrapper {
       errors.push('Dependency tree is empty.');
     }
 
-    if (this.nodeType === NodeType.CRYTON_STEP) {
-      const rootNodes = this.treeNodeManager.canvasNodes.filter(
-        (node: CrytonNode) => node.treeNode.parentEdges.length === 0
-      ).length;
-
-      if (rootNodes > 1) {
-        errors.push('Multiple initial nodes in dependency tree.');
+    try {
+      this.findRootNode();
+    } catch (error) {
+      if (error instanceof Error) {
+        errors.push(error.message);
       }
     }
     return errors;
@@ -302,14 +307,13 @@ export class DependencyTree extends KonvaWrapper {
   /**
    * Initializes stage container and dimensions.
    *
-   * @param containerID Contaier ID.
    * @param container Container element.
    */
-  protected _createStage(containerID: string, container: DebugElement): void {
+  protected _createStage(container: HTMLDivElement): void {
     const { width, height } = this._getBoundingRect(container);
 
     this.stage = new Konva.Stage({
-      container: containerID,
+      container,
       width,
       height,
       x: this._stageX,
@@ -455,8 +459,8 @@ export class DependencyTree extends KonvaWrapper {
 
     if (minRescale > 1) {
       return 1;
-    } else if (minRescale <= 0.1) {
-      return 0.1;
+    } else if (minRescale <= MIN_SCALE) {
+      return MIN_SCALE;
     }
 
     return minRescale;

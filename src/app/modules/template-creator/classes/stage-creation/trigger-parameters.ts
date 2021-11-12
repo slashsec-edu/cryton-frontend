@@ -3,9 +3,8 @@ import { ErrorMessages } from '../../models/types/errorsMessages.type';
 import { TriggerForm } from './forms/trigger-form.interface';
 
 export abstract class TriggerParameters {
-  triggerForm: TriggerForm;
-
   private _errorMessages: ErrorMessages;
+  abstract triggerForm: TriggerForm;
 
   constructor(errorMessages: ErrorMessages) {
     this._errorMessages = errorMessages;

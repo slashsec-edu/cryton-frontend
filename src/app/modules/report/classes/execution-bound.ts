@@ -1,6 +1,7 @@
 import { TimelineUtils } from '../../shared/classes/timeline-utils';
 import { VerticalLine, VLineConfig } from '../../shared/classes/vertical-line';
-import { TimelineParams, TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
+import { TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
+import { TimelineParams } from '../../shared/models/interfaces/timeline-params.interface';
 
 export interface ExecBoundConfig extends VLineConfig {
   startSeconds: number;

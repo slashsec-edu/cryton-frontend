@@ -117,6 +117,16 @@ export class HttpForm implements TriggerForm {
     return copyForm;
   }
 
+  markAsUntouched(): void {
+    this._triggerArgsForm.args.markAsUntouched();
+
+    this._triggerArgsForm.routes.forEach(route => {
+      route.args.markAsUntouched();
+
+      route.parameters.forEach(param => param.markAsUntouched());
+    });
+  }
+
   isNotEmpty(): boolean {
     return (
       FormUtils.someValueDefined(this._triggerArgsForm.args.value) ||

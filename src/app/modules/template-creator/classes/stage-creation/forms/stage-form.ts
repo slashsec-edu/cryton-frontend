@@ -3,8 +3,7 @@ import { TriggerType } from '../../../models/enums/trigger-type';
 import { NodeManager } from '../../dependency-tree/node-manager';
 import { CrytonStage } from '../../cryton-node/cryton-stage';
 import { DeltaForm } from './delta-form';
-import { FormUtils } from './form-utils';
-import { HttpForm } from './http-form';
+import { HttpForm, HttpTriggerForm } from './http-form';
 import { TriggerForm } from './trigger-form.interface';
 import { TriggerParameters } from '../trigger-parameters';
 import { Type } from '@angular/core';
@@ -18,7 +17,7 @@ export interface StageArgs {
 }
 
 export class StageForm {
-  ignoredName = null;
+  editedNodeName = null;
   triggerTypeChange$: Observable<TriggerType>;
 
   private _stageArgsForm: FormGroup;
@@ -52,7 +51,7 @@ export class StageForm {
     return this._triggerForm;
   }
 
-  getTriggerArgsForm(): FormGroup | Record<string, any> {
+  getTriggerArgsForm(): FormGroup | HttpTriggerForm {
     return this._triggerForm.getArgsForm();
   }
 
@@ -73,26 +72,42 @@ export class StageForm {
     this._triggerForm.fill(stage);
   }
 
+  fillWithEditedStage(stage: CrytonStage): void {
+    this.editedNodeName = stage.name;
+    this.fill(stage);
+  }
+
   erase(): void {
     this._stageArgsForm.get('name').reset();
     this._stageArgsForm.get('triggerType').setValue(INITIAL_TRIGGER);
     this._triggerForm.erase();
   }
 
+  cancelEditing(): void {
+    this.editedNodeName = null;
+    this.erase();
+  }
+
   isValid(): boolean {
     return this._stageArgsForm.valid && this._triggerForm.isValid();
+  }
+
+  markAsUntouched(): void {
+    this._stageArgsForm.markAsUntouched();
+    this._triggerForm.markAsUntouched();
   }
 
   copy(): StageForm {
     const copyForm = new StageForm(this._nodeManager);
 
     copyForm._stageArgsForm.setValue(this._stageArgsForm.value);
+    copyForm._triggerForm = this._triggerForm.copy();
 
     return copyForm;
   }
 
   isNotEmpty(): boolean {
-    return FormUtils.someValueDefined(this._stageArgsForm.value) || this._triggerForm.isNotEmpty();
+    return Boolean(this._stageArgsForm.get('name').value) || this._triggerForm.isNotEmpty();
   }
 
   private _changeTriggerForm(type: TriggerType): void {
@@ -131,5 +146,5 @@ export class StageForm {
    * @returns Validation errors.
    */
   private _uniqueNameValidator = (control: AbstractControl): ValidationErrors | null =>
-    this._nodeManager.isNodeNameUnique(control.value, this.ignoredName) ? null : { notUnique: true };
+    this._nodeManager.isNodeNameUnique(control.value, this.editedNodeName) ? null : { notUnique: true };
 }

@@ -26,9 +26,8 @@ export interface ExecutionData {
 
 export class ReportTimeline extends Timeline {
   executionData$ = new Subject<ExecutionData>();
-  timelinePadding = [30, 0, 10, 130];
   timelineOpenSeconds = Date.now() / 1000;
-
+  timelinePadding: [number, number, number, number] = [30, 0, 10, 130];
   private _steps: ReportStep[] = [];
   private _highlights: ReportStageHighlight[] = [];
   private _labels: ReportStageLabel[] = [];
@@ -60,8 +59,8 @@ export class ReportTimeline extends Timeline {
   }
 
   renderExecution(execution: PlanExecutionReport): void {
+    this._setTimeframe(execution);
     const reportHeight = this.createStages(execution.stage_executions);
-    this._setTimeframe(execution.start_time, this._steps);
     this._createExecutionBounds(execution);
     this._centerReport(this.height, reportHeight);
   }
@@ -73,21 +72,23 @@ export class ReportTimeline extends Timeline {
     stageReports.forEach(stageReport => {
       stageTop = currentY;
 
-      const sortedSteps = stageReport.step_executions
-        .filter(step => step.start_time)
-        .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
+      const sortedSteps = stageReport.step_executions.sort(
+        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      );
 
       sortedSteps.forEach(stepReport => {
         if (stepReport.start_time) {
-          const step = this.createStep(stepReport, currentY, stageReport.pause_time);
+          const step = this.createStep(stepReport, currentY);
           this._steps.push(step);
           this.addElement(step);
           currentY += STEP_GAP + STEP_HEIGHT;
         }
       });
 
-      if (sortedSteps.length > 0) {
-        this.createStage(stageReport, stageTop, currentY);
+      if (sortedSteps.some(step => step.start_time)) {
+        const lastStep = sortedSteps[sortedSteps.length - 1];
+        const lastStepEnd = TimelineUtils.datetimeToSeconds(lastStep.finish_time ?? lastStep.start_time);
+        this.createStage(stageReport, stageTop, currentY, lastStepEnd);
       }
 
       currentY += STAGE_GAP;
@@ -96,20 +97,12 @@ export class ReportTimeline extends Timeline {
     return currentY !== 0 ? currentY - STAGE_GAP : currentY;
   }
 
-  createStage(stageReport: StageExecutionReport, top: number, bottom: number): void {
+  createStage(stageReport: StageExecutionReport, top: number, bottom: number, lastStepEnd: number): void {
     const y = top - STAGE_PADDING;
     const height = bottom - top - STEP_GAP + 2 * STAGE_PADDING;
     const stateColor = FILL_MAP[stageReport.state.toLocaleLowerCase()];
     const startSeconds = TimelineUtils.datetimeToSeconds(stageReport.start_time);
-    let endSeconds: number;
-
-    if (stageReport.finish_time) {
-      endSeconds = TimelineUtils.datetimeToSeconds(stageReport.finish_time);
-    } else if (stageReport.pause_time) {
-      endSeconds = TimelineUtils.datetimeToSeconds(stageReport.pause_time);
-    } else {
-      endSeconds = this.timelineOpenSeconds;
-    }
+    const endSeconds = stageReport.finish_time ? TimelineUtils.datetimeToSeconds(stageReport.finish_time) : lastStepEnd;
 
     const highlight = new ReportStageHighlight({
       startSeconds,
@@ -146,16 +139,8 @@ export class ReportTimeline extends Timeline {
     this.stage.draw();
   }
 
-  createStep(stepReport: StepExecutionReport, y: number, stagePauseTime?: string): ReportStep {
-    let endSeconds: number;
-
-    if (stepReport.finish_time) {
-      endSeconds = TimelineUtils.datetimeToSeconds(stepReport.finish_time);
-    } else if (stagePauseTime) {
-      endSeconds = TimelineUtils.datetimeToSeconds(stagePauseTime);
-    } else {
-      endSeconds = this.timelineOpenSeconds;
-    }
+  createStep(stepReport: StepExecutionReport, y: number): ReportStep {
+    const endSeconds = stepReport.finish_time ? TimelineUtils.datetimeToSeconds(stepReport.finish_time) : null;
 
     const step = new ReportStep({
       theme: this.theme,
@@ -186,11 +171,10 @@ export class ReportTimeline extends Timeline {
   }
 
   protected _stageDrag = (pos: Vector2d): Vector2d => {
-    const x = pos.x > this._maxX ? this._maxX : pos.x;
-    this.paddingMask.x(-x);
-    this._highlights.forEach(highligh => highligh.x(-x));
+    this.paddingMask.x(-pos.x);
+    this._highlights.forEach(highligh => highligh.x(-pos.x));
 
-    return { x, y: 0 };
+    return { x: pos.x, y: 0 };
   };
 
   protected _refreshTheme(): void {
@@ -234,14 +218,18 @@ export class ReportTimeline extends Timeline {
     this._labels.forEach(label => label.y(label.y() + dist));
   }
 
-  private _setTimeframe(executionStart: string, steps: ReportStep[]): void {
-    const startSeconds = new Date(executionStart).getTime();
+  private _setTimeframe(executionReport: PlanExecutionReport): void {
+    const startSeconds = new Date(executionReport.start_time).getTime();
 
-    this.tickSeconds = this._calcOptimalTickSeconds(steps);
+    const allSteps = executionReport.stage_executions
+      .map(stage => stage.step_executions)
+      .reduce((a, b) => a.concat(b), []);
+
+    this.tickSeconds = this._calcOptimalTickSeconds(allSteps);
     this.startSeconds = Math.round(startSeconds / 1000);
   }
 
-  private _calcOptimalTickSeconds(steps: ReportStep[]): number {
+  private _calcOptimalTickSeconds(steps: StepExecutionReport[]): number {
     const durationMedian = this._calcDurationMedian(steps);
     let tickSeconds = Math.round(durationMedian / 5);
 
@@ -260,11 +248,11 @@ export class ReportTimeline extends Timeline {
     return num + increment;
   }
 
-  private _calcDurationMedian(steps: ReportStep[]): number {
+  private _calcDurationMedian(steps: StepExecutionReport[]): number {
     if (!steps || steps.length === 0) {
       return 0;
     }
-    const sorted = steps.map(step => step.duration).sort((a, b) => a - b);
+    const sorted = steps.map(step => ReportStep.calcStepDuration(step)).sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
 
     if (sorted.length % 2 === 0) {

@@ -1,0 +1,11 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $warn: map-get($config, warn);
+
+  // LINK HIGHLIGHT COLOR
+  .page-unavailable--error {
+    color: map-get($warn, default);
+  }
+}

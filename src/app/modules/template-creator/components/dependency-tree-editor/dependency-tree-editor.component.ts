@@ -1,5 +1,4 @@
 import {
-  DebugElement,
   HostListener,
   Input,
   OnDestroy,
@@ -9,7 +8,8 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
   Output,
-  EventEmitter
+  EventEmitter,
+  DebugElement
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
@@ -105,8 +105,8 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
       .getCurrentTree(this.depTreeRef)
       .pipe(takeUntil(this._destroy$))
       .subscribe(depTree => {
-        depTree.initKonva('canvas-container', this.canvasContainer, theme$);
-        depTree.cursorState.container = this.canvasContainer.nativeElement as HTMLElement;
+        depTree.initKonva(this.canvasContainer.nativeElement, theme$);
+        depTree.cursorState.container = this.canvasContainer.nativeElement as HTMLDivElement;
         depTree.fitScreen();
       });
   }

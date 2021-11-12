@@ -42,7 +42,7 @@ export class BuildTemplatePageComponent implements AfterViewInit {
   private _shouldForceShowTemplate = false;
 
   get templateForm(): FormGroup {
-    return this._state.templateParametersFormGroup;
+    return this._state.templateForm;
   }
 
   constructor(
@@ -127,7 +127,7 @@ export class BuildTemplatePageComponent implements AfterViewInit {
    */
   createTemplate(): void {
     const templateYaml = this._templateConverter.exportYAMLTemplate();
-    const templateName = this._state.templateParametersFormGroup.get('name').value as string;
+    const templateName = this._state.templateForm.get('name').value as string;
 
     this.creating$.next(true);
 
@@ -154,7 +154,7 @@ export class BuildTemplatePageComponent implements AfterViewInit {
     const depTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
     const errors: string[] = [];
 
-    if (!this._state.templateParametersFormGroup.valid) {
+    if (!this._state.templateForm.valid) {
       errors.push('Invalid template parameters.');
     }
 
@@ -170,7 +170,7 @@ export class BuildTemplatePageComponent implements AfterViewInit {
    */
   isCreationDisabled(): boolean {
     const depTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
-    if (!this._state.templateParametersFormGroup.valid || !depTree.isCorrect()) {
+    if (!this._state.templateForm.valid || !depTree.isValid()) {
       return true;
     }
     return false;

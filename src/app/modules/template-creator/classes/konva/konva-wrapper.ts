@@ -9,7 +9,7 @@ export abstract class KonvaWrapper {
   stage: Konva.Stage;
   theme: Theme;
 
-  protected _container: DebugElement;
+  protected _container: HTMLDivElement;
   protected _stageX = 0;
   protected _stageY = 0;
   protected _scale = 1;
@@ -85,18 +85,17 @@ export abstract class KonvaWrapper {
   /**
    * Initializes konva inside a given container.
    *
-   * @param containerID ID of the container.
    * @param container Container element.
    * @param currentTheme$ Observable which emits Theme object every time theme changes.
    */
-  initKonva(containerID: string, container: DebugElement, currentTheme$: Observable<Theme>): void {
+  initKonva(container: HTMLDivElement, currentTheme$: Observable<Theme>): void {
     this._container = container;
-    this.cursorState.container = container.nativeElement as HTMLElement;
+    this.cursorState.container = container as HTMLElement;
 
     if (this.stage) {
-      this.stage.container(container.nativeElement);
+      this.stage.container(container);
     } else {
-      this._createStage(containerID, container);
+      this._createStage(container);
     }
 
     this.stage.draw();
@@ -104,19 +103,14 @@ export abstract class KonvaWrapper {
   }
 
   /**
-   * Returns all nodes of a given type inside a given layer.
+   * Returns all nodes with a given name inside a given layer.
    *
-   * @param type Type of node.
+   * @param name Node name.
    * @param layer Layer to search through.
    * @returns Array of nodes.
    */
-  getNodesOfType(type: string, layer: Konva.Layer): Konva.Node[] {
-    return layer
-      .getChildren(child => {
-        const objectType = child.getAttr('objectType') as string;
-        return objectType && objectType === type;
-      })
-      .toArray();
+  findNodesByName(name: string, layer: Konva.Layer): Konva.Node[] {
+    return Array.from(layer.find(`.${name}`));
   }
 
   /**
@@ -125,10 +119,15 @@ export abstract class KonvaWrapper {
    * @param container Canvas container.
    * @returns DOMRect
    */
-  protected _getBoundingRect(container: DebugElement): DOMRect {
-    if (container && container.nativeElement) {
+  protected _getBoundingRect(container: DebugElement | HTMLDivElement): DOMRect {
+    if (!container) {
+      return null;
+    }
+    if (container instanceof DebugElement) {
       const nativeElement: HTMLElement = container.nativeElement as HTMLElement;
       return nativeElement.getBoundingClientRect();
+    } else {
+      return container.getBoundingClientRect();
     }
   }
 
@@ -141,6 +140,6 @@ export abstract class KonvaWrapper {
     }
   }
 
-  protected abstract _createStage(containerID: string, container: DebugElement): void;
+  protected abstract _createStage(container: HTMLDivElement): void;
   protected abstract _refreshTheme(): void;
 }
