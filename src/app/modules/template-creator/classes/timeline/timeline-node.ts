@@ -5,17 +5,25 @@ import { CrytonStage } from '../cryton-node/cryton-stage';
 import { TimelineEdge } from './timeline-edge';
 import {
   NODE_RADIUS,
-  TAG_PADDING,
-  TAG_CORNER_RADIUS,
-  TAG_MARGIN_BOTTOM,
+  LABEL_PADDING,
+  LABEL_CORNER_RADIUS,
+  LABEL_MARGIN_BOTTOM,
   NAME_FONT_SIZE,
   MAX_NAME_LENGTH,
-  NS_NODE_DIST
+  NS_NODE_DIST,
+  NODE_LTICK_TIMEMARK_NAME,
+  NODE_LTICK_NAME,
+  NODE_CIRCLE_NAME,
+  NODE_LABEL_NAME,
+  LABEL_TAG_NAME,
+  LABEL_TEXT_NAME,
+  TRIGGER_TAG_NAME
 } from './timeline-node-constants';
 import { Theme } from '../../models/interfaces/theme';
 import { Tick } from 'src/app/modules/shared/classes/tick';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
+import { CIRCLE_RADIUS } from 'src/app/modules/report/classes/report-step';
 
 export class TimelineNode {
   crytonNode: CrytonStage;
@@ -27,7 +35,7 @@ export class TimelineNode {
   // Konva parts
   private _nodeCircle: Konva.Circle;
   private _nameText: Konva.Text;
-  private _nameBG: Konva.Rect;
+  private _nameTag: Konva.Tag;
   private _triggerTag: Konva.Text;
 
   get x(): number {
@@ -49,7 +57,7 @@ export class TimelineNode {
   }
 
   get fullNodeHeight(): number {
-    return 2 * NODE_RADIUS + TAG_MARGIN_BOTTOM + 2 * TAG_PADDING[0] + NAME_FONT_SIZE;
+    return 2 * NODE_RADIUS + LABEL_MARGIN_BOTTOM + 2 * LABEL_PADDING[0] + NAME_FONT_SIZE;
   }
 
   get childEdges(): TimelineEdge[] {
@@ -201,10 +209,7 @@ export class TimelineNode {
     this._nameText?.text(new ShortStringPipe().transform(name, 10));
     this._nameText.x(-(this._nameText.width() / 2));
 
-    const tagWidth = this._nameText.width() + 2 * TAG_PADDING[1];
-
-    this._nameBG.width(tagWidth);
-    this._nameBG.x(-(tagWidth / 2));
+    this._nameTag.x(-(this._nameTag.width() / 2));
   }
 
   changeTheme(theme: Theme): void {
@@ -215,7 +220,7 @@ export class TimelineNode {
     }
 
     this._nameText.fill(theme.templateCreator.timemarkText);
-    this._nameBG.fill(theme.templateCreator.labelBG);
+    this._nameTag.fill(theme.templateCreator.labelBG);
   }
 
   /**
@@ -254,9 +259,9 @@ export class TimelineNode {
     this._initKonvaGroup();
 
     this._nodeCircle = this._createNodeCircle();
-    const nameTag = this._createNameTag();
+    const label = this._createLabel();
 
-    this.konvaObject.add(this._nodeCircle).add(nameTag);
+    this.konvaObject.add(this._nodeCircle).add(label);
     this.konvaObject.x(TimelineUtils.calcXFromSeconds(this._calcX(), this.timeline.getParams()));
     this.konvaObject.y(this.timeline.stage ? this.timeline.height / 2 : 250);
 
@@ -318,7 +323,8 @@ export class TimelineNode {
       constantText: this.crytonNode.trigger.getStartTime() === null ? 'No start time' : null,
       useCenterCoords: true,
       timemarkY: 0,
-      x: this.konvaObject.x()
+      x: this.konvaObject.x(),
+      name: NODE_LTICK_TIMEMARK_NAME
     });
 
     timeMark.centerY(this.timeline.timelinePadding[0]);
@@ -331,7 +337,8 @@ export class TimelineNode {
       isLeading: true,
       strokeWidth: 2,
       listening: false,
-      timeMark
+      timeMark,
+      name: NODE_LTICK_NAME
     });
 
     this._leadingTick = tick;
@@ -349,6 +356,7 @@ export class TimelineNode {
    */
   private _createNodeCircle(): Konva.Circle {
     const circle = new Konva.Circle({
+      name: NODE_CIRCLE_NAME,
       radius: NODE_RADIUS,
       strokeWidth: 0
     });
@@ -365,40 +373,39 @@ export class TimelineNode {
   }
 
   /**
-   * Creates the name tag for the timeline node.
+   * Creates the label for the timeline node.
    *
-   * @returns Konva group of the name tag.
+   * @returns Konva label.
    */
-  private _createNameTag(): Konva.Group {
-    const nameTag = new Konva.Group({ listening: false });
+  private _createLabel(): Konva.Label {
+    const label = new Konva.Label({ listening: false, name: NODE_LABEL_NAME });
+    this._nameTag = this._createNameTag();
     this._nameText = this._createNameText();
-    this._nameBG = this._createNameBG(this._nameText);
 
-    return nameTag.add(this._nameBG).add(this._nameText);
+    label.add(this._nameTag).add(this._nameText);
+    label.x(-label.width() / 2);
+    label.y(-CIRCLE_RADIUS - label.height() - 2 * LABEL_PADDING - LABEL_MARGIN_BOTTOM);
+
+    return label;
   }
 
   /**
    * Creates the background rect of the name tag.
    *
-   * @param nameText Text inside the name tag.
    * @returns Konva rect forming the name tag background.
    */
-  private _createNameBG(nameText: Konva.Text): Konva.Rect {
-    const tagWidth = nameText.width() + 2 * TAG_PADDING[1];
-    const nameBG = new Konva.Rect({
-      x: -(tagWidth / 2),
-      y: -NODE_RADIUS - TAG_MARGIN_BOTTOM - NAME_FONT_SIZE - TAG_PADDING[0],
-      width: tagWidth,
-      height: nameText.height() + 2 * TAG_PADDING[0],
-      cornerRadius: TAG_CORNER_RADIUS,
-      listening: false
+  private _createNameTag(): Konva.Tag {
+    const nameTag = new Konva.Tag({
+      cornerRadius: LABEL_CORNER_RADIUS,
+      listening: false,
+      name: LABEL_TAG_NAME
     });
 
     if (this.timeline.theme) {
-      nameBG.fill(this.timeline.theme.templateCreator.labelBG);
+      nameTag.fill(this.timeline.theme.templateCreator.labelBG);
     }
 
-    return nameBG;
+    return nameTag;
   }
 
   /**
@@ -411,8 +418,10 @@ export class TimelineNode {
       text: new ShortStringPipe().transform(this.crytonNode.name, MAX_NAME_LENGTH),
       fontFamily: 'roboto',
       fontSize: NAME_FONT_SIZE,
-      y: -NODE_RADIUS - NAME_FONT_SIZE - TAG_MARGIN_BOTTOM,
-      listening: false
+      y: -NODE_RADIUS - NAME_FONT_SIZE - LABEL_MARGIN_BOTTOM,
+      padding: 5,
+      listening: false,
+      name: LABEL_TEXT_NAME
     });
 
     if (this.timeline.theme) {
@@ -464,7 +473,8 @@ export class TimelineNode {
     if (this._triggerTag) {
       this._triggerTag.setAttrs({
         x: -this._triggerTag.width() / 2,
-        y: -this._triggerTag.height() / 2
+        y: -this._triggerTag.height() / 2,
+        name: TRIGGER_TAG_NAME
       });
       this.konvaObject.add(this._triggerTag);
       this._triggerTag.moveToTop();

@@ -4,28 +4,27 @@
 export const NODE_RADIUS = 18;
 
 /**
- * Padding inside the tag above the node.
- * Indexes: vertical, horizontal.
+ * Padding inside the node label.
  */
-export const TAG_PADDING = [5, 10];
+export const LABEL_PADDING = 5;
 
 /**
- * Space between the tag and node.
+ * Space between the label and node.
  */
-export const TAG_MARGIN_BOTTOM = 10;
+export const LABEL_MARGIN_BOTTOM = 5;
 
 /**
- * Radius of the tag background border.
+ * Radius of the label background border.
  */
-export const TAG_CORNER_RADIUS = 7;
+export const LABEL_CORNER_RADIUS = 7;
 
 /**
- * Font size of the name text inside the tag.
+ * Font size of the name text inside the label.
  */
 export const NAME_FONT_SIZE = 12;
 
 /**
- * Maximal length of name inside the tag in characters.
+ * Maximal length of name inside the label in characters.
  */
 export const MAX_NAME_LENGTH = 12;
 
@@ -55,3 +54,12 @@ export const NS_EDGE_DASH = [5, 5];
  * Distance of node with no trigger start time from it's last parent node.
  */
 export const NS_NODE_DIST = 150;
+
+// Konva names (used as identifiers).
+export const NODE_CIRCLE_NAME = 'timelineNodeCircle';
+export const NODE_LABEL_NAME = 'timelineNodeLabel';
+export const LABEL_TAG_NAME = 'labelTag';
+export const LABEL_TEXT_NAME = 'labelText';
+export const TRIGGER_TAG_NAME = 'triggerTag';
+export const NODE_LTICK_NAME = 'timelineNodeLTick';
+export const NODE_LTICK_TIMEMARK_NAME = 'timelineNodeLTickTimemark';
