@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { WorkersService } from 'src/app/services/workers.service';
 import { Subject } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
-import { tap, takeUntil, takeWhile } from 'rxjs/operators';
+import { tap, takeUntil } from 'rxjs/operators';
 import { trigger, transition, useAnimation, query, stagger, style } from '@angular/animations';
 import { renderComponentAnimation } from 'src/app/modules/shared/animations/render-component.animation';
 import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-dahboard.data-source';
@@ -27,7 +27,6 @@ export class WorkersDashboardComponent implements OnInit, AfterViewInit, OnDestr
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   dataSource = new WorkersDashboardDataSource(this._workersService);
-  firstWorkersLoaded = false;
   pageSize = 4;
 
   private _destroy$ = new Subject<void>();
@@ -39,15 +38,7 @@ export class WorkersDashboardComponent implements OnInit, AfterViewInit, OnDestr
    * the first page of workers gets loaded for proper render animation.
    */
   ngOnInit(): void {
-    this.dataSource
-      .connect()
-      .pipe(takeWhile(() => !this.firstWorkersLoaded))
-      .subscribe(data => {
-        if (data && data.length > 0) {
-          this.firstWorkersLoaded = true;
-        }
-      });
-    this.loadWorkers();
+    this.dataSource.loadItems(0, this.pageSize, null, null);
   }
 
   ngAfterViewInit(): void {
