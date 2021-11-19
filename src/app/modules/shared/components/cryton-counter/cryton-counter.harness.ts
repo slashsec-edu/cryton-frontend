@@ -7,9 +7,10 @@ export class CrytonCounterHarness extends ComponentHarness {
 
   getCountElement = this.locatorFor('b');
 
-  async getCount(): Promise<string> {
+  async getCount(): Promise<number> {
     const countElement = await this.getCountElement();
-    return countElement.text();
+    const countText = await countElement.text();
+    return Number(countText);
   }
 
   async getName(): Promise<string> {

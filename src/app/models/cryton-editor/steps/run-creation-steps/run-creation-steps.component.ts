@@ -3,7 +3,6 @@ import { Observable, of } from 'rxjs';
 
 import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
 import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 import { InstanceService } from 'src/app/services/instance.service';
 import { WorkersService } from 'src/app/services/workers.service';
@@ -18,6 +17,7 @@ import { Worker } from '../../../api-responses/worker.interface';
 import { Selectable } from '../../../cryton-editor/interfaces/selectable.interface';
 import { Button } from '../../../cryton-table/interfaces/button.interface';
 import { Column } from '../../../cryton-table/interfaces/column.interface';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 @Component({
   selector: 'app-run-creation-steps',

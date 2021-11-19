@@ -1,7 +1,7 @@
 import { Column } from '../cryton-table/interfaces/column.interface';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { Worker } from '../api-responses/worker.interface';
 import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 export class WorkerInventoriesDataSource extends CrytonTableDataSource<Worker> {
   columns: Column[] = [

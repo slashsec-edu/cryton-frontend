@@ -1,20 +1,26 @@
 <ng-container
   *ngIf="{
-    workers: dataSource.dataSubject$ | async,
-    loading: dataSource.loadingSubject$ | async,
-    count: dataSource.itemCount
+    workers: dataSource.connect() | async,
+    loading: dataSource.isLoading() | async,
+    count: dataSource.getCount() | async
   } as data"
 >
   <section class="workers-dashboard" [hidden]="data.count === 0">
     <!-- HEADER & PAGINATOR -->
     <header [ngClass]="{ 'show-border': !data.loading }">
       <div class="workers-header">
-        <h1>WORKERS</h1>
+        <div class="header-section">
+          <h1>WORKERS</h1>
+          <button mat-icon-button color="accent" (click)="refreshData()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+
         <mat-paginator
           id="paginator"
           [hidePageSize]="true"
           [length]="data.count"
-          [pageSize]="4"
+          [pageSize]="pageSize"
           [showFirstLastButtons]="true"
         >
         </mat-paginator>

@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { CrytonTableComponent } from './cryton-table.component';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { CrytonTableComponent, RELOAD_TIMEOUT } from './cryton-table.component';
 import { runs } from 'src/app/testing/mockdata/runs.mockdata';
 import { CrytonDatetimePipe } from '../../pipes/cryton-datetime.pipe';
 import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
@@ -43,6 +43,9 @@ import { CrytonCounterHarness } from '../cryton-counter/cryton-counter.harness';
 import { CrytonTableRowHarness } from './cryton-table-row.harness';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatRadioButtonHarness } from '@angular/material/radio/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatRowHarness } from '@angular/material/table/testing';
+import { ShortStringPipe } from '../../pipes/short-string.pipe';
 
 describe('CrytonTableComponent', () => {
   let component: CrytonTableComponent<HasID>;
@@ -51,7 +54,8 @@ describe('CrytonTableComponent', () => {
 
   const eraseSubject$ = new Subject<void>();
   const testingService = new TestingService(runs);
-  let tableRows: DebugElement[];
+  const datetimePipe = new CrytonDatetimePipe();
+  const shortStringPipe = new ShortStringPipe();
 
   // Uses fake testing service to provide pagination and filtering for mock data.
   const runServiceStub = jasmine.createSpyObj('RunService', ['fetchItems']) as Spied<RunService>;
@@ -59,13 +63,39 @@ describe('CrytonTableComponent', () => {
     testingService.fetchItems(offset, limit, orderBy, filter)
   );
 
-  const getRows = () => fixture.debugElement.queryAll(By.css('.mat-row'));
-  const getRowIds = () => {
-    tableRows = getRows();
-    return tableRows.map(row => {
-      const columnIdElement = row.query(By.css('.mat-column-id')).nativeElement as HTMLElement;
-      return columnIdElement.textContent.trim();
-    });
+  const formatDate = (date: string): string =>
+    shortStringPipe.transform(datetimePipe.transform(date), component.maxStringLength);
+
+  const compareRowWithData = async (row: MatRowHarness, data: Run): Promise<void> => {
+    const columns = await row.getCellTextByColumnName();
+    const formattedScheduleTime = formatDate(data.schedule_time);
+
+    expect(columns['id']).toBe(String(data.id));
+    expect(columns['state']).toBe(data.state);
+    expect(columns['plan_executions']).toBe(String(data.plan_executions.length));
+    expect(columns['schedule_time']).toBe(String(formattedScheduleTime));
+  };
+
+  const compareRowsWithData = async (rows: MatRowHarness[], data: Run[]): Promise<void> => {
+    expect(rows.length).toBe(data.length);
+
+    for (let i = 0; i < rows.length; i++) {
+      await compareRowWithData(rows[i], data[i]);
+    }
+  };
+
+  const getRows = (): Promise<MatRowHarness[]> => loader.getAllHarnesses(MatRowHarness);
+
+  const getRowIds = async (): Promise<number[]> => {
+    const rows = await getRows();
+    const rowIDs: number[] = [];
+
+    for (const row of rows) {
+      const rowID = (await row.getCellTextByColumnName())['id'];
+      rowIDs.push(Number(rowID));
+    }
+
+    return rowIDs;
   };
 
   beforeEach(
@@ -103,6 +133,7 @@ describe('CrytonTableComponent', () => {
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
 
+    testingService.setData(runs);
     component.expandedComponent = undefined;
     component.sort = 'id';
     component.header = 'TESTING TABLE';
@@ -111,16 +142,14 @@ describe('CrytonTableComponent', () => {
     component.dataSource = new RunTableDataSource((runServiceStub as unknown) as RunService, new CrytonDatetimePipe());
     component.createButton = { value: 'test', link: '/test' };
     fixture.detectChanges();
-
-    tableRows = getRows();
   });
 
-  it('should sort results by ID by default', () => {
-    const rowIds = getRowIds();
-    expect(rowIds).toEqual(['1', '2', '3', '4', '5']);
+  it('should sort results by ID by default', async () => {
+    const rowIds = await getRowIds();
+    expect(rowIds).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('should sort by ID in reverse on click on ID column', () => {
+  it('should sort by ID in reverse on click on ID column', async () => {
     const idColumn: DebugElement = fixture.debugElement.query(By.css('.mat-column-id'));
     const sortButton = idColumn.query(By.css('[role=button]')).nativeElement as HTMLElement;
 
@@ -128,8 +157,8 @@ describe('CrytonTableComponent', () => {
     sortButton.click();
     fixture.detectChanges();
 
-    const rowIds = getRowIds();
-    expect(rowIds).toEqual(['9', '8', '7', '6', '5']);
+    const rowIds = await getRowIds();
+    expect(rowIds).toEqual([9, 8, 7, 6, 5]);
   });
 
   describe('Checkbox and radio tests', () => {
@@ -267,63 +296,68 @@ describe('CrytonTableComponent', () => {
   });
 
   it('should display "TESTING TABLE" in the header', () => {
-    const header = fixture.debugElement.query(By.css('h2')).nativeElement as HTMLElement;
+    const nativeEl = fixture.nativeElement as HTMLElement;
+    const header = nativeEl.querySelector('h2');
     expect(header.textContent).toEqual('TESTING TABLE');
   });
 
-  it('should display 5 runs', () => {
-    expect(tableRows.length).toEqual(5);
+  it('should display 5 runs', async () => {
+    const rows = await getRows();
+    expect(rows.length).toEqual(5);
   });
 
-  it('should display 4 runs on the second page', () => {
-    const nextButton = fixture.debugElement.query(By.css('.mat-paginator-navigation-next'))
-      .nativeElement as HTMLElement;
-    nextButton.click();
+  it('should display 4 runs on the second page', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    await paginator.goToNextPage();
     fixture.detectChanges();
 
     expect(fixture.debugElement.queryAll(By.css('.mat-row')).length).toEqual(4);
   });
 
-  it('should filter only row with id 1', () => {
+  it('should filter only row with id 1', async () => {
     component.filter = { column: 'id', filter: '1' };
     component.loadPage();
     fixture.detectChanges();
 
-    tableRows = getRows();
-    const firstRow = tableRows[0].query(By.css('.mat-column-id')).nativeElement as HTMLElement;
+    const rows = await getRows();
 
-    expect(tableRows.length).toEqual(1);
-    expect(firstRow.textContent).toContain('1');
+    expect(rows.length).toEqual(1);
+    expect((await rows[0].getCellTextByColumnName())['id']).toBe('1');
   });
 
   it('should display total number of runs as 9', async () => {
-    const expectedCount = '9';
+    const expectedCount = 9;
 
     const counterCount = await loader.getHarness(CrytonCounterHarness).then(counter => counter.getCount());
     const paginatorRange = await loader.getHarness(MatPaginatorHarness).then(paginator => paginator.getRangeLabel());
 
     const rangeFragments = paginatorRange.split(' ');
-    const paginatorCount = rangeFragments[rangeFragments.length - 1];
+    const paginatorCount = Number(rangeFragments[rangeFragments.length - 1]);
 
     expect(counterCount).toEqual(expectedCount);
     expect(paginatorCount).toEqual(expectedCount);
   });
 
   it('should display a button with value "test" in the header', () => {
-    const button = fixture.debugElement.query(By.css('.button')).nativeElement as HTMLElement;
+    const nativeEl = fixture.nativeElement as HTMLElement;
+    const button = nativeEl.querySelector('header').querySelector('.button');
     expect(button.textContent).toContain('test');
   });
 
   it('should display expand icons', () => {
     component.expandedComponent = TestComponent;
     fixture.detectChanges();
-    const row: DebugElement = fixture.debugElement.query(By.css('.mat-row'));
-    const expandIcon = row.query(By.css('.mat-icon')).nativeElement as HTMLElement;
 
-    expect(expandIcon.textContent).toContain('expand_more');
+    const nativeEl = fixture.nativeElement as HTMLElement;
+    const rows = nativeEl.querySelectorAll('.mat-row');
+
+    rows.forEach(row => {
+      const expandIcon = row.querySelector('.mat-icon');
+      expect(expandIcon.textContent).toContain('expand_more');
+    });
   });
 
-  it('should display custom button with a custom function', () => {
+  it('should display custom button with a custom icon and function', async () => {
     let testRow: Run;
 
     const testFunction = (inputRow: Run): Observable<string> => {
@@ -331,17 +365,59 @@ describe('CrytonTableComponent', () => {
       return of('test');
     };
 
-    const buttons: Button<Run>[] = [{ icon: 'add_circle', func: testFunction }];
+    const testingButtons: Button<Run>[] = [{ icon: 'test', func: testFunction }];
 
-    component.buttons = buttons;
+    component.buttons = testingButtons;
     fixture.detectChanges();
 
-    const row: DebugElement = fixture.debugElement.query(By.css('.mat-row'));
-    const button = row.query(By.css('.mat-icon')).nativeElement as HTMLElement;
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'test' }));
 
-    button.click();
-
-    expect(button.textContent).toContain('add_circle');
-    expect(testRow).toEqual(runs[0]);
+    for (let i = 0; i < buttons.length; i++) {
+      await buttons[i].click();
+      expect(testRow).toEqual(runs[i]);
+    }
   });
+
+  it('should call refreshData method on refresh button click', async () => {
+    const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
+
+    spyOn(component, 'refreshData');
+    await refreshBtn.click();
+    expect(component.refreshData).toHaveBeenCalled();
+  });
+
+  it('should load new data on refresh', fakeAsync(async () => {
+    let rows = await loader.getAllHarnesses(MatRowHarness);
+    const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
+
+    // Expect to be page size.
+    expect(rows.length).toBe(5);
+    await compareRowsWithData(rows, runs.slice(0, 5));
+
+    const newData = [runs[0]];
+    testingService.setData(newData);
+    await refreshBtn.click();
+
+    tick(RELOAD_TIMEOUT);
+    fixture.detectChanges();
+    rows = await loader.getAllHarnesses(MatRowHarness);
+
+    await compareRowsWithData(rows, newData);
+  }));
+
+  it('should update counter on refresh', fakeAsync(async () => {
+    const counter = await loader.getHarness(CrytonCounterHarness);
+    let count = await counter.getCount();
+
+    expect(count).toBe(runs.length);
+
+    testingService.setData([runs[0]]);
+    const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
+    await refreshBtn.click();
+    tick(RELOAD_TIMEOUT);
+    fixture.detectChanges();
+
+    count = await counter.getCount();
+    expect(count).toBe(1);
+  }));
 });

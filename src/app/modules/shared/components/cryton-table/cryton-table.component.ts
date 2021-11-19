@@ -25,15 +25,17 @@ import { Observable, Subject } from 'rxjs';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { ExpandedRowInterface } from 'src/app/generics/expanded-row.interface';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { Sort } from '@angular/material/sort';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 export interface ErroneousButton<T> {
   button: Button<T>;
   row: T;
 }
+
+export const RELOAD_TIMEOUT = 500;
 
 @Component({
   selector: 'app-cryton-table',
@@ -223,6 +225,18 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       this.sort,
       this.filter
     );
+  }
+
+  /**
+   * Refreshes table data with a small time-out to simulate loading data even if data gets
+   * loaded almost instantly.
+   */
+  refreshData(): void {
+    this.dataSource.setLoading(true);
+
+    setTimeout(() => {
+      this.loadPage();
+    }, RELOAD_TIMEOUT);
   }
 
   /**

@@ -1,8 +1,8 @@
 import { Column } from '../cryton-table/interfaces/column.interface';
 import { Run } from '../api-responses/run.interface';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { RunService } from 'src/app/services/run.service';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 export class RunTableDataSource extends CrytonTableDataSource<Run> {
   columns: Column[] = [

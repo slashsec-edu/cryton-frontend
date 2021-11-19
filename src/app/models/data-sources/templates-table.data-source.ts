@@ -1,5 +1,5 @@
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { Template } from '../../models/api-responses/template.interface';
-import { CrytonTableDataSource } from '../../generics/cryton-table.datasource';
 import { Column } from '../cryton-table/interfaces/column.interface';
 
 export class TemplatesTableDataSource extends CrytonTableDataSource<Template> {

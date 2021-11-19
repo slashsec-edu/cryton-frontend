@@ -1,8 +1,8 @@
 import { Instance } from '../api-responses/instance.interface';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { InstanceService } from 'src/app/services/instance.service';
 import { Column } from '../cryton-table/interfaces/column.interface';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
 export class InstanceTableDataSource extends CrytonTableDataSource<Instance> {
   columns: Column[] = [

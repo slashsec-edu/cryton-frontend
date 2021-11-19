@@ -17,19 +17,19 @@
   <div class="worker-table">
     <div class="worker-table--row">
       <b>Name:</b>
-      <p [matTooltip]="getTooltip(data.name)">
+      <p [matTooltip]="getTooltip(data.name)" id="name-text">
         {{ data.name | shortString: maxStringLength }}
       </p>
     </div>
     <div class="worker-table--row">
       <b>Address:</b>
-      <p [matTooltip]="getTooltip(data.address)">
+      <p [matTooltip]="getTooltip(data.address)" id="address-text">
         {{ data.address | shortString: maxStringLength }}
       </p>
     </div>
     <div class="worker-table--row">
       <b>Q-Prefix:</b>
-      <p [matTooltip]="getTooltip(data.q_prefix)">
+      <p [matTooltip]="getTooltip(data.q_prefix)" id="q-prefix-text">
         {{ data.q_prefix | shortString: maxStringLength }}
       </p>
     </div>

@@ -6,6 +6,7 @@ import { tap, takeUntil, takeWhile } from 'rxjs/operators';
 import { trigger, transition, useAnimation, query, stagger, style } from '@angular/animations';
 import { renderComponentAnimation } from 'src/app/modules/shared/animations/render-component.animation';
 import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-dahboard.data-source';
+import { RELOAD_TIMEOUT } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 
 @Component({
   selector: 'app-workers-dashboard',
@@ -27,8 +28,8 @@ export class WorkersDashboardComponent implements OnInit, AfterViewInit, OnDestr
 
   dataSource = new WorkersDashboardDataSource(this._workersService);
   firstWorkersLoaded = false;
+  pageSize = 4;
 
-  private _pageSize = 4;
   private _destroy$ = new Subject<void>();
 
   constructor(private _workersService: WorkersService) {}
@@ -38,12 +39,15 @@ export class WorkersDashboardComponent implements OnInit, AfterViewInit, OnDestr
    * the first page of workers gets loaded for proper render animation.
    */
   ngOnInit(): void {
-    this.dataSource.dataSubject$.pipe(takeWhile(() => !this.firstWorkersLoaded)).subscribe(data => {
-      if (data && data.length > 0) {
-        this.firstWorkersLoaded = true;
-      }
-    });
-    this.dataSource.loadItems(0, this._pageSize);
+    this.dataSource
+      .connect()
+      .pipe(takeWhile(() => !this.firstWorkersLoaded))
+      .subscribe(data => {
+        if (data && data.length > 0) {
+          this.firstWorkersLoaded = true;
+        }
+      });
+    this.loadWorkers();
   }
 
   ngAfterViewInit(): void {
@@ -61,6 +65,19 @@ export class WorkersDashboardComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   loadWorkers(): void {
-    this.dataSource.loadItems(this.paginator.pageIndex * this.paginator.pageSize, this.paginator.pageSize);
+    const offset = this.paginator ? this.paginator.pageIndex * this.paginator.pageSize : 0;
+    this.dataSource.loadItems(offset, this.pageSize, null, null);
+  }
+
+  /**
+   * Refreshes table data with a small time-out to simulate loading data even if data gets
+   * loaded almost instantly.
+   */
+  refreshData(): void {
+    this.dataSource.setLoading(true);
+
+    setTimeout(() => {
+      this.loadWorkers();
+    }, RELOAD_TIMEOUT);
   }
 }

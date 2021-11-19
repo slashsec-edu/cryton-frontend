@@ -83,7 +83,7 @@ describe('RunCreationStepsComponent', () => {
 
   it('should display 3 instances in the first step table', async () => {
     const count = await counterHarness.getCount();
-    expect(count).toEqual('3');
+    expect(count).toEqual(3);
   });
 
   it('should display second step if current step subject emits 1', () => {
