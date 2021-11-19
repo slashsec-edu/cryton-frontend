@@ -66,7 +66,6 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { UploadTemplateComponent } from './pages/templates/upload-template/upload-template.component';
 import { ThemeColorGetterComponent } from './components/theme-color-getter/theme-color-getter.component';
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
-import { LogComponent } from './components/log/log.component';
 
 @NgModule({
   declarations: [
@@ -95,8 +94,7 @@ import { LogComponent } from './components/log/log.component';
     CreateRunComponent,
     UploadTemplateComponent,
     ThemeColorGetterComponent,
-    ListLogsComponent,
-    LogComponent
+    ListLogsComponent
   ],
   imports: [
     BrowserModule,

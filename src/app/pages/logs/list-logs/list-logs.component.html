@@ -1,7 +1,12 @@
 <header>
-  <h1>CRYTON LOGS</h1>
+  <div class="header-section">
+    <h1>CRYTON LOGS</h1>
+    <button mat-icon-button color="accent" (click)="refreshData()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
 
-  <form class="filter" [formGroup]="filterForm" (submit)="applyFilter()">
+  <form class="header-section" [formGroup]="filterForm" (submit)="applyFilter()">
     <button mat-flat-button color="primary" id="apply-button">Apply</button>
     <mat-form-field id="filter-field">
       <mat-label>Filter</mat-label>

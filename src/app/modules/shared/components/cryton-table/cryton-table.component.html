@@ -2,13 +2,19 @@
   <header>
     <h2>{{ header }}</h2>
     <div class="header-options">
-      <div class="header-left-side">
+      <div class="header-section">
         <a *ngIf="createButton" [href]="createButton.link">
           <app-cryton-button [value]="createButton.value" icon="add_circle" color="primary"></app-cryton-button>
         </a>
         <app-cryton-counter name="Total" [count]="data.count"></app-cryton-counter>
+
+        <!-- REFRESH BUTTON -->
+        <button mat-icon-button color="accent" (click)="refreshData()">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
-      <form [formGroup]="filterOptions">
+
+      <form [formGroup]="filterOptions" class="header-section">
         <mat-form-field>
           <mat-label>Column</mat-label>
           <mat-select ngDefaultControl [formControl]="columnControl">
@@ -40,7 +46,7 @@
     mat-table
     matSort
     (matSortChange)="sortData($event)"
-    [hidden]="data.count === 0"
+    [hidden]="data.loading || data.count === 0"
     [dataSource]="dataSource"
     [multiTemplateDataRows]="expandedComponent != null"
   >
@@ -132,23 +138,21 @@
   </table>
 
   <!-- EMPTY TABLE -->
-  <div class="empty-table" *ngIf="data.count === 0 && data.loading; else noResults">
+  <div class="empty-table" *ngIf="data.loading">
     <mat-spinner></mat-spinner>
   </div>
-  <ng-template #noResults>
-    <div class="empty-table" *ngIf="data.count === 0">
-      <h2>NO RESULTS FOUND</h2>
-    </div>
-  </ng-template>
-</ng-container>
+  <div class="empty-table" *ngIf="!data.loading && data.count === 0">
+    <h2>NO RESULTS FOUND</h2>
+  </div>
 
-<div class="paginator">
-  <mat-paginator
-    [length]="dataSource.getCount() | async"
-    [pageSize]="5"
-    [pageSizeOptions]="[3, 5, 10]"
-    [showFirstLastButtons]="true"
-    [hidePageSize]="hidePageSize"
-  >
-  </mat-paginator>
-</div>
+  <div class="paginator">
+    <mat-paginator
+      [length]="dataSource.getCount() | async"
+      [pageSize]="5"
+      [pageSizeOptions]="[3, 5, 10]"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="hidePageSize"
+    >
+    </mat-paginator>
+  </div>
+</ng-container>

@@ -15,10 +15,14 @@ header {
   gap: 10px;
 }
 
-/* FILTER */
-#apply-button {
-  margin-right: 10px;
+/* HEADER */
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+/* FILTER */
 #filter-field {
   width: 200px;
 }

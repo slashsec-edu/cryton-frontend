@@ -50,4 +50,8 @@ export class TestingService<T> {
   postItem(): Observable<Record<string, never> | never> {
     return of({});
   }
+
+  setData(data: T[]): void {
+    this._data = data;
+  }
 }

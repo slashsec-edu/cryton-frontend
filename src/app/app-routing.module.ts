@@ -17,7 +17,6 @@ import { UploadTemplateComponent } from './pages/templates/upload-template/uploa
 import { ReportComponent } from './modules/report/components/report/report.component';
 import { TimelineComponent } from './modules/report/components/timeline/timeline.component';
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
-import { LogComponent } from './components/log/log.component';
 
 const routes: Routes = [
   {
@@ -76,7 +75,6 @@ const routes: Routes = [
       },
       { path: 'reports/:id/timeline', component: TimelineComponent },
       { path: 'logs', component: ListLogsComponent },
-      { path: 'logs/:id', component: LogComponent },
       { path: '', redirectTo: '/app/dashboard', pathMatch: 'full' },
       { path: '**', component: PageUnavailableComponent }
     ]

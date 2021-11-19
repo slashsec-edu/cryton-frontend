@@ -11,6 +11,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject, merge, Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
+import { RELOAD_TIMEOUT } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { LogService, LogsResponse } from 'src/app/services/log.service';
 
@@ -43,11 +44,7 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     merge(this.paginator.initialized, this.paginator.page, this._filter$)
       .pipe(takeUntil(this._destroy$))
       .subscribe(() => {
-        const { filter } = this.filterForm.value as Record<string, string>;
-
-        const offset = this.paginator.pageSize * this.paginator.pageIndex;
-        this._fetchLogs(offset, this.paginator.pageSize, filter ?? '');
-        this._cd.detectChanges();
+        this.loadPage();
       });
   }
 
@@ -63,6 +60,25 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   cancelFilter(): void {
     this.filterForm.reset();
     this.applyFilter();
+  }
+
+  loadPage(): void {
+    const { filter } = this.filterForm.value as Record<string, string>;
+    const offset = this.paginator.pageSize * this.paginator.pageIndex;
+    this._fetchLogs(offset, this.paginator.pageSize, filter ?? '');
+    this._cd.detectChanges();
+  }
+
+  /**
+   * Refreshes table data with a small time-out to simulate loading data even if data gets
+   * loaded almost instantly.
+   */
+  refreshData(): void {
+    this.loading$.next(true);
+
+    setTimeout(() => {
+      this.loadPage();
+    }, RELOAD_TIMEOUT);
   }
 
   private _fetchLogs(offset = 0, limit = 0, filter = ''): void {
