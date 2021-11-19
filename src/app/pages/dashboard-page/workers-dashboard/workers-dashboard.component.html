@@ -29,10 +29,12 @@
     </header>
 
     <!-- WORKER TABLES -->
-    <div class="workers-wrapper" [@renderTrigger]="firstWorkersLoaded ? 'loaded' : 'loading'">
-      <div *ngFor="let worker of data.workers" class="worker">
-        <app-worker-table [data]="worker"> </app-worker-table>
-      </div>
+    <div class="workers-wrapper" [@renderTrigger]="(dataSource.isLoading() | async) ? 'loading' : 'loaded'">
+      <ng-container *ngIf="!(dataSource.isLoading() | async)">
+        <div *ngFor="let worker of data.workers" class="worker">
+          <app-worker-table [data]="worker"> </app-worker-table>
+        </div>
+      </ng-container>
     </div>
   </section>
 </ng-container>
