@@ -1,6 +1,7 @@
 <main class="tc-responsive-page" *ngIf="!(creating$.asObservable() | async); else spinner">
   <div class="tc-responsive-page" [@verticalSlide]="getAnimationState()">
     <section class="create-button-wrapper">
+      <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
       <app-cryton-button
         icon="add_circle"
         value="Create template"
@@ -14,23 +15,24 @@
 
     <section class="main-content tc-responsive-container">
       <div class="content-wrapper">
+        <h5>TEMPLATE PARAMETERS</h5>
         <form [formGroup]="templateForm">
           <mat-form-field appearance="fill">
-            <mat-label>Name</mat-label>
+            <mat-label>Template name</mat-label>
             <input matInput type="text" formControlName="name" />
             <mat-error>Template name is required.</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
-            <mat-label>Owner</mat-label>
+            <mat-label>Owners name</mat-label>
             <input matInput type="text" formControlName="owner" />
             <mat-error>Template owner is required.</mat-error>
           </mat-form-field>
         </form>
 
         <div class="buttons">
-          <button mat-flat-button color="primary" (click)="showDepTree()">Create dependency tree</button>
-          <button mat-flat-button color="primary" (click)="showTimeline()">Create timeline</button>
+          <button mat-flat-button color="primary" (click)="showDepTree()">Show dependency tree</button>
+          <button mat-flat-button color="primary" (click)="showTimeline()">Show timeline</button>
         </div>
       </div>
     </section>

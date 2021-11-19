@@ -31,6 +31,10 @@ import { StageParametersComponent } from './components/stage-parameters/stage-pa
 import { TreeEditorToolbarComponent } from './components/tree-editor-toolbar/tree-editor-toolbar.component';
 import { DeltaTriggerParametersComponent } from './components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { HttpTriggerParametersComponent } from './components/http-trigger-parameters/http-trigger-parameters.component';
+import { StepCreatorHelpComponent } from './components/step-creator-help/step-creator-help.component';
+import { StageCreatorHelpComponent } from './components/stage-creator-help/stage-creator-help.component';
+import { TemplateCreatorHelpComponent } from './components/template-creator-help/template-creator-help.component';
+import { DependencyTreeHelpComponent } from './components/dependency-tree-help/dependency-tree-help.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +51,11 @@ import { HttpTriggerParametersComponent } from './components/http-trigger-parame
     StageParametersComponent,
     TreeEditorToolbarComponent,
     DeltaTriggerParametersComponent,
-    HttpTriggerParametersComponent
+    HttpTriggerParametersComponent,
+    StepCreatorHelpComponent,
+    StageCreatorHelpComponent,
+    TemplateCreatorHelpComponent,
+    DependencyTreeHelpComponent
   ],
   imports: [
     CommonModule,

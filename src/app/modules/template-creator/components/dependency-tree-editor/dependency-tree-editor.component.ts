@@ -22,6 +22,7 @@ import { CrytonEdge } from '../../classes/cryton-edge/cryton-edge';
 import { CrytonStepEdge } from '../../classes/cryton-edge/cryton-step-edge';
 import { AlertService } from 'src/app/services/alert.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { DependencyTreeHelpComponent } from '../dependency-tree-help/dependency-tree-help.component';
 
 @Component({
   selector: 'app-dependency-tree-editor',
@@ -83,6 +84,10 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  showHelp(): void {
+    this._dialog.open(DependencyTreeHelpComponent, { width: '60%' });
   }
 
   /**
