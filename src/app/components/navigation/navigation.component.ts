@@ -1,15 +1,16 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { routes, Route, metaRoutes } from './routes';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ThemeService } from 'src/app/services/theme.service';
 import { ResizeService } from 'src/app/services/resize.service';
+import { BackendStatusService } from 'src/app/services/backend-status.service';
 
 @Component({
   selector: 'app-navigation',
@@ -38,13 +39,16 @@ export class NavigationComponent implements OnInit, OnDestroy {
   isSidebarClosed = false;
   isAccountClosed = true;
   shouldShowOver = false;
+  isBackendLive = false;
 
-  destroy$ = new Subject<void>();
+  private _destroy$ = new Subject<void>();
 
   constructor(
     public themeService: ThemeService,
+    private _backendStatus: BackendStatusService,
     private _breakpointObserver: BreakpointObserver,
-    private _resizeService: ResizeService
+    private _resizeService: ResizeService,
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -55,11 +59,16 @@ export class NavigationComponent implements OnInit, OnDestroy {
     if (isClosed != null) {
       this.isSidebarClosed = isClosed;
     }
+
+    this._backendStatus.isLive$.pipe(takeUntil(this._destroy$)).subscribe(isLive => {
+      this.isBackendLive = isLive;
+      this._cd.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   /**
@@ -68,7 +77,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   initSidebarBreakpoint(): void {
     this._breakpointObserver
       .observe(['(max-width: 768px)'])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this._destroy$))
       .subscribe((breakpointState: BreakpointState) => {
         if (breakpointState.matches) {
           this.shouldShowOver = true;
@@ -121,5 +130,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
     } else {
       this.themeService.changeTheme('light-theme', false);
     }
+  }
+
+  checkBackendStatus(): void {
+    this._backendStatus.checkBackendStatus().pipe(first()).subscribe();
   }
 }
