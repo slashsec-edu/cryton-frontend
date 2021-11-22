@@ -18,6 +18,7 @@ import { Spied } from 'src/app/testing/utility/utility-types';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { BackendStatusService } from 'src/app/services/backend-status.service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -35,6 +36,11 @@ describe('NavigationComponent', () => {
 
   const bpSpy = jasmine.createSpyObj('BreakpointObserver', ['observe']) as Spied<BreakpointObserver>;
   bpSpy.observe.and.callFake(fakeObserve);
+
+  const isLive$ = new BehaviorSubject(true);
+  const backendStatusStub = jasmine.createSpyObj('BackendStatusService', [], {
+    isLive$: isLive$.asObservable()
+  }) as Spied<BackendStatusService>;
 
   /**
    * Tests if navbar links display text.
@@ -56,6 +62,17 @@ describe('NavigationComponent', () => {
     }
   };
 
+  const testBackendStatus = (shouldBeLive: boolean): void => {
+    const nativeEl = fixture.nativeElement as HTMLElement;
+    const backendStatusContainer = nativeEl.querySelector('.backend-status');
+    const dotSpan = backendStatusContainer.querySelector('.dot');
+    const statusText = backendStatusContainer.querySelector('small');
+
+    const statusName = shouldBeLive ? 'live' : 'offline';
+    expect(dotSpan.classList.contains(statusName)).toBeTrue();
+    expect(statusText.textContent).toContain(statusName);
+  };
+
   beforeEach(async () => {
     /**
      * Needs to override change detection strategy to Default
@@ -74,7 +91,10 @@ describe('NavigationComponent', () => {
         MatSlideToggleModule
       ],
       declarations: [NavigationComponent],
-      providers: [{ provide: BreakpointObserver, useValue: bpSpy }]
+      providers: [
+        { provide: BreakpointObserver, useValue: bpSpy },
+        { provide: BackendStatusService, useValue: backendStatusStub }
+      ]
     })
       .overrideComponent(NavigationComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
       .compileComponents();
@@ -145,5 +165,19 @@ describe('NavigationComponent', () => {
 
     expect(component.shouldShowOver).toBeTrue();
     expect(await sidenavHarness.getMode()).toEqual('over');
+  });
+
+  it('should show that backend is live', () => {
+    isLive$.next(true);
+    fixture.detectChanges();
+
+    testBackendStatus(true);
+  });
+
+  it('should show that backend is offline', () => {
+    isLive$.next(false);
+    fixture.detectChanges();
+
+    testBackendStatus(false);
   });
 });

@@ -4,6 +4,7 @@
     <mat-icon>menu</mat-icon>
   </button>
   <div class="topbar-menu">
+    <!-- DARK MODE TOGGLE -->
     <mat-icon *ngIf="themeService.currentTheme$" class="theme-icon">{{
       themeToggle.checked ? 'dark_mode' : 'light_mode'
     }}</mat-icon>
@@ -13,6 +14,17 @@
       [checked]="(themeService.currentTheme$ | async).isDark"
     >
     </mat-slide-toggle>
+
+    <!-- BACKEND STATUS -->
+    <div class="backend-status">
+      <span [class]="{ dot: true, live: isBackendLive, offline: !isBackendLive }"></span>
+      <small>{{ 'Cryton is ' + (isBackendLive ? 'live&nbsp;' : 'offline&nbsp;') }}</small>
+      <button mat-icon-button matTooltip="Refresh status" (click)="checkBackendStatus()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <!-- ACCOUNT BUTTON -->
     <button mat-button id="account-button" [matMenuTriggerFor]="accountMenu">
       <mat-icon class="account-button--icon">account_circle</mat-icon>Account<mat-icon
         class="account-button--icon expand-arrow"
