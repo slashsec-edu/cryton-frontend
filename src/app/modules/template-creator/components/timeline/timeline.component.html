@@ -1,12 +1,16 @@
-<div class="controls">
+<div class="header">
   <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
 
-  <app-cryton-button
-    color="primary"
-    value="Go back"
-    icon="arrow_upward"
-    (clicked)="emitSwapPagesEvent()"
-  ></app-cryton-button>
+  <div class="buttons">
+    <app-cryton-button value="Help" icon="info" (clicked)="openHelp()"></app-cryton-button>
+
+    <app-cryton-button
+      color="primary"
+      value="Go back"
+      icon="arrow_upward"
+      (clicked)="emitSwapPagesEvent()"
+    ></app-cryton-button>
+  </div>
 </div>
 
 <!-- TIMELINE -->
