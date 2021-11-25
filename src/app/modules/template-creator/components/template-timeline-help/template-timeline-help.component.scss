@@ -1,0 +1,23 @@
+/* LAYOUY */
+section {
+  margin: 10px 0;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+
+  h1 {
+    margin: 0;
+  }
+}
+footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* OTHER */
+li > mat-icon {
+  font-size: 16px;
+}
