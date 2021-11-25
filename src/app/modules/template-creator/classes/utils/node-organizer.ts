@@ -1,6 +1,6 @@
 import { Queue } from 'src/app/modules/shared/utils/queue';
-import { TreeEdge } from '../dependency-tree/tree-edge';
-import { NODE_HEIGHT, NODE_WIDTH, TreeNode } from '../dependency-tree/tree-node';
+import { TreeEdge } from '../dependency-tree/edge/tree-edge';
+import { NODE_HEIGHT, NODE_WIDTH, TreeNode } from '../dependency-tree/node/tree-node';
 import { TimelineEdge } from '../timeline/timeline-edge';
 import { TimelineNode } from '../timeline/timeline-node';
 import { NODE_RADIUS } from '../timeline/timeline-node-constants';
@@ -419,8 +419,8 @@ export class NodeOrganizer {
     return edges
       .filter(edge => this._isNodeLastParent(node as TimelineNode, edge.childNode as TimelineNode))
       .sort((a: Edge, b: Edge) => {
-        const aName = a.childNode.crytonNode.name;
-        const bName = b.childNode.crytonNode.name;
+        const aName = a.childNode.name;
+        const bName = b.childNode.name;
 
         return aName === bName ? 0 : aName < bName ? -1 : 1;
       });
@@ -435,8 +435,8 @@ export class NodeOrganizer {
    * @returns Sorting order.
    */
   private _timelineNodeSort(a: TimelineNode, b: TimelineNode): number {
-    const aStart = a.crytonNode.trigger.getStartTime() ?? 0;
-    const bStart = b.crytonNode.trigger.getStartTime() ?? 0;
+    const aStart = a.trigger.getStartTime() ?? 0;
+    const bStart = b.trigger.getStartTime() ?? 0;
 
     const diff = aStart - bStart;
     if (diff === 0) {
@@ -453,10 +453,10 @@ export class NodeOrganizer {
    * @returns Sorting order.
    */
   private _nameSort(a: Node, b: Node): number {
-    if (a.crytonNode.name === b.crytonNode.name) {
+    if (a.name === b.name) {
       return 0;
     }
-    return a.crytonNode.name < b.crytonNode.name ? -1 : 1;
+    return a.name < b.name ? -1 : 1;
   }
 
   /**
@@ -495,14 +495,11 @@ export class NodeOrganizer {
     const parents = (childNode.parentEdges as Edge[]).map(edge => edge.parentNode);
 
     if (this._nodeType === NodeType.TIMELINE) {
-      const parentStart = (parentNode as TimelineNode).crytonNode.trigger.getStartTime() ?? 0;
+      const parentStart = (parentNode as TimelineNode).trigger.getStartTime() ?? 0;
 
       return !parents.some((otherNode: TimelineNode) => {
-        const otherStart = otherNode.crytonNode.trigger.getStartTime() ?? 0;
-        return (
-          otherStart > parentStart ||
-          (otherStart === parentStart && otherNode.crytonNode.name < parentNode.crytonNode.name)
-        );
+        const otherStart = otherNode.trigger.getStartTime() ?? 0;
+        return otherStart > parentStart || (otherStart === parentStart && otherNode.name < parentNode.name);
       });
     } else {
       return !parents.some(parent =>
@@ -520,20 +517,20 @@ export class NodeOrganizer {
   private _nodeDistFromRoot(node: Node): number {
     const queue = new Queue<Node>();
     const distances: Record<string, number> = {};
-    distances[node.crytonNode.name] = 0;
+    distances[node.name] = 0;
     queue.enqueue(node);
 
     while (!queue.isEmpty()) {
       const currentNode = queue.dequeue();
 
       if (currentNode.parentEdges.length === 0) {
-        return distances[currentNode.crytonNode.name];
+        return distances[currentNode.name];
       }
 
       currentNode.parentEdges.forEach((parentEdge: Edge) => {
         const parent = parentEdge.parentNode;
-        if (!distances[parent.crytonNode.name]) {
-          distances[parent.crytonNode.name] = distances[currentNode.crytonNode.name] + 1;
+        if (!distances[parent.name]) {
+          distances[parent.name] = distances[currentNode.name] + 1;
           queue.enqueue(parent);
         }
       });

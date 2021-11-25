@@ -5,9 +5,9 @@ import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe'
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EdgeCondition } from '../../models/interfaces/edge-condition';
-import { CrytonStepEdge } from '../../classes/cryton-edge/cryton-step-edge';
 import { first } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
+import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
 
 @Component({
   selector: 'app-edge-parameters',
@@ -35,7 +35,7 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
   constructor(
     private _alert: AlertService,
     private _dialogRef: MatDialogRef<EdgeParametersComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { edge: CrytonStepEdge }
+    @Inject(MAT_DIALOG_DATA) public data: { edge: StepEdge }
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +146,7 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    *
    * @param edge Step edge from MAT_DIALOG_DATA.
    */
-  private _loadEdgeConditions(edge: CrytonStepEdge): void {
+  private _loadEdgeConditions(edge: StepEdge): void {
     edge.conditions.forEach(condition => {
       this.conditions.push(
         new FormGroup({

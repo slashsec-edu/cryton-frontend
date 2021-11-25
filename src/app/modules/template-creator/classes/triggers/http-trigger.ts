@@ -1,7 +1,7 @@
 import Konva from 'konva';
-import { TriggerType } from '../../../models/enums/trigger-type';
-import { HTTPListenerArgs } from '../../../models/interfaces/http-listener-args';
-import { LABEL_FONT_SIZE } from '../../timeline/timeline-node-constants';
+import { TriggerType } from '../../models/enums/trigger-type';
+import { HTTPListenerArgs } from '../../models/interfaces/http-listener-args';
+import { LABEL_FONT_SIZE } from '../timeline/timeline-node-constants';
 import { Trigger } from './trigger';
 
 export class HttpTrigger extends Trigger<HTTPListenerArgs> {

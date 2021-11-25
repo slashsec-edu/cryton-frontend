@@ -5,20 +5,18 @@ import { DependencyTree, MAX_SCALE, MIN_SCALE } from './dependency-tree';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { BehaviorSubject } from 'rxjs';
 import { Theme } from '../../models/interfaces/theme';
-import { CrytonStage } from '../cryton-node/cryton-stage';
 import { TemplateTimeline } from '../timeline/template-timeline';
-import { TriggerFactory } from '../cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from '../triggers/trigger-factory';
 import { TriggerType } from '../../models/enums/trigger-type';
-import { NODE_HEIGHT, NODE_WIDTH, TREE_NODE_NAME, TREE_NODE_RECT_NAME } from './tree-node';
-import { CrytonNode } from '../cryton-node/cryton-node';
-import { CrytonStep } from '../cryton-node/cryton-step';
+import { NODE_HEIGHT, NODE_WIDTH, TreeNode, TREE_NODE_NAME, TREE_NODE_RECT_NAME } from './node/tree-node';
 import { Vector2d } from 'konva/types/types';
-import { CrytonEdge } from '../cryton-edge/cryton-edge';
-import { EDGE_POINTER_LENGTH, TREE_EDGE_NAME } from './tree-edge';
+import { EDGE_POINTER_LENGTH, TreeEdge, TREE_EDGE_NAME } from './edge/tree-edge';
 import { ToolState } from './tool-state';
 import { TreeComparator } from 'src/app/testing/utility/tree-comparator';
-import { CrytonStepEdge } from '../cryton-edge/cryton-step-edge';
 import Konva from 'konva';
+import { StageNode } from './node/stage-node';
+import { StepNode } from './node/step-node';
+import { StepEdge } from './edge/step-edge';
 
 describe('DependencyTree', () => {
   let depTree: DependencyTree;
@@ -27,34 +25,34 @@ describe('DependencyTree', () => {
 
   const theme$ = new BehaviorSubject<Theme>(mockTheme);
 
-  const createEdge = (parentNode: CrytonNode, childNode: CrytonNode): CrytonEdge => {
+  const createEdge = (parentNode: TreeNode, childNode: TreeNode): TreeEdge => {
     const edge = depTree.createDraggedEdge(parentNode);
     edge.childNode = childNode;
     edge.parentNode.addChildEdge(edge);
     edge.childNode.addParentEdge(edge);
-    edge.treeEdge.moveToParentNode();
-    edge.treeEdge.moveToChildNode();
+    edge.moveToParentNode();
+    edge.moveToChildNode();
     depTree.draggedEdge = null;
 
     return edge;
   };
 
-  const checkEdgePoints = (edge: CrytonEdge, parentNode: CrytonNode, childNode: CrytonNode): void => {
-    const edgePoints = edge.treeEdge.konvaObject.points();
+  const checkEdgePoints = (edge: TreeEdge, parentNode: TreeNode, childNode: TreeNode): void => {
+    const edgePoints = edge.konvaObject.points();
     const edgeStart: Vector2d = { x: edgePoints[0], y: edgePoints[1] };
     const edgeEnd: Vector2d = { x: edgePoints[2], y: edgePoints[3] };
 
-    expect(edgeStart.x).toEqual(parentNode.treeNode.x + NODE_WIDTH / 2);
-    expect(edgeStart.y).toEqual(parentNode.treeNode.y + NODE_HEIGHT);
-    expect(edgeEnd.x).toEqual(childNode.treeNode.x + NODE_WIDTH / 2);
-    expect(edgeEnd.y).toEqual(childNode.treeNode.y + EDGE_POINTER_LENGTH / 2);
+    expect(edgeStart.x).toEqual(parentNode.x + NODE_WIDTH / 2);
+    expect(edgeStart.y).toEqual(parentNode.y + NODE_HEIGHT);
+    expect(edgeEnd.x).toEqual(childNode.x + NODE_WIDTH / 2);
+    expect(edgeEnd.y).toEqual(childNode.y + EDGE_POINTER_LENGTH / 2);
   };
 
-  const createStage = (name: string): CrytonStage => {
+  const createStage = (name: string): StageNode => {
     const childDepTree = new DependencyTree(NodeType.CRYTON_STEP);
     const timeline = new TemplateTimeline();
     const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 });
-    const stage = new CrytonStage({
+    const stage = new StageNode({
       name,
       childDepTree,
       parentDepTree: depTree,
@@ -64,16 +62,16 @@ describe('DependencyTree', () => {
     return stage;
   };
 
-  const createStep = (name: string): CrytonStep => {
-    const step = new CrytonStep(name, '', '', depTree);
+  const createStep = (name: string): StepNode => {
+    const step = new StepNode(name, '', '', depTree);
     return step;
   };
 
-  const createNodeAtPos = (createFn: (name: string) => CrytonNode, name: string, pos: Vector2d): CrytonNode => {
+  const createNodeAtPos = (createFn: (name: string) => TreeNode, name: string, pos: Vector2d): TreeNode => {
     const node = createFn(name);
-    depTree.treeNodeManager.moveToPlan(node);
-    node.treeNode.x = pos.x;
-    node.treeNode.y = pos.y;
+    node.parentDepTree.treeNodeManager.moveToPlan(node);
+    node.x = pos.x;
+    node.y = pos.y;
 
     return node;
   };
@@ -113,7 +111,7 @@ describe('DependencyTree', () => {
     });
   };
 
-  const runNodeTests = (createFn: (name: string) => CrytonNode): void => {
+  const runNodeTests = (createFn: (name: string) => TreeNode): void => {
     it('should add node to the canvas', () => {
       const node = createFn('test');
       depTree.addNode(node);
@@ -125,7 +123,7 @@ describe('DependencyTree', () => {
       depTree.toolState = jasmine.createSpyObj('ToolState', [], { isMoveNodeEnabled: true }) as ToolState;
       depTree.addNode(node);
 
-      expect(node.treeNode.konvaObject.draggable()).toBeTrue();
+      expect(node.konvaObject.draggable()).toBeTrue();
     });
 
     it('should find root node', () => {
@@ -160,14 +158,14 @@ describe('DependencyTree', () => {
       expect(edge).toBeTruthy();
 
       const canvasEdge = depTree.treeLayer.findOne(`.${TREE_EDGE_NAME}`);
-      expect(canvasEdge).toBe(edge.treeEdge.konvaObject);
+      expect(canvasEdge).toBe(edge.konvaObject);
     });
 
     describe('Fit screen tests', () => {
       it('1 node test', () => {
         const node = createFn('test');
         depTree.addNode(node);
-        const treeNode = node.treeNode;
+        const treeNode = node;
         depTree.fitScreen();
 
         const nodeCenter: Vector2d = { x: treeNode.x + NODE_WIDTH / 2, y: treeNode.y + NODE_HEIGHT / 2 };
@@ -190,10 +188,10 @@ describe('DependencyTree', () => {
           y: depTree.stage.height() / 2 - rectCenter.y
         };
 
-        expect(parentNode.treeNode.x).toBe(centeringVector.x, 'Parent node x !== expected value');
-        expect(parentNode.treeNode.y).toBe(centeringVector.y, 'Parent node y !== expected value');
-        expect(childNode.treeNode.x).toBe(centeringVector.x, 'Child node x !== expected value');
-        expect(childNode.treeNode.y).toBe(centeringVector.y + 200, 'Child node y !== expected value');
+        expect(parentNode.x).toBe(centeringVector.x, 'Parent node x !== expected value');
+        expect(parentNode.y).toBe(centeringVector.y, 'Parent node y !== expected value');
+        expect(childNode.x).toBe(centeringVector.x, 'Child node x !== expected value');
+        expect(childNode.y).toBe(centeringVector.y + 200, 'Child node y !== expected value');
 
         // Check if arrow was moved correctly
         checkEdgePoints(edge, parentNode, childNode);
@@ -215,10 +213,10 @@ describe('DependencyTree', () => {
           y: (depTree.stage.height() / 2) * (1 / depTree.scale) - boundingRectCenter.y
         };
 
-        expect(parentNode.treeNode.x).toBe(centeringVector.x, 'Parent node x !== expected value');
-        expect(parentNode.treeNode.y).toBe(centeringVector.y, 'Parent node y !== expected value');
-        expect(childNode.treeNode.x).toBe(centeringVector.x, 'Child node x !== expected value');
-        expect(childNode.treeNode.y).toBe(
+        expect(parentNode.x).toBe(centeringVector.x, 'Parent node x !== expected value');
+        expect(parentNode.y).toBe(centeringVector.y, 'Parent node y !== expected value');
+        expect(childNode.x).toBe(centeringVector.x, 'Child node x !== expected value');
+        expect(childNode.y).toBe(
           centeringVector.y + depTree.stage.height() + NODE_HEIGHT,
           'Child node y !== expected value'
         );
@@ -248,9 +246,9 @@ describe('DependencyTree', () => {
       const edgeOne = createEdge(nodeOne, nodeTwo);
       const edgeTwo = createEdge(nodeOne, nodeThree);
 
-      nodeOne.treeNode.x = 100;
-      nodeTwo.treeNode.x = 70;
-      nodeThree.treeNode.x = 130;
+      nodeOne.x = 100;
+      nodeTwo.x = 70;
+      nodeThree.x = 130;
 
       depTree.updateAllEdges();
       checkEdgePoints(edgeOne, nodeOne, nodeTwo);
@@ -273,8 +271,8 @@ describe('DependencyTree', () => {
       nodeRects.forEach((rect: Konva.Rect) => {
         expect(rect.fill()).toBe('#23456');
       });
-      expect(edgeOne.treeEdge.konvaObject.stroke()).toBe('#12345');
-      expect(edgeOne.treeEdge.konvaObject.fill()).toBe('#12345');
+      expect(edgeOne.konvaObject.stroke()).toBe('#12345');
+      expect(edgeOne.konvaObject.fill()).toBe('#12345');
     });
 
     it('should return no error', () => {
@@ -392,23 +390,23 @@ describe('DependencyTree', () => {
         const stepNine = createNodeAtPos(createStep, 'stepNine', { x: 0, y: 0 });
         const stepTen = createNodeAtPos(createStep, 'stepTen', { x: 0, y: 0 });
 
-        const edgeOne = createEdge(stepOne, stepTwo) as CrytonStepEdge;
+        const edgeOne = createEdge(stepOne, stepTwo) as StepEdge;
         edgeOne.conditions.push({ type: 'result', value: 'OK' });
-        const edgeTwo = createEdge(stepOne, stepThree) as CrytonStepEdge;
+        const edgeTwo = createEdge(stepOne, stepThree) as StepEdge;
         edgeTwo.conditions.push({ type: 'state', value: 'RUNNING' });
-        const edgeThree = createEdge(stepOne, stepFour) as CrytonStepEdge;
+        const edgeThree = createEdge(stepOne, stepFour) as StepEdge;
         edgeThree.conditions.push({ type: 'std_out', value: '15' });
-        const edgeFour = createEdge(stepTwo, stepFive) as CrytonStepEdge;
+        const edgeFour = createEdge(stepTwo, stepFive) as StepEdge;
         edgeFour.conditions.push({ type: 'mod_err', value: 'An error occured.' });
-        const edgeFive = createEdge(stepThree, stepSix) as CrytonStepEdge;
+        const edgeFive = createEdge(stepThree, stepSix) as StepEdge;
         edgeFive.conditions.push({ type: 'return_code', value: '1' });
-        const edgeSix = createEdge(stepThree, stepSeven) as CrytonStepEdge;
+        const edgeSix = createEdge(stepThree, stepSeven) as StepEdge;
         edgeSix.conditions.push({ type: 'std_err', value: 'An error occured.' });
-        const edgeSeven = createEdge(stepFour, stepEight) as CrytonStepEdge;
+        const edgeSeven = createEdge(stepFour, stepEight) as StepEdge;
         edgeSeven.conditions.push({ type: 'mod_out', value: '50' });
-        const edgeEight = createEdge(stepFour, stepNine) as CrytonStepEdge;
+        const edgeEight = createEdge(stepFour, stepNine) as StepEdge;
         edgeEight.conditions.push({ type: 'any', value: 'test' });
-        const edgeNine = createEdge(stepNine, stepTen) as CrytonStepEdge;
+        const edgeNine = createEdge(stepNine, stepTen) as StepEdge;
         edgeNine.conditions.push({ type: 'result', value: 'OK' }, { type: 'state', value: 'DOWN' });
 
         const treeCopy = depTree.copy();

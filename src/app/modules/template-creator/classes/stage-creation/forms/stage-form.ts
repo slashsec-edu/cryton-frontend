@@ -1,13 +1,13 @@
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TriggerType } from '../../../models/enums/trigger-type';
 import { NodeManager } from '../../dependency-tree/node-manager';
-import { CrytonStage } from '../../cryton-node/cryton-stage';
 import { DeltaForm } from './delta-form';
 import { HttpForm, HttpTriggerForm } from './http-form';
 import { TriggerForm } from './trigger-form.interface';
 import { TriggerParameters } from '../trigger-parameters';
 import { Type } from '@angular/core';
 import { Observable } from 'rxjs';
+import { StageNode } from '../../dependency-tree/node/stage-node';
 
 const INITIAL_TRIGGER = TriggerType.DELTA;
 
@@ -63,7 +63,7 @@ export class StageForm {
     return this._triggerForm.formComponent;
   }
 
-  fill(stage: CrytonStage): void {
+  fill(stage: StageNode): void {
     this._stageArgsForm.setValue({
       name: stage.name,
       triggerType: stage.trigger.getType()
@@ -72,7 +72,7 @@ export class StageForm {
     this._triggerForm.fill(stage);
   }
 
-  fillWithEditedStage(stage: CrytonStage): void {
+  fillWithEditedStage(stage: StageNode): void {
     this.editedNodeName = stage.name;
     this.fill(stage);
   }

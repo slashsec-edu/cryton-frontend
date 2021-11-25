@@ -16,6 +16,7 @@ import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 describe('WorkersDashboardComponent', () => {
   let component: WorkersDashboardComponent;
@@ -53,7 +54,8 @@ describe('WorkersDashboardComponent', () => {
           BrowserAnimationsModule,
           MatPaginatorModule,
           SharedModule,
-          MatTooltipModule
+          MatTooltipModule,
+          MatProgressBarModule
         ],
         providers: [{ provide: WorkersService, useValue: workersServiceStub }]
       }).compileComponents();

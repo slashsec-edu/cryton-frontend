@@ -3,7 +3,6 @@ import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from
 import Konva from 'konva';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { CrytonStage } from '../../classes/cryton-node/cryton-stage';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
@@ -13,9 +12,10 @@ import { NodeType } from '../../models/enums/node-type';
 import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PreviewDependencyTree } from '../../classes/dependency-tree/preview-dependency-tree';
-import { TriggerFactory } from '../../classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
+import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 
 @Component({
   selector: 'app-stage-creator',
@@ -41,10 +41,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this._state.stageForm = value;
   }
 
-  get editedStage(): CrytonStage {
+  get editedStage(): StageNode {
     return this._state.editedStage;
   }
-  set editedStage(value: CrytonStage) {
+  set editedStage(value: StageNode) {
     this._state.editedStage = value;
   }
 
@@ -223,13 +223,13 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    *
    * @returns Created cryton stage.
    */
-  private _createStage(): CrytonStage {
+  private _createStage(): StageNode {
     const { name, triggerType } = this._state.stageForm.getStageArgs();
     const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
 
     const trigger = TriggerFactory.createTrigger(triggerType, this._state.stageForm.getTriggerArgs());
 
-    return new CrytonStage({
+    return new StageNode({
       parentDepTree: this.parentDepTree,
       timeline: this._state.timeline,
       childDepTree,
@@ -265,8 +265,8 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    *
    * @param editNode$ Edit node observable from tree node manager
    */
-  private _createEditNodeSub(editNode$: Observable<CrytonNode>): void {
-    editNode$.pipe(takeUntil(this._destroy$)).subscribe((stage: CrytonStage) => {
+  private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
+    editNode$.pipe(takeUntil(this._destroy$)).subscribe((stage: StageNode) => {
       if (stage) {
         this._moveToEditor(stage);
       } else if (this.editedStage) {
@@ -280,7 +280,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    *
    * @param stage Stage to edit.
    */
-  private _moveToEditor(stage: CrytonStage): void {
+  private _moveToEditor(stage: StageNode): void {
     if (stage !== this.editedStage) {
       // Don't back up empty form or edited stage.
       if (!this.editedStage) {

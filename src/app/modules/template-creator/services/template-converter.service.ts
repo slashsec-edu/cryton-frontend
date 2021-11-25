@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 import { parse, stringify } from 'yaml';
-import { CrytonStepEdge } from '../classes/cryton-edge/cryton-step-edge';
-import { CrytonStage } from '../classes/cryton-node/cryton-stage';
-import { CrytonStep } from '../classes/cryton-node/cryton-step';
 import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
 import { NodeType } from '../models/enums/node-type';
 import {
@@ -19,7 +16,10 @@ import { first, tap, mapTo } from 'rxjs/operators';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { TemplateService } from 'src/app/services/template.service';
 import { TemplateDetail } from 'src/app/models/api-responses/template-detail.interface';
-import { TriggerFactory } from '../classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from '../classes/triggers/trigger-factory';
+import { StageNode } from '../classes/dependency-tree/node/stage-node';
+import { StepNode } from '../classes/dependency-tree/node/step-node';
+import { StepEdge } from '../classes/dependency-tree/edge/step-edge';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +63,7 @@ export class TemplateConverterService {
       owner: template.plan.owner
     });
 
-    const stagesWithParents: Record<string, { stage: CrytonStage; parents: string[] }> = {};
+    const stagesWithParents: Record<string, { stage: StageNode; parents: string[] }> = {};
 
     template.plan.stages.forEach(stageDescription => {
       const stage = this._createStage(stageDescription, parentDepTree);
@@ -75,9 +75,7 @@ export class TemplateConverterService {
     });
 
     this._createStageEdges(stagesWithParents);
-    stageOrganizer.organizeNodes(
-      Object.values(stagesWithParents).map(stageWithParent => stageWithParent.stage.treeNode)
-    );
+    stageOrganizer.organizeNodes(Object.values(stagesWithParents).map(stageWithParent => stageWithParent.stage));
 
     parentDepTree.updateAllEdges();
     parentDepTree.treeLayer.draw();
@@ -95,12 +93,12 @@ export class TemplateConverterService {
 
     const template: TemplateDescription = { plan: { name, owner, stages: [] } };
 
-    templateDepTree.treeNodeManager.canvasNodes.forEach((node: CrytonStage) => {
+    templateDepTree.treeNodeManager.canvasNodes.forEach((node: StageNode) => {
       const stage: StageDescription = {
         name: node.name,
         trigger_type: node.trigger.getType(),
         trigger_args: node.trigger.getArgs(),
-        steps: this._createStepsYaml(node.childDepTree.treeNodeManager.canvasNodes as CrytonStep[])
+        steps: this._createStepsYaml(node.childDepTree.treeNodeManager.canvasNodes as StepNode[])
       };
 
       if (node.parentEdges.length > 0) {
@@ -128,7 +126,7 @@ export class TemplateConverterService {
    * @param steps Cryton steps.
    * @returns Steps yaml object.
    */
-  private _createStepsYaml(steps: CrytonStep[]): StepDescription[] {
+  private _createStepsYaml(steps: StepNode[]): StepDescription[] {
     const stepArray: StepDescription[] = [];
 
     steps.forEach(step => {
@@ -139,7 +137,7 @@ export class TemplateConverterService {
       };
       const next: StepEdgeDescription[] = [];
 
-      step.childEdges.forEach((edge: CrytonStepEdge) => {
+      step.childEdges.forEach((edge: StepEdge) => {
         edge.conditions.forEach(condition => {
           next.push({ step: edge.childNode.name, ...condition });
         });
@@ -165,12 +163,12 @@ export class TemplateConverterService {
    * @param parentDepTree Stage's parent dependency tree.
    * @returns Cryton stage.
    */
-  private _createStage(stageDescription: StageDescription, parentDepTree: DependencyTree): CrytonStage {
+  private _createStage(stageDescription: StageDescription, parentDepTree: DependencyTree): StageNode {
     const childDepTree = new DependencyTree(NodeType.CRYTON_STEP);
     const parentTimeline = this._state.timeline;
     const stepOrganizer = new NodeOrganizer(OrganizerNodeType.STEP);
 
-    const stepsWithEdges: Record<string, { step: CrytonStep; next: StepEdgeDescription[] }> = {};
+    const stepsWithEdges: Record<string, { step: StepNode; next: StepEdgeDescription[] }> = {};
 
     stageDescription.steps.forEach(stepDescription => {
       const step = this._createStep(stepDescription, childDepTree);
@@ -179,14 +177,14 @@ export class TemplateConverterService {
     });
     this._createStepEdges(stepsWithEdges);
     const rootNode = Object.values(stepsWithEdges).find(step => step.step.parentEdges.length === 0);
-    stepOrganizer.organizeTree(rootNode.step.treeNode);
+    stepOrganizer.organizeTree(rootNode.step);
 
     childDepTree.updateAllEdges();
     childDepTree.treeLayer.draw();
 
     const trigger = TriggerFactory.createTrigger(stageDescription.trigger_type, stageDescription.trigger_args);
 
-    const crytonStage = new CrytonStage({
+    const crytonStage = new StageNode({
       name: stageDescription.name,
       parentDepTree,
       childDepTree,
@@ -204,8 +202,8 @@ export class TemplateConverterService {
    * @param parentDepTree Step's parent dependency tree.
    * @returns Cryton step.
    */
-  private _createStep(stepDescription: StepDescription, parentDepTree: DependencyTree): CrytonStep {
-    const step = new CrytonStep(
+  private _createStep(stepDescription: StepDescription, parentDepTree: DependencyTree): StepNode {
+    const step = new StepNode(
       stepDescription.name,
       stepDescription.attack_module,
       stringify(stepDescription.attack_module_args),
@@ -221,13 +219,13 @@ export class TemplateConverterService {
    * @param steps Record with step name as a key and an object with
    * cryton step and YAML representations of all of its edges as the value.
    */
-  private _createStepEdges(steps: Record<string, { step: CrytonStep; next: StepEdgeDescription[] }>): void {
+  private _createStepEdges(steps: Record<string, { step: StepNode; next: StepEdgeDescription[] }>): void {
     Object.values(steps).forEach(stepWithEdges => {
       // <Parent step name, step's edges>
-      const createdEdges: Record<string, CrytonStepEdge[]> = {};
+      const createdEdges: Record<string, StepEdge[]> = {};
 
       stepWithEdges.next?.forEach(edgeYaml => {
-        let matchingEdge: CrytonStepEdge;
+        let matchingEdge: StepEdge;
 
         if (!createdEdges[stepWithEdges.step.name]) {
           matchingEdge = this._createStepEdge(stepWithEdges.step, steps[edgeYaml.step].step);
@@ -256,8 +254,8 @@ export class TemplateConverterService {
    * @param childNode Child node.
    * @returns Cryton step edge.
    */
-  private _createStepEdge(parentNode: CrytonStep, childNode: CrytonStep): CrytonStepEdge {
-    const edge = parentNode.parentDepTree.createDraggedEdge(parentNode) as CrytonStepEdge;
+  private _createStepEdge(parentNode: StepNode, childNode: StepNode): StepEdge {
+    const edge = parentNode.parentDepTree.createDraggedEdge(parentNode) as StepEdge;
     parentNode.parentDepTree.connectDraggedEdge(childNode);
     return edge;
   }
@@ -267,7 +265,7 @@ export class TemplateConverterService {
    *
    * @param stages Record with stage name as a key and an object with cryton stage and names of all of its parents as the value.
    */
-  private _createStageEdges(stages: Record<string, { stage: CrytonStage; parents: string[] }>) {
+  private _createStageEdges(stages: Record<string, { stage: StageNode; parents: string[] }>) {
     Object.values(stages).forEach(stageWithParent => {
       stageWithParent.parents?.forEach(parent => {
         stageWithParent.stage.parentDepTree.createDraggedEdge(stages[parent].stage);

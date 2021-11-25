@@ -1,31 +1,29 @@
 import Konva from 'konva';
-import { CrytonStageEdge } from '../cryton-edge/cryton-stage-edge';
 import { TemplateTimeline } from './template-timeline';
-import { TimelineNode } from './timeline-node';
-import { NS_EDGE_DASH, NODE_RADIUS } from './timeline-node-constants';
+import { NODE_RADIUS } from './timeline-node-constants';
 import { Vector } from '../utils/vector';
 import { Theme } from '../../models/interfaces/theme';
 import { EDGE_ARROW_NAME } from './timeline-edge-constants';
+import { TimelineNode } from './timeline-node';
 
 export class TimelineEdge {
-  crytonEdge: CrytonStageEdge;
   konvaObject: Konva.Arrow;
+  timeline: TemplateTimeline;
 
-  constructor(crytonEdge: CrytonStageEdge) {
-    this.crytonEdge = crytonEdge;
+  parentNode: TimelineNode;
+  childNode: TimelineNode;
+
+  private _edgeColor: string;
+
+  constructor(timeline: TemplateTimeline, parentNode: TimelineNode, childNode: TimelineNode) {
+    this.timeline = timeline;
+    this.parentNode = parentNode;
+    this.childNode = childNode;
+
+    parentNode.childEdges.push(this);
+    childNode.parentEdges.push(this);
+
     this._initKonvaObject();
-  }
-
-  get parentNode(): TimelineNode {
-    return this.crytonEdge.parentNode.timelineNode;
-  }
-
-  get childNode(): TimelineNode {
-    return this.crytonEdge.childNode.timelineNode;
-  }
-
-  get timeline(): TemplateTimeline {
-    return this.crytonEdge.timeline;
   }
 
   set color(value: string) {
@@ -37,15 +35,15 @@ export class TimelineEdge {
    * Updates edge points.
    */
   updatePoints(): void {
-    this.konvaObject.points(this._generatePoints());
-  }
+    const newPoints = this._generatePoints();
 
-  updateEdgeStyle(): void {
-    if (!this.childNode.crytonNode.trigger.getStartTime()) {
-      this._addDash();
+    if (newPoints[2] - newPoints[0] < 0) {
+      this.color = 'red';
     } else {
-      this._removeDash();
+      this.color = this._edgeColor;
     }
+
+    this.konvaObject.points(newPoints);
   }
 
   /**
@@ -54,7 +52,23 @@ export class TimelineEdge {
    * @param theme New theme.
    */
   changeTheme(theme: Theme): void {
-    this.color = theme.templateCreator.timelineEdge;
+    this._edgeColor = theme.templateCreator.timelineEdge;
+
+    const edgePoints = this.konvaObject.points();
+
+    if (edgePoints[2] - edgePoints[0] >= 0) {
+      this.color = theme.templateCreator.timelineEdge;
+    }
+  }
+
+  destroy(): void {
+    this.konvaObject.destroy();
+    this.parentNode.removeChildEdge(this);
+    this.childNode.removeParentEdge(this);
+    this.konvaObject = null;
+    this.parentNode = null;
+    this.childNode = null;
+    this.timeline = null;
   }
 
   /**
@@ -74,26 +88,6 @@ export class TimelineEdge {
     if (this.timeline.theme) {
       this.changeTheme(this.timeline.theme);
     }
-
-    if (this.childNode.crytonNode.trigger.getStartTime() === null) {
-      this.konvaObject.dash(NS_EDGE_DASH);
-    }
-
-    this.konvaObject.on('mouseenter', e => {
-      e.cancelBubble = true;
-      this.timeline.cursorState.resetCursor();
-      this.color = this.timeline.theme.templateCreator.timelineEdgeHover;
-      this.konvaObject.moveToBottom();
-      this.timeline.stage.draw();
-    });
-
-    this.konvaObject.on('mouseleave', e => {
-      e.cancelBubble = true;
-      this.timeline.cursorState.resetCursor();
-      this.changeTheme(this.timeline.theme);
-      this.konvaObject.moveToBottom();
-      this.timeline.stage.draw();
-    });
   }
 
   /**
@@ -136,19 +130,5 @@ export class TimelineEdge {
     }
     v = v.normalize();
     return origin.add(v.multiplyScalar(radius));
-  }
-
-  /**
-   * Removes dash from the edge.
-   */
-  private _removeDash(): void {
-    this.konvaObject.dash(null);
-  }
-
-  /**
-   * Adds dash to the edge.
-   */
-  private _addDash(): void {
-    this.konvaObject.dash(NS_EDGE_DASH);
   }
 }

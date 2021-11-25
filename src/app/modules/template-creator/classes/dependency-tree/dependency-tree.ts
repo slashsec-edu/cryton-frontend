@@ -2,21 +2,20 @@ import Konva from 'konva';
 import { Vector2d } from 'konva/types/types';
 import { Subject } from 'rxjs';
 import { BoundingRect } from '../../models/interfaces/bounding-rect';
-import { CrytonEdge } from '../cryton-edge/cryton-edge';
-import { TreeNode, NODE_HEIGHT, NODE_WIDTH } from './tree-node';
+import { TreeNode, NODE_HEIGHT, NODE_WIDTH } from './node/tree-node';
 import { ToolState } from './tool-state';
 import { NodeManager } from './node-manager';
 import { KonvaWrapper } from '../konva/konva-wrapper';
-import { CrytonStep } from '../cryton-node/cryton-step';
-import { CrytonStage } from '../cryton-node/cryton-stage';
 import { Alert } from '../../../shared/models/interfaces/alert.interface';
-import { CrytonNode } from '../cryton-node/cryton-node';
-import { CrytonStageEdge } from '../cryton-edge/cryton-stage-edge';
 import { NodeType } from '../../models/enums/node-type';
-import { CrytonStepEdge } from '../cryton-edge/cryton-step-edge';
 import { Theme } from '../../models/interfaces/theme';
 import { Queue } from 'src/app/modules/shared/utils/queue';
 import { CANVAS_PADDING } from './dependency-tree-constants';
+import { TreeEdge } from './edge/tree-edge';
+import { StageNode } from './node/stage-node';
+import { StageEdge } from './edge/stage-edge';
+import { StepEdge } from './edge/step-edge';
+import { StepNode } from './node/step-node';
 
 export const MIN_SCALE = 0.1;
 export const MAX_SCALE = 1.5;
@@ -31,7 +30,7 @@ export class DependencyTree extends KonvaWrapper {
   treeNodeManager = new NodeManager();
 
   // EDGE DATA
-  draggedEdge: CrytonEdge; // Reference to the dragged edge.
+  draggedEdge: TreeEdge; // Reference to the dragged edge.
   clickedNode: TreeNode; // Group where the arrow drag started.
 
   nodeType: NodeType;
@@ -47,7 +46,6 @@ export class DependencyTree extends KonvaWrapper {
    */
   destroy(): void {
     super.destroy();
-    this.treeNodeManager = null;
     this.clickedNode = null;
     this.alert$.complete();
     this.treeLayerUpdate$.complete();
@@ -106,12 +104,12 @@ export class DependencyTree extends KonvaWrapper {
    *
    * @param node Node to add.
    */
-  addNode(node: CrytonNode): void {
+  addNode(node: TreeNode): void {
     if (this.toolState.isMoveNodeEnabled) {
-      node.treeNode.konvaObject.draggable(true);
+      node.konvaObject.draggable(true);
     }
 
-    this.treeLayer.add(node.treeNode.konvaObject);
+    this.treeLayer.add(node.konvaObject);
     this.treeLayer.draw();
   }
 
@@ -121,14 +119,14 @@ export class DependencyTree extends KonvaWrapper {
    * @param parentNode Parent node of the edge.
    * @returns Dragged edge.
    */
-  createDraggedEdge(parentNode: CrytonNode): CrytonEdge {
-    if (parentNode instanceof CrytonStage) {
-      this.draggedEdge = new CrytonStageEdge(parentNode.timeline, this, parentNode);
+  createDraggedEdge(parentNode: TreeNode): TreeEdge {
+    if (parentNode instanceof StageNode) {
+      this.draggedEdge = new StageEdge(this, parentNode);
     } else {
-      this.draggedEdge = new CrytonStepEdge(this, parentNode);
+      this.draggedEdge = new StepEdge(this, parentNode);
     }
-    this.treeLayer.add(this.draggedEdge.treeEdge.konvaObject);
-    this.draggedEdge.treeEdge.konvaObject.moveToBottom();
+    this.treeLayer.add(this.draggedEdge.konvaObject);
+    this.draggedEdge.konvaObject.moveToBottom();
 
     return this.draggedEdge;
   }
@@ -144,9 +142,9 @@ export class DependencyTree extends KonvaWrapper {
   /**
    * Connects dragged edge to the child node.
    *
-   * @param childNode CrytonNode where edge ends.
+   * @param childNode TreeNode where edge ends.
    */
-  connectDraggedEdge(childNode: CrytonNode): void {
+  connectDraggedEdge(childNode: TreeNode): void {
     try {
       this.draggedEdge.connect(childNode);
     } catch (e) {
@@ -155,10 +153,10 @@ export class DependencyTree extends KonvaWrapper {
       }
       throw e;
     }
-    this.draggedEdge.treeEdge.moveToChildNode();
+    this.draggedEdge.moveToChildNode();
 
-    this.draggedEdge.treeEdge.konvaObject.listening(true);
-    this.draggedEdge.treeEdge.konvaObject.moveToBottom();
+    this.draggedEdge.konvaObject.listening(true);
+    this.draggedEdge.konvaObject.moveToBottom();
 
     this.draggedEdge = null;
     this.treeLayer.draw();
@@ -172,6 +170,7 @@ export class DependencyTree extends KonvaWrapper {
   copy(): DependencyTree {
     const rootNode = this.findRootNode();
     const treeCopy = new DependencyTree(this.nodeType);
+    const nodeType = treeCopy.nodeType;
 
     [treeCopy.scale, treeCopy.stageX, treeCopy.stageY] = [this.scale, this.stageX, this.stageY];
 
@@ -179,16 +178,16 @@ export class DependencyTree extends KonvaWrapper {
       return treeCopy;
     }
 
-    const queue = new Queue<CrytonNode>();
+    const queue = new Queue<TreeNode>();
     queue.enqueue(rootNode);
-    const copyMap: Record<string, CrytonNode> = {};
+    const copyMap: Record<string, TreeNode> = {};
 
     this._copyNode(rootNode, treeCopy, copyMap);
 
     while (queue.length > 0) {
       const currentNode = queue.dequeue();
 
-      currentNode.childEdges.forEach((edge: CrytonEdge) => {
+      currentNode.childEdges.forEach((edge: TreeEdge) => {
         const childNode = edge.childNode;
         let nodeCopy = copyMap[childNode.name];
 
@@ -199,8 +198,8 @@ export class DependencyTree extends KonvaWrapper {
 
         const edgeCopy = treeCopy.createDraggedEdge(copyMap[edge.parentNode.name]);
 
-        if (edgeCopy.nodeType === NodeType.CRYTON_STEP) {
-          (edgeCopy as CrytonStepEdge).conditions = (edge as CrytonStepEdge).conditions;
+        if (nodeType === NodeType.CRYTON_STEP) {
+          (edgeCopy as StepEdge).conditions = (edge as StepEdge).conditions;
         }
 
         treeCopy.connectDraggedEdge(nodeCopy);
@@ -222,9 +221,8 @@ export class DependencyTree extends KonvaWrapper {
       return false;
     }
     if (this.nodeType === NodeType.CRYTON_STEP) {
-      const rootNodes = this.treeNodeManager.canvasNodes.filter(
-        (node: CrytonNode) => node.treeNode.parentEdges.length === 0
-      ).length;
+      const rootNodes = this.treeNodeManager.canvasNodes.filter((node: TreeNode) => node.parentEdges.length === 0)
+        .length;
       return rootNodes === 1;
     }
     return true;
@@ -235,7 +233,7 @@ export class DependencyTree extends KonvaWrapper {
    */
   updateAllEdges(): void {
     const nodes = this.treeNodeManager.canvasNodes;
-    nodes.forEach((node: CrytonNode) => node.treeNode.updateEdges());
+    nodes.forEach((node: TreeNode) => node.updateEdges());
   }
 
   /**
@@ -251,11 +249,13 @@ export class DependencyTree extends KonvaWrapper {
       errors.push('Dependency tree is empty.');
     }
 
-    try {
-      this.findRootNode();
-    } catch (error) {
-      if (error instanceof Error) {
-        errors.push(error.message);
+    if (this.nodeType === NodeType.CRYTON_STEP) {
+      try {
+        this.findRootNode();
+      } catch (error) {
+        if (error instanceof Error) {
+          errors.push(error.message);
+        }
       }
     }
     return errors;
@@ -268,10 +268,10 @@ export class DependencyTree extends KonvaWrapper {
    */
   updateTheme(theme: Theme): void {
     this.treeNodeManager.getAllNodes().forEach(node => {
-      node.treeNode.changeTheme(theme);
+      node.changeTheme(theme);
     });
     this._getAllEdges().forEach(edge => {
-      edge.treeEdge.changeTheme(theme);
+      edge.changeTheme(theme);
     });
   }
 
@@ -280,11 +280,11 @@ export class DependencyTree extends KonvaWrapper {
    *
    * @returns Root node.
    */
-  findRootNode(): CrytonNode {
-    let rootNode: CrytonNode;
+  findRootNode(): TreeNode {
+    let rootNode: TreeNode;
 
-    this.treeNodeManager.canvasNodes.forEach((node: CrytonNode) => {
-      if (node.treeNode.parentEdges.length === 0) {
+    this.treeNodeManager.canvasNodes.forEach((node: TreeNode) => {
+      if (node.parentEdges.length === 0) {
         if (!rootNode) {
           rootNode = node;
         } else {
@@ -353,7 +353,7 @@ export class DependencyTree extends KonvaWrapper {
         const scale = this.stage.scaleX();
         const x = (event.evt.offsetX - this.stage.x()) * (1 / scale);
         const y = (event.evt.offsetY - this.stage.y()) * (1 / scale);
-        this.draggedEdge.treeEdge.moveEdgeEnd(x, y);
+        this.draggedEdge.moveEdgeEnd(x, y);
         this.treeLayer.batchDraw();
       }
     });
@@ -369,8 +369,8 @@ export class DependencyTree extends KonvaWrapper {
   /**
    * Returns all edges inside the dependency tree.
    */
-  private _getAllEdges(): CrytonEdge[] {
-    const edges: CrytonEdge[] = [];
+  private _getAllEdges(): TreeEdge[] {
+    const edges: TreeEdge[] = [];
     const nodes = this.treeNodeManager.canvasNodes;
 
     nodes.forEach(node => edges.push(...node.childEdges));
@@ -385,19 +385,19 @@ export class DependencyTree extends KonvaWrapper {
    * @param copyMap Record with node names and their copies.
    * @returns Copied node.
    */
-  private _copyNode(node: CrytonNode, treeCopy: DependencyTree, copyMap: Record<string, CrytonNode>): CrytonNode {
-    let nodeCopy: CrytonNode;
+  private _copyNode(node: TreeNode, treeCopy: DependencyTree, copyMap: Record<string, TreeNode>): TreeNode {
+    let nodeCopy: TreeNode;
 
-    if (node instanceof CrytonStep) {
-      nodeCopy = new CrytonStep(node.name, node.attackModule, node.attackModuleArgs, treeCopy);
-    } else if (node instanceof CrytonStage) {
-      throw new Error('Cannot copy CrytonStage node.');
+    if (node instanceof StepNode) {
+      nodeCopy = new StepNode(node.name, node.attackModule, node.attackModuleArgs, treeCopy);
+    } else if (node instanceof StageNode) {
+      throw new Error('Cannot copy stage node.');
     }
 
     copyMap[node.name] = nodeCopy;
     treeCopy.treeNodeManager.moveToPlan(nodeCopy);
-    nodeCopy.treeNode.x = node.treeNode.x;
-    nodeCopy.treeNode.y = node.treeNode.y;
+    nodeCopy.x = node.x;
+    nodeCopy.y = node.y;
 
     return nodeCopy;
   }
