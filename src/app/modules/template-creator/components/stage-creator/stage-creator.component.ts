@@ -16,6 +16,8 @@ import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
 import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { MatDialog } from '@angular/material/dialog';
+import { StageCreatorHelpComponent } from '../stage-creator-help/stage-creator-help.component';
 
 @Component({
   selector: 'app-stage-creator',
@@ -53,7 +55,8 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     private _state: TemplateCreatorStateService,
     private _themeService: ThemeService,
     private _alertService: AlertService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _dialog: MatDialog
   ) {}
 
   /**
@@ -84,6 +87,13 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this._destroy$.next();
     this._destroy$.complete();
     this.previewDepTree.destroy();
+  }
+
+  /**
+   * Opens help page.
+   */
+  openHelp(): void {
+    this._dialog.open(StageCreatorHelpComponent, { width: '60%' });
   }
 
   emitSwapPagesEvent(): void {

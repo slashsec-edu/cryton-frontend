@@ -10,6 +10,8 @@ import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { MatDialog } from '@angular/material/dialog';
+import { StepCreatorHelpComponent } from '../step-creator-help/step-creator-help.component';
 
 @Component({
   selector: 'app-step-creator',
@@ -39,7 +41,8 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   constructor(
     private _treeManager: DependencyTreeManagerService,
     private _state: TemplateCreatorStateService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +56,13 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  /**
+   * Opens help page.
+   */
+  openHelp(): void {
+    this._dialog.open(StepCreatorHelpComponent, { width: '60%' });
   }
 
   /**

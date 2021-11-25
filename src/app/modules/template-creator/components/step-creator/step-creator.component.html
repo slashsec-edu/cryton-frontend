@@ -1,6 +1,7 @@
 <div class="tc-responsive-page">
   <ng-template [ngIf]="!editedStep" [ngIfElse]="editingModeButtons">
     <div class="buttons">
+      <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
       <app-cryton-button (clicked)="stepForm.reset()" icon="delete" value="Erase step"> </app-cryton-button>
       <app-cryton-button
         (clicked)="handleCreateStep()"
@@ -16,6 +17,7 @@
   </ng-template>
   <main class="tc-responsive-container">
     <form [formGroup]="stepForm">
+      <h5>STEP PARAMETERS</h5>
       <!-- NAME FORM FIELD-->
       <mat-form-field class="text-input" appearance="fill">
         <mat-label>Name</mat-label>
@@ -32,7 +34,7 @@
 
       <!-- ATTACK MODULE ARGS TEXTAREA -->
       <mat-form-field appearance="fill">
-        <mat-label>Attack Module Args...</mat-label>
+        <mat-label>Attack Module Args (in YAML)...</mat-label>
         <textarea matInput rows="7" formControlName="attackModuleArgs" cdkTextareaAutosize appEnableTab></textarea>
         <mat-error>{{ getControlError('attackModuleArgs') }}</mat-error>
       </mat-form-field>

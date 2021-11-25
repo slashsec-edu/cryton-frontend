@@ -24,6 +24,7 @@ import { HttpTriggerForm } from '../../classes/stage-creation/forms/http-form';
 import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('StageCreatorComponent', () => {
   let component: StageCreatorComponent;
@@ -75,6 +76,8 @@ describe('StageCreatorComponent', () => {
       return childDepTree$;
     }
   });
+
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
   /**
    * Fills stage creator with valid stage data (valid for creation).
@@ -215,7 +218,8 @@ describe('StageCreatorComponent', () => {
         providers: [
           { provide: AlertService, useValue: alertServiceStub },
           { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
-          { provide: TemplateCreatorStateService, useValue: tcState }
+          { provide: TemplateCreatorStateService, useValue: tcState },
+          { provide: MatDialog, useValue: matDialogStub }
         ]
       })
         .overrideComponent(StageCreatorComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })

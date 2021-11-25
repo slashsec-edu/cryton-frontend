@@ -18,6 +18,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { MatDialog } from '@angular/material/dialog';
 
 const EMPTY_FORM_VALUE = { name: null, attackModule: null, attackModuleArgs: null };
 const TESTING_ARGS1 = { name: 'a1', attackModule: 'b1', attackModuleArgs: 'c1' };
@@ -70,6 +71,8 @@ describe('StepCreatorComponent', () => {
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.returnValue(of(depTreeSpy));
 
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
+
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
@@ -78,7 +81,8 @@ describe('StepCreatorComponent', () => {
         providers: [
           { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
           { provide: AlertService, useValue: alertServiceStub },
-          { provide: TemplateCreatorStateService, useValue: tcState }
+          { provide: TemplateCreatorStateService, useValue: tcState },
+          { provide: MatDialog, useValue: matDialogStub }
         ]
       })
         .overrideComponent(StepCreatorComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
