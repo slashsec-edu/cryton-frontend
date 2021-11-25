@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CrytonStage } from '../../cryton-node/cryton-stage';
+import { StageNode } from '../../dependency-tree/node/stage-node';
 import { TriggerParameters } from '../trigger-parameters';
 import { HttpTriggerForm } from './http-form';
 
@@ -31,7 +31,7 @@ export interface TriggerForm {
   /**
    * Fills trigger form with stage parameters.
    */
-  fill(stage: CrytonStage): void;
+  fill(stage: StageNode): void;
 
   /**
    * Creates a copy of itself.

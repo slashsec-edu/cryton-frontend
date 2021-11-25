@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CrytonStage } from '../classes/cryton-node/cryton-stage';
-import { CrytonStep } from '../classes/cryton-node/cryton-step';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { BuildTemplateDisplay } from '../models/enums/build-template-display.enum';
 import { StageForm } from '../classes/stage-creation/forms/stage-form';
+import { StageNode } from '../classes/dependency-tree/node/stage-node';
+import { StepNode } from '../classes/dependency-tree/node/step-node';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ import { StageForm } from '../classes/stage-creation/forms/stage-form';
 export class TemplateCreatorStateService {
   // CREATE STAGE TAB
   isDependencyTreeDisplayed: boolean;
-  editedStage: CrytonStage;
+  editedStage: StageNode;
   stageForm: StageForm;
 
   // BUILD TEMPLATE TAB
@@ -21,7 +21,7 @@ export class TemplateCreatorStateService {
 
   // CREATE STEP TAB
   stepForm: FormGroup;
-  editedStep: CrytonStep;
+  editedStep: StepNode;
 
   // Timeline
   timeline: TemplateTimeline;

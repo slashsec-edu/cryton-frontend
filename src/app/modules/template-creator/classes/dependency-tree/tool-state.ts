@@ -1,4 +1,4 @@
-import { CrytonNode } from '../cryton-node/cryton-node';
+import { TreeNode } from './node/tree-node';
 
 export class ToolState {
   isSwapEnabled = false;
@@ -17,10 +17,10 @@ export class ToolState {
     return this.isDeleteEnabled;
   }
 
-  flipMoveNodeTool(nodes: CrytonNode[]): boolean {
+  flipMoveNodeTool(nodes: TreeNode[]): boolean {
     this.isMoveNodeEnabled = this._toolClick(this.isMoveNodeEnabled);
 
-    nodes.forEach(node => node.treeNode.konvaObject.draggable(this.isMoveNodeEnabled));
+    nodes.forEach(node => node.konvaObject.draggable(this.isMoveNodeEnabled));
 
     return this.isMoveNodeEnabled;
   }

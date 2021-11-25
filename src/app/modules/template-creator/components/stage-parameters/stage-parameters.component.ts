@@ -13,12 +13,12 @@ import { FormGroup } from '@angular/forms';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { getControlError } from './stage-parameters.errors';
 import { TriggerType } from '../../models/enums/trigger-type';
-import { CrytonStage } from '../../classes/cryton-node/cryton-stage';
-import { TriggerFactory } from '../../classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { StageForm } from '../../classes/stage-creation/forms/stage-form';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 
 @Component({
   selector: 'app-stage-parameters',
@@ -85,7 +85,7 @@ export class StageParametersComponent implements OnInit, AfterViewInit, OnDestro
     this.stageForm.editedNodeName = name;
   }
 
-  fillFromStage(stage: CrytonStage): void {
+  fillFromStage(stage: StageNode): void {
     this.stageForm.fill(stage);
   }
 
@@ -106,7 +106,7 @@ export class StageParametersComponent implements OnInit, AfterViewInit, OnDestro
    *
    * @param stage Stage to edit.
    */
-  editStage(stage: CrytonStage): void {
+  editStage(stage: StageNode): void {
     const { name, triggerType } = this.stageForm.getStageArgs();
     const trigger = TriggerFactory.createTrigger(triggerType, this.stageForm.getTriggerArgs());
 

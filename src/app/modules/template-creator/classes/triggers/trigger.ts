@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { TriggerType } from '../../../models/enums/trigger-type';
+import { TriggerType } from '../../models/enums/trigger-type';
 
 export abstract class Trigger<T extends Record<string, any>> {
   protected _args: T;

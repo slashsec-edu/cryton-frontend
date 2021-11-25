@@ -1,9 +1,9 @@
 import Konva from 'konva';
 import { RippleAnimation } from '../../animations/ripple.animation';
 import { Theme } from '../../models/interfaces/theme';
-import { CrytonNode } from '../cryton-node/cryton-node';
 import { Cursor } from './cursor-state';
 import { DependencyTree } from './dependency-tree';
+import { TreeNode } from './node/tree-node';
 
 export const CONNECTOR_NAME = 'nodeConnector';
 export const CONNECTOR_CIRCLE_NAME = 'nodeConnectorCircle';
@@ -14,10 +14,10 @@ export class NodeConnector {
   private _rippleCircle: Konva.Circle;
   private _rippleAnimation: RippleAnimation;
 
-  constructor(nodeWidth: number, nodeHeight: number, depTree: DependencyTree, crytonNode: CrytonNode) {
+  constructor(nodeWidth: number, nodeHeight: number, node: TreeNode) {
     this._createKonvaObject(nodeWidth / 2, nodeHeight);
-    this._rippleAnimation = new RippleAnimation(this._rippleCircle, depTree.treeLayer);
-    this._initKonvaEvents(depTree, crytonNode);
+    this._rippleAnimation = new RippleAnimation(this._rippleCircle, node.parentDepTree.treeLayer);
+    this._initKonvaEvents(node.parentDepTree, node);
   }
 
   /**
@@ -64,7 +64,7 @@ export class NodeConnector {
     this.konvaObject.add(this._connectorCircle);
   }
 
-  private _initKonvaEvents(depTree: DependencyTree, crytonNode: CrytonNode): void {
+  private _initKonvaEvents(depTree: DependencyTree, node: TreeNode): void {
     this.konvaObject.on('mouseenter', () => {
       depTree.cursorState.setCursor(Cursor.POINTER);
     });
@@ -80,8 +80,8 @@ export class NodeConnector {
       }
       event.cancelBubble = true;
 
-      depTree.clickedNode = crytonNode.treeNode;
-      depTree.createDraggedEdge(crytonNode);
+      depTree.clickedNode = node;
+      depTree.createDraggedEdge(node);
     });
     this.konvaObject.on('mousedown', () => this.animateRipple(15, 0.2));
     this.konvaObject.on('mouseup', () => this.unanimateRipple());

@@ -7,7 +7,6 @@ export const tcDarkTheme: TCTheme = {
   leadingTick: '#9b9b9b',
   timemarkText: '#e1e1e1',
   timelineEdge: '#646464',
-  timelineEdgeHover: '#727272',
   labelBG: 'gray',
   nodeTimemarkTick: '#c2c2c2',
   paddingMaskTop: '#393838',

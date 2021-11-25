@@ -1,9 +1,9 @@
-import { CrytonEdge } from 'src/app/modules/template-creator/classes/cryton-edge/cryton-edge';
-import { CrytonStepEdge } from 'src/app/modules/template-creator/classes/cryton-edge/cryton-step-edge';
-import { CrytonNode } from 'src/app/modules/template-creator/classes/cryton-node/cryton-node';
-import { CrytonStage } from 'src/app/modules/template-creator/classes/cryton-node/cryton-stage';
-import { CrytonStep } from 'src/app/modules/template-creator/classes/cryton-node/cryton-step';
 import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/step-edge';
+import { TreeEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/tree-edge';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
+import { TreeNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/tree-node';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { compareArrays } from './compare-arrays';
 
@@ -24,15 +24,15 @@ export class TreeComparator {
       throw new Error('Can only compare dependency trees with the same node type.');
     }
 
-    const compareNodesFn = (a: CrytonNode, b: CrytonNode): boolean =>
+    const compareNodesFn = (a: TreeNode, b: TreeNode): boolean =>
       nodeType === NodeType.CRYTON_STAGE
-        ? this._compareStages(a as CrytonStage, b as CrytonStage)
-        : this._compareSteps(a as CrytonStep, b as CrytonStep);
+        ? this._compareStages(a as StageNode, b as StageNode)
+        : this._compareSteps(a as StepNode, b as StepNode);
 
     return compareArrays(treeOne.treeNodeManager.canvasNodes, treeTwo.treeNodeManager.canvasNodes, compareNodesFn);
   }
 
-  private static _compareStages(stageOne: CrytonStage, stageTwo: CrytonStage): boolean {
+  private static _compareStages(stageOne: StageNode, stageTwo: StageNode): boolean {
     if (stageOne.name !== stageTwo.name) {
       return false;
     }
@@ -52,7 +52,7 @@ export class TreeComparator {
     return true;
   }
 
-  private static _compareSteps(stepOne: CrytonStep, stepTwo: CrytonStep): boolean {
+  private static _compareSteps(stepOne: StepNode, stepTwo: StepNode): boolean {
     if (
       stepOne.name.trim() !== stepTwo.name.trim() ||
       stepOne.attackModule.trim() !== stepTwo.attackModule.trim() ||
@@ -68,14 +68,14 @@ export class TreeComparator {
     return true;
   }
 
-  private static _compareEdges(nodeOne: CrytonNode, nodeTwo: CrytonNode): boolean {
-    const edgeCompareFn = (a: CrytonEdge, b: CrytonEdge): boolean => {
-      if (a.childNode instanceof CrytonStage && b.childNode instanceof CrytonStage) {
+  private static _compareEdges(nodeOne: TreeNode, nodeTwo: TreeNode): boolean {
+    const edgeCompareFn = (a: TreeEdge, b: TreeEdge): boolean => {
+      if (a.childNode instanceof StageNode && b.childNode instanceof StageNode) {
         return TreeComparator._compareStages(a.childNode, b.childNode);
-      } else if (a.childNode instanceof CrytonStep && b.childNode instanceof CrytonStep) {
+      } else if (a.childNode instanceof StepNode && b.childNode instanceof StepNode) {
         return (
           TreeComparator._compareSteps(a.childNode, b.childNode) &&
-          TreeComparator._compareEdgeConditions(a as CrytonStepEdge, b as CrytonStepEdge)
+          TreeComparator._compareEdgeConditions(a as StepEdge, b as StepEdge)
         );
       }
       return false;
@@ -84,7 +84,7 @@ export class TreeComparator {
     return compareArrays(nodeOne.childEdges, nodeTwo.childEdges, edgeCompareFn);
   }
 
-  private static _compareEdgeConditions(edgeOne: CrytonStepEdge, edgeTwo: CrytonStepEdge): boolean {
+  private static _compareEdgeConditions(edgeOne: StepEdge, edgeTwo: StepEdge): boolean {
     const conditionsOne = edgeOne.conditions.map(condition => JSON.stringify(condition)).sort();
     const conditionsTwo = edgeTwo.conditions.map(condition => JSON.stringify(condition)).sort();
 

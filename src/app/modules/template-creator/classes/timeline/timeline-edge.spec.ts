@@ -1,78 +1,44 @@
 import Konva from 'konva';
 import { BehaviorSubject } from 'rxjs';
 import { NodeType } from '../../models/enums/node-type';
-import { TriggerType } from '../../models/enums/trigger-type';
-import { HTTPListenerArgs } from '../../models/interfaces/http-listener-args';
 import { Theme } from '../../models/interfaces/theme';
-import { CrytonStageEdge } from '../cryton-edge/cryton-stage-edge';
-import { CrytonStage } from '../cryton-node/cryton-stage';
-import { DeltaTrigger } from '../cryton-node/triggers/delta-trigger';
-import { HttpTrigger } from '../cryton-node/triggers/http-trigger';
-import { Trigger } from '../cryton-node/triggers/trigger';
-import { TriggerFactory } from '../cryton-node/triggers/trigger-factory';
+import { DeltaTrigger } from '../triggers/delta-trigger';
+import { Trigger } from '../triggers/trigger';
 import { DependencyTree } from '../dependency-tree/dependency-tree';
 import { TemplateTimeline } from './template-timeline';
 import { TimelineEdge } from './timeline-edge';
 import { EDGE_ARROW_NAME } from './timeline-edge-constants';
-
-const DEFAULT_STROKE = '#fff';
-
-const HTTP_TRIGGER_ARGS: HTTPListenerArgs = {
-  host: '127.0.0.1',
-  port: 8080,
-  routes: [
-    {
-      path: '/',
-      method: 'GET',
-      parameters: [{ name: 'result', value: 'OK' }]
-    }
-  ]
-};
+import { StageNode } from '../dependency-tree/node/stage-node';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 
 describe('TimelineEdge', () => {
+  let fixture: ComponentFixture<KonvaContainerComponent>;
+  let component: KonvaContainerComponent;
   // Edge
   let timelineEdge: TimelineEdge;
-  let crytonStageEdge: CrytonStageEdge;
 
   // Environment
   let parentDepTree: DependencyTree;
   let timeline: TemplateTimeline;
-  const theme = {
-    primary: '#fff',
-    accent: '#fff',
-    warn: '#fff',
-    isDark: true,
-    templateCreator: {
-      tick: '#fff',
-      leadingTick: '#fff',
-      timemarkText: '#fff',
-      timelineEdge: DEFAULT_STROKE,
-      timelineEdgeHover: '#fff',
-      treeEdge: '#fff',
-      treeNodeRect: '#fff',
-      labelBG: '#fff',
-      nodeTimemarkTick: '#fff',
-      paddingMaskTop: '#fff',
-      background: '#fff'
-    }
-  };
-  const theme$ = new BehaviorSubject<Theme>(theme);
+  const theme$ = new BehaviorSubject<Theme>(mockTheme);
 
   // Parent and child stage
-  let parentStage: CrytonStage;
+  let parentStage: StageNode;
   let parentStageDepTree: DependencyTree;
   let childStageDepTree: DependencyTree;
-  let childStage: CrytonStage;
+  let childStage: StageNode;
 
   const createEdge = (parentTrigger: Trigger<Record<string, any>>, childTrigger: Trigger<Record<string, any>>) => {
-    parentStage = new CrytonStage({
+    parentStage = new StageNode({
       name: 'parent',
       parentDepTree,
       childDepTree: parentStageDepTree,
       timeline,
       trigger: parentTrigger
     });
-    childStage = new CrytonStage({
+    childStage = new StageNode({
       name: 'child',
       parentDepTree,
       childDepTree: childStageDepTree,
@@ -80,16 +46,9 @@ describe('TimelineEdge', () => {
       trigger: childTrigger
     });
 
-    crytonStageEdge = parentDepTree.createDraggedEdge(parentStage) as CrytonStageEdge;
-    parentDepTree.connectDraggedEdge(childStage);
-    timelineEdge = crytonStageEdge.timelineEdge;
-  };
-
-  const copyTheme = (): Theme => {
-    const tcTheme = Object.assign({}, theme.templateCreator);
-    const newTheme = Object.assign({}, theme);
-    newTheme.templateCreator = tcTheme;
-    return newTheme;
+    timeline.addNode(parentStage.timelineNode);
+    timeline.addNode(childStage.timelineNode);
+    timelineEdge = timeline.createEdge(parentStage.timelineNode, childStage.timelineNode);
   };
 
   const getArrow = (): Konva.Arrow => timeline.mainLayer.findOne(`.${EDGE_ARROW_NAME}`);
@@ -114,11 +73,10 @@ describe('TimelineEdge', () => {
     });
 
     it('should change theme correctly', () => {
-      timelineEdge.changeTheme(theme);
-      expect(timelineEdge.konvaObject.stroke()).toEqual(DEFAULT_STROKE);
+      expect(timelineEdge.konvaObject.stroke()).toEqual(mockTheme.templateCreator.timelineEdge);
 
       const newStroke = '#000';
-      const newTheme = copyTheme();
+      const newTheme = JSON.parse(JSON.stringify(mockTheme)) as Theme;
       newTheme.templateCreator.timelineEdge = newStroke;
       timelineEdge.changeTheme(newTheme);
 
@@ -126,12 +84,24 @@ describe('TimelineEdge', () => {
     });
   };
 
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [KonvaContainerComponent]
+      }).compileComponents();
+    })
+  );
+
   beforeEach(() => {
+    fixture = TestBed.createComponent(KonvaContainerComponent);
+    component = fixture.componentInstance;
+
     parentDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
     parentStageDepTree = new DependencyTree(NodeType.CRYTON_STEP);
     childStageDepTree = new DependencyTree(NodeType.CRYTON_STEP);
     timeline = new TemplateTimeline();
-    timeline.initKonva(document.createElement('div'), theme$.asObservable());
+    component.afterInit = () => timeline.initKonva(component.konvaContainer.nativeElement, theme$.asObservable());
+    fixture.detectChanges();
   });
 
   describe('Delta trigger tests', () => {
@@ -142,35 +112,5 @@ describe('TimelineEdge', () => {
     });
 
     runTests(false);
-
-    it('should add dash when child node trigger changes to HTTP listener', () => {
-      expect(timelineEdge.konvaObject.dash()).toBeFalsy();
-
-      const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, HTTP_TRIGGER_ARGS);
-      childStage.trigger = httpTrigger;
-      timelineEdge.updateEdgeStyle();
-
-      expect(timelineEdge.konvaObject.dash()).toBeTruthy();
-    });
-  });
-
-  describe('HTTP listener trigger tests', () => {
-    beforeEach(() => {
-      const parentTrigger = new HttpTrigger(HTTP_TRIGGER_ARGS);
-      const childTrigger = new HttpTrigger(HTTP_TRIGGER_ARGS);
-      createEdge(parentTrigger, childTrigger);
-    });
-
-    runTests(true);
-
-    it('should remove dash when child node trigger changes to delta listener', () => {
-      expect(timelineEdge.konvaObject.dash()).toBeTruthy();
-
-      const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 1, minutes: 0, seconds: 0 });
-      childStage.trigger = deltaTrigger;
-      timelineEdge.updateEdgeStyle();
-
-      expect(timelineEdge.konvaObject.dash()).toBeFalsy();
-    });
   });
 });
