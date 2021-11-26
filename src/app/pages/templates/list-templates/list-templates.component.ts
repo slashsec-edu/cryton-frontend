@@ -28,7 +28,7 @@ export class ListTemplatesComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new TemplatesTableDataSource(this._templateService);
-    this.buttons = [{ icon: 'delete', func: this._deleteTemplate }];
+    this.buttons = [{ name: 'delete', icon: 'delete', func: this._deleteTemplate }];
   }
 
   /**

@@ -32,6 +32,13 @@ th.mat-header-cell {
   cursor: pointer;
   filter: brightness(90%);
 }
+.justify-right {
+  text-align: right;
+}
+.button-width {
+  box-sizing: content-box; // To keep the padding-right of the last cell.
+  width: 40px;
+}
 
 /* EXPANDABLE ROWS */
 tr.cryton-table--expandable-row {

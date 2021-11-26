@@ -98,6 +98,23 @@ describe('CrytonTableComponent', () => {
     return rowIDs;
   };
 
+  /**
+   * Utility function for component creation.
+   * We have to recreate a component in every spec that uses different component configuration.
+   */
+  const createComponent = (): void => {
+    fixture = TestBed.createComponent(CrytonTableComponent);
+    component = fixture.componentInstance;
+    loader = TestbedHarnessEnvironment.loader(fixture);
+
+    component.sort = 'id';
+    component.header = 'TESTING TABLE';
+    component.filter = undefined;
+    component.eraseEvent$ = eraseSubject$.asObservable();
+    component.dataSource = new RunTableDataSource((runServiceStub as unknown) as RunService, new CrytonDatetimePipe());
+    component.createButton = { value: 'test', link: '/test' };
+  };
+
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
@@ -129,18 +146,8 @@ describe('CrytonTableComponent', () => {
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CrytonTableComponent);
-    component = fixture.componentInstance;
-    loader = TestbedHarnessEnvironment.loader(fixture);
-
     testingService.setData(runs);
-    component.expandedComponent = undefined;
-    component.sort = 'id';
-    component.header = 'TESTING TABLE';
-    component.filter = undefined;
-    component.eraseEvent$ = eraseSubject$.asObservable();
-    component.dataSource = new RunTableDataSource((runServiceStub as unknown) as RunService, new CrytonDatetimePipe());
-    component.createButton = { value: 'test', link: '/test' };
+    createComponent();
     fixture.detectChanges();
   });
 
@@ -172,20 +179,20 @@ describe('CrytonTableComponent', () => {
 
     const expectChecks = (radio: boolean, checkbox: boolean): void => {
       if (radio) {
-        expect(component.checkedRadio).toBeTruthy();
+        expect(component.radioSelection.isEmpty()).toBeFalse();
       } else {
-        expect(component.checkedRadio).toBeFalsy();
+        expect(component.radioSelection.isEmpty()).toBeTrue();
       }
 
       if (checkbox) {
-        expect(component.checkedCheckboxes.length).toBeGreaterThan(0);
+        expect(component.checkboxSelection.selected.length).toBeGreaterThan(0);
       } else {
-        expect(component.checkedCheckboxes.length).toEqual(0);
+        expect(component.checkboxSelection.selected.length).toEqual(0);
       }
     };
 
     beforeEach(async () => {
-      component.expandedComponent = undefined;
+      createComponent();
       component.showCheckboxes = true;
       component.showRadioButtons = true;
       fixture.detectChanges();
@@ -205,13 +212,13 @@ describe('CrytonTableComponent', () => {
     it('should correctly store checkbox and radio states', async () => {
       await radios[0].check();
       await radios[3].check();
-      await checkboxes[1].check();
-      await checkboxes[4].check();
+      await checkboxes[2].check();
+      await checkboxes[5].check();
 
       fixture.detectChanges();
 
-      expect(Array.from(component.checkedCheckboxes).map((run: Run) => run.id)).toEqual([2, 5]);
-      expect((component.checkedRadio as Run).id).toEqual(4);
+      expect(Array.from(component.checkboxSelection.selected).map((run: Run) => run.id)).toEqual([2, 5]);
+      expect((component.radioSelection.selected[0] as Run).id).toEqual(4);
     });
 
     it('should emit checkbox and radio click events', async () => {
@@ -221,9 +228,9 @@ describe('CrytonTableComponent', () => {
       spyOn(component.radioChange, 'emit').and.callThrough();
 
       await radios[0].check();
-      await checkboxes[0].check();
       await checkboxes[1].check();
       await checkboxes[2].check();
+      await checkboxes[3].check();
 
       expect(component.radioChange.emit).toHaveBeenCalled();
       expect(component.checkboxChange.emit).toHaveBeenCalledTimes(3);
@@ -245,7 +252,8 @@ describe('CrytonTableComponent', () => {
     });
 
     it('should check radio button on row click', async () => {
-      component.showCheckboxes = false;
+      createComponent();
+      component.showRadioButtons = true;
       fixture.detectChanges();
 
       expectChecks(false, false);
@@ -257,7 +265,8 @@ describe('CrytonTableComponent', () => {
     });
 
     it('should check checkbox on row click', async () => {
-      component.showRadioButtons = false;
+      createComponent();
+      component.showCheckboxes = true;
       fixture.detectChanges();
 
       expectChecks(false, false);
@@ -345,16 +354,14 @@ describe('CrytonTableComponent', () => {
   });
 
   it('should display expand icons', () => {
+    createComponent();
     component.expandedComponent = TestComponent;
     fixture.detectChanges();
 
     const nativeEl = fixture.nativeElement as HTMLElement;
-    const rows = nativeEl.querySelectorAll('.mat-row');
+    const expandColumn = nativeEl.querySelector('.mat-column-expand');
 
-    rows.forEach(row => {
-      const expandIcon = row.querySelector('.mat-icon');
-      expect(expandIcon.textContent).toContain('expand_more');
-    });
+    expect(expandColumn).toBeTruthy();
   });
 
   it('should display custom button with a custom icon and function', async () => {
@@ -365,8 +372,9 @@ describe('CrytonTableComponent', () => {
       return of('test');
     };
 
-    const testingButtons: Button<Run>[] = [{ icon: 'test', func: testFunction }];
+    const testingButtons: Button<Run>[] = [{ name: 'test', icon: 'test', func: testFunction }];
 
+    createComponent();
     component.buttons = testingButtons;
     fixture.detectChanges();
 

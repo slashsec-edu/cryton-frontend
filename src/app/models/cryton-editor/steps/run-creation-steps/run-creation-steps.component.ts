@@ -51,7 +51,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     this.workerDataSource = new WorkerTableDataSource(this._workersService);
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
 
-    this.inventoriesButtons = [{ icon: 'backup', func: this.uploadFile }];
+    this.inventoriesButtons = [{ name: 'upload', icon: 'backup', func: this.uploadFile }];
   }
 
   ngOnDestroy(): void {
