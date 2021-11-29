@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-template-timeline-help',
@@ -8,11 +7,7 @@ import { MatDialogRef } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TemplateTimelineHelpComponent implements OnInit {
-  constructor(private _dialogRef: MatDialogRef<TemplateTimelineHelpComponent>) {}
+  constructor() {}
 
   ngOnInit(): void {}
-
-  close(): void {
-    this._dialogRef.close();
-  }
 }

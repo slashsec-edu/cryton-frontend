@@ -9,6 +9,8 @@ import { TableFilter } from '../models/cryton-table/interfaces/table-filter.inte
 import { Observable } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { TemplateDescription } from '../modules/template-creator/models/interfaces/template-description';
+import { parse } from 'yaml';
 
 @Injectable({
   providedIn: 'root'
@@ -62,8 +64,10 @@ export class TemplateService extends CrytonRESTApiService<Template> {
     return this.postItem(formData);
   }
 
-  uploadYAML(templateYaml: string, templateName: string): Observable<string> {
-    const templateFile = new File([templateYaml], templateName, { type: 'text/plain' });
+  uploadYAML(templateYaml: string): Observable<string> {
+    const template = parse(templateYaml) as TemplateDescription;
+
+    const templateFile = new File([templateYaml], template.plan.name, { type: 'text/plain' });
     return this.uploadFile(templateFile);
   }
 

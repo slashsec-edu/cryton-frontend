@@ -1,9 +1,9 @@
-<header>
+<header mat-dialog-title>
   <mat-icon>info</mat-icon>
   <h1>Dependency tree help page</h1>
 </header>
 
-<main>
+<mat-dialog-content class="cryton-scrollbar">
   <section>
     <h3>Components</h3>
 
@@ -73,8 +73,8 @@
       </li>
     </ul>
   </section>
-</main>
+</mat-dialog-content>
 
-<footer>
-  <button mat-button (click)="close()">Close</button>
-</footer>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

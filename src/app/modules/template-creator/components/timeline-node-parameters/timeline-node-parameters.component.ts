@@ -38,20 +38,12 @@ export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Closes dialog window.
-   */
-  close(): void {
-    this.stageParams.setEditedNodeName(null);
-    this._dialogRef.close();
-  }
-
-  /**
    * Edits stage parameters and closes dialog window.
    */
   save(): void {
     try {
       this.stageParams.editStage(this.data.stage);
-      this.close();
+      this._dialogRef.close();
     } catch (e) {
       if (e instanceof Error) {
         this._alertService.showError(e.message);

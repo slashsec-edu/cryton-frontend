@@ -1,61 +1,57 @@
-<div class="edge-parameters">
-  <div class="centering-wrapper">
-    <!-- PARENT - CHILD -->
-    <div *ngIf="{ parent: getParentName(), child: getChildName() } as data" class="parent-child">
-      <span class="step-name">{{ data.parent }}</span>
-      <img src="assets/img/right_arrow.svg" alt="right arrow" height="10px" class="arrow" />
-      <span class="step-name">{{ data.child }}</span>
-    </div>
+<!-- PARENT - CHILD -->
+<header *ngIf="{ parent: getParentName(), child: getChildName() } as data" class="parent-child" mat-dialog-title>
+  <span class="step-name">{{ data.parent }}</span>
+  <img src="assets/img/right_arrow.svg" alt="right arrow" height="10px" class="arrow" />
+  <span class="step-name">{{ data.child }}</span>
+</header>
 
-    <main class="cryton-scrollbar">
-      <!-- CONDITIONS -->
-      <form *ngFor="let condition of conditions" [formGroup]="condition">
-        <div class="flex-section form-fields">
-          <button
-            mat-icon-button
-            type="button"
-            onclick="this.blur()"
-            class="cancel-btn"
-            (click)="removeCondition(condition)"
-            [disabled]="this.conditions.length === 1"
-          >
-            <mat-icon>cancel</mat-icon>
-          </button>
-
-          <div class="inputs-wrapper">
-            <!-- CONDITION TYPE -->
-            <mat-form-field appearance="fill">
-              <mat-label>Type</mat-label>
-              <mat-select formControlName="type">
-                <mat-option *ngFor="let option of typeOptions" [value]="option.type">{{ option.display }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <!-- CONDITION VALUE -->
-            <mat-form-field appearance="fill">
-              <mat-label>Value</mat-label>
-              <textarea matInput placeholder="Value" formControlName="value"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
-      </form>
-
-      <button mat-button class="add-btn" color="primary" (click)="addCondition()">
-        <span><mat-icon>add_circle</mat-icon>Add condition</span>
+<mat-dialog-content class="cryton-scrollbar">
+  <!-- CONDITIONS -->
+  <form *ngFor="let condition of conditions" [formGroup]="condition">
+    <div class="flex-section form-fields">
+      <button
+        mat-icon-button
+        type="button"
+        onclick="this.blur()"
+        class="cancel-btn"
+        (click)="removeCondition(condition)"
+        [disabled]="this.conditions.length === 1"
+      >
+        <mat-icon>cancel</mat-icon>
       </button>
-    </main>
 
-    <div class="flex-section buttons">
-      <app-cryton-button value="Close" (clicked)="close()" cdkFocusRegionstart></app-cryton-button>
-      <app-cryton-button
-        color="primary"
-        icon="save"
-        value="Save"
-        (clicked)="saveEdge()"
-        [disabled]="!isValid()"
-        [matTooltip]="isValid() ? null : invalidError"
-        matTooltipClass="tooltip-error"
-      ></app-cryton-button>
+      <div class="inputs-wrapper">
+        <!-- CONDITION TYPE -->
+        <mat-form-field appearance="fill">
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option *ngFor="let option of typeOptions" [value]="option.type">{{ option.display }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- CONDITION VALUE -->
+        <mat-form-field appearance="fill">
+          <mat-label>Value</mat-label>
+          <textarea matInput placeholder="Value" formControlName="value"></textarea>
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-</div>
+  </form>
+
+  <button mat-button class="add-btn" color="primary" (click)="addCondition()">
+    <span><mat-icon>add_circle</mat-icon>Add condition</span>
+  </button>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close cdkFocusRegionstart>Close</button>
+  <app-cryton-button
+    color="primary"
+    icon="save"
+    value="Save"
+    (clicked)="saveEdge()"
+    [disabled]="!isValid()"
+    [matTooltip]="isValid() ? null : invalidError"
+    matTooltipClass="tooltip-error"
+  ></app-cryton-button>
+</mat-dialog-actions>

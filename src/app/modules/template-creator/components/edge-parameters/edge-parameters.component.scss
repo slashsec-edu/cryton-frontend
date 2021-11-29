@@ -6,21 +6,20 @@ main {
   overflow-y: auto;
   padding-right: 10px;
 }
-.centering-wrapper {
-  width: 100%;
-}
 .flex-section {
   width: 100%;
   display: flex;
   align-items: center;
 }
+mat-dialog-content {
+  text-align: right;
+}
+mat-dialog-actions {
+  justify-content: right;
+  gap: 10px;
+}
 
 /* CONDITION FORM */
-.edge-parameters {
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
 mat-form-field {
   font-size: 12px;
   width: 500px;
@@ -31,11 +30,6 @@ mat-form-field {
 }
 
 /* BUTTONS */
-.buttons {
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 15px;
-}
 .cancel-btn {
   height: 44.625px;
   width: 44.625px;
@@ -67,4 +61,5 @@ mat-form-field {
   color: white;
   border-radius: 5px;
   padding: 2px 15px;
+  font-size: 12px;
 }

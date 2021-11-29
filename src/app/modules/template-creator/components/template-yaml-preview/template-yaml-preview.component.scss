@@ -1,0 +1,16 @@
+mat-dialog-actions {
+  justify-content: flex-end;
+}
+
+h2 {
+  margin: 0;
+}
+#template-form-field {
+  width: 100%;
+
+  textarea {
+    resize: none;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+}

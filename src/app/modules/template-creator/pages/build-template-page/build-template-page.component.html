@@ -6,7 +6,7 @@
         icon="add_circle"
         value="Create template"
         color="primary"
-        (click)="createTemplate()"
+        (click)="handleCreate()"
         [disabled]="isCreationDisabled()"
         [matTooltip]="getCreationErrors()"
         matTooltipClass="tooltip-error"
