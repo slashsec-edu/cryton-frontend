@@ -10,7 +10,7 @@ import {
 } from '../models/interfaces/template-description';
 import { DependencyTreeManagerService, DepTreeRef } from './dependency-tree-manager.service';
 import { TemplateCreatorStateService } from './template-creator-state.service';
-import { NodeOrganizer, NodeType as OrganizerNodeType } from '../classes/utils/node-organizer';
+import { NodeOrganizer, OrganizerNodeType } from '../classes/utils/node-organizer';
 import { Observable } from 'rxjs';
 import { first, tap, mapTo } from 'rxjs/operators';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';

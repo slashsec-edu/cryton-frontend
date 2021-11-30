@@ -3,13 +3,13 @@ import { TimelineEdge } from './timeline-edge';
 import { ToolState } from './tool-state';
 import { Subject } from 'rxjs';
 import { NodeOrganizer } from '../utils/node-organizer';
-import { NodeType } from '../utils/node-organizer';
+import { OrganizerNodeType } from '../utils/node-organizer';
 import { Timeline } from 'src/app/modules/shared/classes/timeline';
 import { NodeMover } from './node-mover';
 import { StageNode } from '../dependency-tree/node/stage-node';
 
 export class TemplateTimeline extends Timeline {
-  nodeOrganizer = new NodeOrganizer(NodeType.TIMELINE);
+  nodeOrganizer = new NodeOrganizer(OrganizerNodeType.TIMELINE);
   nodeMover = new NodeMover(this);
   toolState = new ToolState();
 

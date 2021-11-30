@@ -5,7 +5,7 @@ import { TimelineEdge } from '../timeline/timeline-edge';
 import { TimelineNode } from '../timeline/timeline-node';
 import { NODE_RADIUS } from '../timeline/timeline-node-constants';
 
-export enum NodeType {
+export enum OrganizerNodeType {
   STEP,
   STAGE,
   TIMELINE
@@ -18,9 +18,9 @@ export const NODE_PADDING = 40;
 export const NODE_MARGIN = 0.25;
 
 export class NodeOrganizer {
-  private _nodeType: NodeType;
+  private _nodeType: OrganizerNodeType;
 
-  constructor(nodeType: NodeType) {
+  constructor(nodeType: OrganizerNodeType) {
     this._nodeType = nodeType;
   }
 
@@ -109,7 +109,7 @@ export class NodeOrganizer {
     }
 
     nodes.forEach(node => {
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         node.y = 0;
       } else {
         node.x = 0;
@@ -123,13 +123,13 @@ export class NodeOrganizer {
       const currentNode = rootNodes.pop();
       const currentBounds = this._organizeTree(currentNode, -Infinity, Infinity);
 
-      if (this._nodeType !== NodeType.TIMELINE) {
+      if (this._nodeType !== OrganizerNodeType.TIMELINE) {
         currentBounds.left -= NODE_MARGIN * NODE_WIDTH;
         currentBounds.right += NODE_MARGIN * NODE_WIDTH;
       }
 
       const intersecting = prevBounds.filter(bounds =>
-        this._nodeType === NodeType.TIMELINE
+        this._nodeType === OrganizerNodeType.TIMELINE
           ? this._doesXOverlap(bounds, currentBounds)
           : this._doesYOverlap(bounds, currentBounds)
       );
@@ -141,7 +141,7 @@ export class NodeOrganizer {
 
       const spaces: Bounds[] = this._findSpaces(
         intersecting,
-        this._nodeType === NodeType.TIMELINE
+        this._nodeType === OrganizerNodeType.TIMELINE
           ? currentBounds.bottom - currentBounds.top + 2 * NODE_PADDING
           : currentBounds.right - currentBounds.left + 2 * NODE_PADDING
       );
@@ -149,10 +149,13 @@ export class NodeOrganizer {
       const closestToCenter = this._findClosestToCenter(spaces, 0);
 
       let increment: number;
-      const closestLowerCoord = this._nodeType === NodeType.TIMELINE ? closestToCenter.top : closestToCenter.left;
-      const closestHigherCoord = this._nodeType === NodeType.TIMELINE ? closestToCenter.bottom : closestToCenter.right;
-      const currLowerCoord = this._nodeType === NodeType.TIMELINE ? currentBounds.top : currentBounds.left;
-      const currHigherCoord = this._nodeType === NodeType.TIMELINE ? currentBounds.bottom : currentBounds.right;
+      const closestLowerCoord =
+        this._nodeType === OrganizerNodeType.TIMELINE ? closestToCenter.top : closestToCenter.left;
+      const closestHigherCoord =
+        this._nodeType === OrganizerNodeType.TIMELINE ? closestToCenter.bottom : closestToCenter.right;
+      const currLowerCoord = this._nodeType === OrganizerNodeType.TIMELINE ? currentBounds.top : currentBounds.left;
+      const currHigherCoord =
+        this._nodeType === OrganizerNodeType.TIMELINE ? currentBounds.bottom : currentBounds.right;
 
       if (closestHigherCoord !== Infinity) {
         increment = -Math.abs(currHigherCoord - closestHigherCoord) - NODE_PADDING;
@@ -165,7 +168,7 @@ export class NodeOrganizer {
           (currLowerCoord + (currHigherCoord - currLowerCoord) / 2);
       }
 
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         NodeOrganizer.moveTree(currentNode, 0, increment, true);
         currentBounds.top += increment;
         currentBounds.bottom += increment;
@@ -220,18 +223,18 @@ export class NodeOrganizer {
    */
   private _findSpaces(intersecting: Bounds[], minSize: number): Bounds[] {
     intersecting.sort((a: Bounds, b: Bounds) =>
-      this._nodeType === NodeType.TIMELINE ? a.top - b.top : a.left - b.left
+      this._nodeType === OrganizerNodeType.TIMELINE ? a.top - b.top : a.left - b.left
     );
     const spaces: Bounds[] = [];
 
     for (let i = 1; i < intersecting.length; i++) {
       const spaceSize =
-        this._nodeType === NodeType.TIMELINE
+        this._nodeType === OrganizerNodeType.TIMELINE
           ? intersecting[i].top - intersecting[i - 1].bottom
           : intersecting[i].left - intersecting[i - 1].right;
 
       if (spaceSize > minSize) {
-        if (this._nodeType === NodeType.TIMELINE) {
+        if (this._nodeType === OrganizerNodeType.TIMELINE) {
           spaces.push({
             top: intersecting[i - 1].bottom,
             right: Infinity,
@@ -250,7 +253,7 @@ export class NodeOrganizer {
     }
 
     if (intersecting.length > 0) {
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         spaces.push({ top: -Infinity, right: Infinity, bottom: intersecting[0].top, left: -Infinity });
         spaces.push({
           top: intersecting[intersecting.length - 1].bottom,
@@ -287,7 +290,7 @@ export class NodeOrganizer {
     // Sort edges by child node name for deterministic result
     const childEdges = this._filterSortEdges(rootNode);
 
-    if (this._nodeType !== NodeType.TIMELINE && rootNode.parentEdges.length > 0) {
+    if (this._nodeType !== OrganizerNodeType.TIMELINE && rootNode.parentEdges.length > 0) {
       rootNode.y = rootNode.parentEdges[0].parentNode.y + NODE_HEIGHT + 2 * NODE_PADDING;
     }
 
@@ -299,7 +302,7 @@ export class NodeOrganizer {
     if (childEdges.length % 2 === 1) {
       startIndex = 1;
 
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         childEdges[0].childNode.y = rootNode.y;
       } else {
         childEdges[0].childNode.x = rootNode.x;
@@ -308,7 +311,7 @@ export class NodeOrganizer {
 
       // Add padding if there are gonna be more children around the middle node.
       if (childEdges.length > 1) {
-        if (this._nodeType === NodeType.TIMELINE) {
+        if (this._nodeType === OrganizerNodeType.TIMELINE) {
           centerTreeBounds.top -= NODE_PADDING;
           centerTreeBounds.bottom += NODE_PADDING;
         } else {
@@ -329,7 +332,7 @@ export class NodeOrganizer {
         lastBounds = this._organizeTree(
           childEdges[i].childNode,
           -Infinity,
-          this._nodeType === NodeType.TIMELINE ? lastBounds.top : lastBounds.left
+          this._nodeType === OrganizerNodeType.TIMELINE ? lastBounds.top : lastBounds.left
         );
         this._updateBounds(myBounds, lastBounds);
       }
@@ -339,7 +342,7 @@ export class NodeOrganizer {
       for (let i = centerIndex; i < childEdges.length; i++) {
         lastBounds = this._organizeTree(
           childEdges[i].childNode,
-          this._nodeType === NodeType.TIMELINE ? lastBounds.bottom : lastBounds.right,
+          this._nodeType === OrganizerNodeType.TIMELINE ? lastBounds.bottom : lastBounds.right,
           Infinity
         );
         this._updateBounds(myBounds, lastBounds);
@@ -358,13 +361,13 @@ export class NodeOrganizer {
    * @returns Bounds of a given node.
    */
   private _calcNodeBounds(node: Node): Bounds {
-    const nodeHeight = this._nodeType === NodeType.TIMELINE ? NODE_RADIUS : NODE_HEIGHT;
-    const nodeWidth = this._nodeType === NodeType.TIMELINE ? NODE_RADIUS : NODE_WIDTH;
+    const nodeHeight = this._nodeType === OrganizerNodeType.TIMELINE ? NODE_RADIUS : NODE_HEIGHT;
+    const nodeWidth = this._nodeType === OrganizerNodeType.TIMELINE ? NODE_RADIUS : NODE_WIDTH;
 
     return {
-      top: node.y - (this._nodeType === NodeType.TIMELINE ? nodeHeight : 0),
+      top: node.y - (this._nodeType === OrganizerNodeType.TIMELINE ? nodeHeight : 0),
       bottom: node.y + nodeHeight,
-      left: node.x + (this._nodeType === NodeType.TIMELINE ? -nodeWidth : nodeWidth * NODE_MARGIN),
+      left: node.x + (this._nodeType === OrganizerNodeType.TIMELINE ? -nodeWidth : nodeWidth * NODE_MARGIN),
       right: node.x + nodeWidth * (1 - NODE_MARGIN)
     };
   }
@@ -392,13 +395,13 @@ export class NodeOrganizer {
    */
   private _setRootNodeCoord(rootNode: Node, minCoord: number, maxCoord: number) {
     if (maxCoord !== Infinity) {
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         rootNode.y = maxCoord - NODE_RADIUS;
       } else {
         rootNode.x = maxCoord - NODE_WIDTH;
       }
     } else if (minCoord !== -Infinity) {
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         rootNode.y = minCoord + NODE_RADIUS;
       } else {
         rootNode.x = minCoord;
@@ -494,7 +497,7 @@ export class NodeOrganizer {
   private _isNodeLastParent(parentNode: Node, childNode: Node): boolean {
     const parents = (childNode.parentEdges as Edge[]).map(edge => edge.parentNode);
 
-    if (this._nodeType === NodeType.TIMELINE) {
+    if (this._nodeType === OrganizerNodeType.TIMELINE) {
       const parentStart = (parentNode as TimelineNode).trigger.getStartTime() ?? 0;
 
       return !parents.some((otherNode: TimelineNode) => {
@@ -549,7 +552,7 @@ export class NodeOrganizer {
   private _checkBounds(rootNode: Node, treeBounds: Bounds, minCoord: number, maxCoord: number): void {
     let increment = 0;
 
-    if (this._nodeType === NodeType.TIMELINE) {
+    if (this._nodeType === OrganizerNodeType.TIMELINE) {
       if (treeBounds.bottom > maxCoord) {
         increment = -(treeBounds.bottom - maxCoord);
       } else if (treeBounds.top < minCoord) {
@@ -566,7 +569,7 @@ export class NodeOrganizer {
     }
 
     if (increment !== 0) {
-      if (this._nodeType === NodeType.TIMELINE) {
+      if (this._nodeType === OrganizerNodeType.TIMELINE) {
         NodeOrganizer.moveTree(rootNode, 0, increment, true);
         treeBounds.top += increment;
         treeBounds.bottom += increment;
