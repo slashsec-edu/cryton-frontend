@@ -25,7 +25,7 @@ export class ListRunsComponent implements OnInit {
   buttons: Button<Run>[];
 
   constructor(private _runService: RunService, private _crytonDatetime: CrytonDatetimePipe, private _router: Router) {
-    this.buttons = [{ icon: 'assignment', func: this.handleReport }];
+    this.buttons = [{ name: 'report', icon: 'assignment', func: this.handleReport }];
   }
 
   ngOnInit(): void {

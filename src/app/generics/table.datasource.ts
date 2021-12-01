@@ -6,7 +6,14 @@ import { CrytonRESTApiService } from './cryton-rest-api-service';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
 
+export interface TableData<T> {
+  count: number;
+  items: T[];
+}
+
 export abstract class TableDataSource<T extends HasID> implements DataSource<T> {
+  data: TableData<T> = { count: 0, items: [] };
+
   private _dataSubject$ = new BehaviorSubject<T[]>([]);
   private _countSubject$ = new BehaviorSubject<number>(0);
   private _loadingSubject$ = new BehaviorSubject<boolean>(false);
@@ -73,6 +80,7 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
       .fetchItems(offset, limit, sort, filter)
       .pipe(catchError(() => of({ count: 0, data: [] })))
       .subscribe(items => {
+        this.data = { count: items.count, items: items.data };
         this._countSubject$.next(items.count);
         this._dataSubject$.next(items.data);
         this._loadingSubject$.next(false);
