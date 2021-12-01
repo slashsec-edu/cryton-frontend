@@ -3,9 +3,9 @@ import { Observable, Subject } from 'rxjs';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
 import { ThemeService } from 'src/app/services/theme.service';
 import { takeUntil } from 'rxjs/operators';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 
 @Component({
   selector: 'app-tree-node-dispenser',
@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   @Input() depTreeRef: DepTreeRef = DepTreeRef.STAGE_CREATION;
 
-  nodeSubject$: Observable<CrytonNode[]>;
+  nodeSubject$: Observable<TreeNode[]>;
 
   private _destroy$ = new Subject<void>();
   private _nodeManager: NodeManager;
@@ -43,7 +43,7 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
    *
    * @param node Node to swap.
    */
-  swapNode(node: CrytonNode): void {
+  swapNode(node: TreeNode): void {
     this._nodeManager.moveToPlan(node);
   }
 }

@@ -1,11 +1,11 @@
-import { CrytonStepEdge } from 'src/app/modules/template-creator/classes/cryton-edge/cryton-step-edge';
-import { CrytonStage } from 'src/app/modules/template-creator/classes/cryton-node/cryton-stage';
-import { CrytonStep } from 'src/app/modules/template-creator/classes/cryton-node/cryton-step';
-import { TriggerFactory } from 'src/app/modules/template-creator/classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
 import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/step-edge';
 
 /**
  * Main template dependency tree.
@@ -51,7 +51,7 @@ const basicStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
 // Create stage
 const basicDeltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 1, minutes: 20, seconds: 20 });
-const basicStage = new CrytonStage({
+const basicStage = new StageNode({
   name: 'stage-one',
   childDepTree: basicStageChildDepTree,
   parentDepTree: basicTemplateDepTree,
@@ -60,13 +60,13 @@ const basicStage = new CrytonStage({
 });
 
 // Create steps
-const firsStep = new CrytonStep(
+const firsStep = new StepNode(
   'scan-localhost',
   'mod_nmap',
   'target: 127.0.0.1\nports:\n  - 22',
   basicStageChildDepTree
 );
-const secondStep = new CrytonStep(
+const secondStep = new StepNode(
   'bruteforce',
   'mod_medusa',
   'target: 127.0.0.1\ncredentials:\n  username: vagrant',
@@ -76,7 +76,7 @@ basicStageChildDepTree.treeNodeManager.moveToPlan(firsStep);
 basicStageChildDepTree.treeNodeManager.moveToPlan(secondStep);
 
 // Create edge between steps with a condition
-const stepEdge = basicStageChildDepTree.createDraggedEdge(firsStep) as CrytonStepEdge;
+const stepEdge = basicStageChildDepTree.createDraggedEdge(firsStep) as StepEdge;
 basicStageChildDepTree.connectDraggedEdge(secondStep);
 stepEdge.conditions.push({ type: 'result', value: 'OK' });
 

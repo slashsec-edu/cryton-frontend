@@ -1,11 +1,11 @@
-import { CrytonStepEdge } from 'src/app/modules/template-creator/classes/cryton-edge/cryton-step-edge';
-import { CrytonStage } from 'src/app/modules/template-creator/classes/cryton-node/cryton-stage';
-import { CrytonStep } from 'src/app/modules/template-creator/classes/cryton-node/cryton-step';
-import { TriggerFactory } from 'src/app/modules/template-creator/classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
 import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/step-edge';
 
 /**
  * Main template dependency tree.
@@ -85,20 +85,20 @@ const httpStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
 // Create delta stage
 const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 5 });
-const deltaStage = new CrytonStage({
+const deltaStage = new StageNode({
   name: 'stage-one',
   childDepTree: deltaStageChildDepTree,
   parentDepTree: advancedTemplateDepTree,
   timeline,
   trigger: deltaTrigger
 });
-const deltaStageStepOne = new CrytonStep(
+const deltaStageStepOne = new StepNode(
   'scan-localhost',
   'mod_nmap',
   `target: "{{ target }}"\nports:\n  - 22`,
   deltaStageChildDepTree
 );
-const deltaStageStepTwo = new CrytonStep(
+const deltaStageStepTwo = new StepNode(
   'bruteforce',
   'mod_medusa',
   `target: "{{ target }}"\ncredentials:\n  username: "{{ username }}"`,
@@ -109,7 +109,7 @@ deltaStageChildDepTree.treeNodeManager.moveToPlan(deltaStageStepTwo);
 
 const edgeOne = deltaStageChildDepTree.createDraggedEdge(deltaStageStepOne);
 deltaStageChildDepTree.connectDraggedEdge(deltaStageStepTwo);
-(edgeOne as CrytonStepEdge).conditions.push({ type: 'result', value: 'OK' });
+(edgeOne as StepEdge).conditions.push({ type: 'result', value: 'OK' });
 
 advancedTemplateDepTree.treeNodeManager.moveToPlan(deltaStage);
 
@@ -119,21 +119,21 @@ const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
   port: 8082,
   routes: [{ path: '/index', method: 'GET', parameters: [{ name: 'a', value: '1' }] }]
 });
-const httpStage = new CrytonStage({
+const httpStage = new StageNode({
   name: 'stage-two',
   childDepTree: httpStageChildDepTree,
   parentDepTree: advancedTemplateDepTree,
   timeline,
   trigger: httpTrigger
 });
-const httpStageStepOne = new CrytonStep(
+const httpStageStepOne = new StepNode(
   'ssh-session',
   'mod_msf',
   // eslint-disable-next-line max-len
   `create_named_session: session_to_target_1\nexploit: auxiliary/scanner/ssh/ssh_login\nexploit_arguments:\n  RHOSTS: "{{ target }}"\n  USERNAME: $bruteforce.username\n  PASSWORD: $bruteforce.password`,
   httpStageChildDepTree
 );
-const httpStageStepTwo = new CrytonStep(
+const httpStageStepTwo = new StepNode(
   'session-cmd',
   'mod_cmd',
   `use_named_session: session_to_target_1\ncmd: "{{ commands.passwd }}"`,
@@ -145,7 +145,7 @@ advancedTemplateDepTree.treeNodeManager.moveToPlan(httpStage);
 
 const edgeTwo = httpStageChildDepTree.createDraggedEdge(httpStageStepOne);
 httpStageChildDepTree.connectDraggedEdge(httpStageStepTwo);
-(edgeTwo as CrytonStepEdge).conditions.push({ type: 'result', value: 'OK' });
+(edgeTwo as StepEdge).conditions.push({ type: 'result', value: 'OK' });
 
 advancedTemplateDepTree.createDraggedEdge(deltaStage);
 advancedTemplateDepTree.connectDraggedEdge(httpStage);

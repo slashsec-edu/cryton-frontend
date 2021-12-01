@@ -11,13 +11,14 @@ import { Spied } from 'src/app/testing/utility/utility-types';
 import { DependencyTreeManagerService } from '../../services/dependency-tree-manager.service';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { of, ReplaySubject } from 'rxjs';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
-import { CrytonStep } from '../../classes/cryton-node/cryton-step';
 import { NodeType } from '../../models/enums/node-type';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { MatDialog } from '@angular/material/dialog';
 
 const EMPTY_FORM_VALUE = { name: null, attackModule: null, attackModuleArgs: null };
 const TESTING_ARGS1 = { name: 'a1', attackModule: 'b1', attackModuleArgs: 'c1' };
@@ -31,8 +32,8 @@ describe('StepCreatorComponent', () => {
   const tcState = new TemplateCreatorStateService();
   const testingDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
-  const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): CrytonStep =>
-    new CrytonStep(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs, testingDepTree);
+  const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): StepNode =>
+    new StepNode(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs, testingDepTree);
 
   const getCreateBtn = (): Promise<CrytonButtonHarness> =>
     loader.getHarness(CrytonButtonHarness.with({ text: /.*Create step/ })) as Promise<CrytonButtonHarness>;
@@ -46,7 +47,7 @@ describe('StepCreatorComponent', () => {
   /**
    * Fake subject for simulating edit node event.
    */
-  const fakeEditNode$ = new ReplaySubject<CrytonNode>();
+  const fakeEditNode$ = new ReplaySubject<TreeNode>();
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
@@ -70,6 +71,8 @@ describe('StepCreatorComponent', () => {
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.returnValue(of(depTreeSpy));
 
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
+
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
@@ -78,7 +81,8 @@ describe('StepCreatorComponent', () => {
         providers: [
           { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
           { provide: AlertService, useValue: alertServiceStub },
-          { provide: TemplateCreatorStateService, useValue: tcState }
+          { provide: TemplateCreatorStateService, useValue: tcState },
+          { provide: MatDialog, useValue: matDialogStub }
         ]
       })
         .overrideComponent(StepCreatorComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })

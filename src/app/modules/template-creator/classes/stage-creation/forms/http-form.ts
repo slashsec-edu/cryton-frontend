@@ -2,7 +2,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpTriggerParametersComponent } from '../../../components/http-trigger-parameters/http-trigger-parameters.component';
 import { HTTPListenerArgs, HTTPListenerParams, HTTPListenerRoute } from '../../../models/interfaces/http-listener-args';
 import { Route } from '../../../models/interfaces/route';
-import { CrytonStage } from '../../cryton-node/cryton-stage';
+import { StageNode } from '../../dependency-tree/node/stage-node';
 import { FormUtils } from './form-utils';
 import { TriggerForm } from './trigger-form.interface';
 
@@ -58,7 +58,7 @@ export class HttpForm implements TriggerForm {
     this._triggerArgsForm.routes = [this._createRoute(null, null, [this._createParam(null, null)])];
   }
 
-  fill(stage: CrytonStage): void {
+  fill(stage: StageNode): void {
     const httpArgs = (stage.trigger.getArgs() as unknown) as HTTPListenerArgs;
 
     this._triggerArgsForm.args.setValue({

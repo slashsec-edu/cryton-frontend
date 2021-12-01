@@ -14,11 +14,13 @@ import { PortalModule } from '@angular/cdk/portal';
 import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('BuildTemplatePageComponent', () => {
   let component: BuildTemplatePageComponent;
   let fixture: ComponentFixture<BuildTemplatePageComponent>;
 
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
   const templateServiceStub = jasmine.createSpyObj('TemplateService', ['getTemplateDetail']) as Spied<TemplateService>;
 
   beforeEach(async () => {
@@ -37,7 +39,8 @@ describe('BuildTemplatePageComponent', () => {
       declarations: [BuildTemplatePageComponent, CrytonButtonComponent],
       providers: [
         { provide: AlertService, useValue: alertServiceStub },
-        { provide: TemplateService, useValue: templateServiceStub }
+        { provide: TemplateService, useValue: templateServiceStub },
+        { provide: MatDialog, useValue: matDialogStub }
       ]
     })
       .overrideComponent(BuildTemplatePageComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })

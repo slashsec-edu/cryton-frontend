@@ -4,25 +4,25 @@ import { TemplateCreatorModule } from '../../template-creator.module';
 import { DependencyTreeManagerService } from '../../services/dependency-tree-manager.service';
 import { Spied } from 'src/app/testing/utility/utility-types';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 
 /**
  * Fake implementation of node manager for testing.
  */
 class NodeManagerFake {
-  dispenserNodes$: Observable<CrytonNode[]>;
+  dispenserNodes$: Observable<TreeNode[]>;
 
-  private _dispenserNodes$ = new BehaviorSubject<CrytonNode[]>([]);
+  private _dispenserNodes$ = new BehaviorSubject<TreeNode[]>([]);
 
   constructor() {
     this.dispenserNodes$ = this._dispenserNodes$.asObservable();
   }
 
-  emitNodes(nodes: CrytonNode[]): void {
+  emitNodes(nodes: TreeNode[]): void {
     this._dispenserNodes$.next(nodes);
   }
 
@@ -50,8 +50,8 @@ describe('TreeNodeDispenserComponent', () => {
 
   treeManagerStub.getCurrentTree.and.returnValue(of(depTreeFake));
 
-  // Mocks the CrytonNode, we only need name attribute in dispenser.
-  const fakeNode = jasmine.createSpyObj('CrytonNode', [], { name: 'testing step' }) as CrytonNode;
+  // Mocks the TreeNode, we only need name attribute in dispenser.
+  const fakeNode = jasmine.createSpyObj('TreeNode', [], { name: 'testing step' }) as TreeNode;
 
   /**
    * Expects that DOM contains a given count of nodes.

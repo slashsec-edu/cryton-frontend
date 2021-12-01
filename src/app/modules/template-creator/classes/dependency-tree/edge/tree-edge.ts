@@ -1,41 +1,30 @@
 import Konva from 'konva';
-import { StrokeAnimation } from '../../animations/stroke.animation';
-import { Cursor } from './cursor-state';
-import { NODE_WIDTH, NODE_HEIGHT, TreeNode } from './tree-node';
-import { CrytonEdge } from '../cryton-edge/cryton-edge';
-import { DependencyTree } from './dependency-tree';
-import { CrytonStepEdge } from '../cryton-edge/cryton-step-edge';
-import { NodeType } from '../../models/enums/node-type';
-import { Theme } from '../../models/interfaces/theme';
+import { StrokeAnimation } from '../../../animations/stroke.animation';
+import { Cursor } from '../cursor-state';
+import { NODE_WIDTH, NODE_HEIGHT, TreeNode } from '../node/tree-node';
+import { DependencyTree } from '../dependency-tree';
+import { Theme } from '../../../models/interfaces/theme';
 
 export const EDGE_POINTER_LENGTH = 10;
 export const TREE_EDGE_NAME = 'treeEdge';
 
-export class TreeEdge {
-  crytonEdge: CrytonEdge;
+export abstract class TreeEdge {
+  parentNode: TreeNode;
+  childNode: TreeNode;
+
+  depTree: DependencyTree;
   konvaObject: Konva.Arrow;
   strokeAnimation: StrokeAnimation;
 
-  constructor(crytonEdge: CrytonEdge) {
-    this.crytonEdge = crytonEdge;
+  constructor(depTree: DependencyTree, parentNode: TreeNode) {
+    this.depTree = depTree;
+    this.parentNode = parentNode;
     this._initKonvaObject();
   }
 
   set color(color: string) {
     this.konvaObject.stroke(color);
     this.konvaObject.fill(color);
-  }
-
-  get parentNode(): TreeNode {
-    return this.crytonEdge.parentNode.treeNode;
-  }
-
-  get childNode(): TreeNode {
-    return this.crytonEdge.childNode.treeNode;
-  }
-
-  get depTree(): DependencyTree {
-    return this.crytonEdge.depTree;
   }
 
   /**
@@ -109,6 +98,76 @@ export class TreeEdge {
   }
 
   /**
+   * Checks if edge from parent node to child node is a correct edge.
+   * There must be no cycles.
+   * There can't already be the same edge.
+   */
+  isCorrectEdge(): void {
+    for (const childEdge of this.parentNode.childEdges) {
+      if (childEdge !== this && childEdge.childNode === this.childNode) {
+        throw new Error('Edge already exists.');
+      }
+    }
+    if (this.doesCreateCycle()) {
+      throw new Error('Edge creates a cycle.');
+    }
+  }
+
+  /**
+   * Checks if edge creates a cycle.
+   *
+   * @param startEdge Edge where call stack started, should be left empty.
+   * @returns True if edge creates a cycle.
+   */
+  doesCreateCycle(startEdge: TreeEdge = this): boolean {
+    return this.childNode.childEdges.some(childEdge => childEdge === startEdge || childEdge.doesCreateCycle(startEdge));
+  }
+
+  /**
+   * Connects edge to the child node.
+   *
+   * @param childNode Child node to connect to.
+   */
+  connect(childNode: TreeNode): void {
+    this.childNode = childNode;
+    this.parentNode.addChildEdge(this);
+    this.childNode.addParentEdge(this);
+    try {
+      this.isCorrectEdge();
+    } catch (error) {
+      this.destroy();
+      throw error;
+    }
+  }
+
+  /**
+   * Destroys edge.
+   */
+  destroy(): void {
+    this.parentNode.removeChildEdge(this);
+    this.childNode?.removeParentEdge(this);
+    this.konvaObject.destroy();
+  }
+
+  protected _onMouseEnter(): void {
+    if (this.depTree.toolState.isDeleteEnabled) {
+      this.depTree.cursorState.setCursor(Cursor.POINTER);
+      this.strokeAnimation.activate(this.depTree.theme.primary);
+    }
+    this.depTree.treeLayer.draw();
+  }
+  protected _onMouseLeave(): void {
+    this.depTree.cursorState.unsetCursor(Cursor.POINTER);
+    this.color = this.depTree.theme.templateCreator.treeEdge;
+    this.depTree.treeLayer.draw();
+  }
+  protected _onClick(): void {
+    if (this.depTree.toolState.isDeleteEnabled) {
+      this.destroy();
+    }
+  }
+
+  /**
    * Moves edge arrow points to the new destination.
    *
    * @param points New arrow points.
@@ -139,28 +198,13 @@ export class TreeEdge {
     this.strokeAnimation = new StrokeAnimation(this.konvaObject, this.konvaObject, this.depTree.treeLayer);
 
     this.konvaObject.on('mouseenter', () => {
-      if (this.depTree.toolState.isDeleteEnabled) {
-        this.depTree.cursorState.setCursor(Cursor.POINTER);
-        this.strokeAnimation.activate(this.depTree.theme.primary);
-      } else if (this.crytonEdge.nodeType === NodeType.CRYTON_STEP) {
-        this.depTree.cursorState.setCursor(Cursor.POINTER);
-        this.color = this.depTree.theme.primary;
-        this.crytonEdge.depTree.treeLayer.draw();
-      }
+      this._onMouseEnter();
     });
     this.konvaObject.on('mouseleave', () => {
-      this.depTree.cursorState.unsetCursor(Cursor.POINTER);
-      this.color = this.depTree.theme.templateCreator.treeEdge;
-      this.crytonEdge.depTree.treeLayer.draw();
+      this._onMouseLeave();
     });
     this.konvaObject.on('click', () => {
-      if (this.depTree.toolState.isDeleteEnabled) {
-        this.crytonEdge.destroy();
-      } else {
-        if (this.crytonEdge.nodeType === NodeType.CRYTON_STEP) {
-          (this.crytonEdge as CrytonStepEdge).emitEditEvent();
-        }
-      }
+      this._onClick();
     });
   }
 }

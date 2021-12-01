@@ -19,6 +19,7 @@ import { PortalModule } from '@angular/cdk/portal';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('CreateStagePageComponent', () => {
   let component: CreateStagePageComponent;
@@ -27,6 +28,8 @@ describe('CreateStagePageComponent', () => {
   const viewContainerRefStub = jasmine.createSpyObj('ViewContainerRef', ['insert'], {
     injector: TestBed
   }) as Spied<ViewContainerRef>;
+
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -52,7 +55,8 @@ describe('CreateStagePageComponent', () => {
       ],
       providers: [
         { provide: AlertService, useValue: alertServiceStub },
-        { provide: ViewContainerRef, useValue: viewContainerRefStub }
+        { provide: ViewContainerRef, useValue: viewContainerRefStub },
+        { provide: MatDialog, useValue: matDialogStub }
       ]
     })
       .overrideComponent(CreateStagePageComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
