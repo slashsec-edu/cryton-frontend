@@ -2,6 +2,9 @@
   <header [ngClass]="['worker-header', getStateColor(data.state)]">
     <!-- HEADER -->
     <div class="worker-header--state">
+      <button mat-icon-button onclick="this.blur()" (click)="handleSettings(data)">
+        <mat-icon>settings</mat-icon>
+      </button>
       <h2>{{ data.state }}</h2>
     </div>
 
