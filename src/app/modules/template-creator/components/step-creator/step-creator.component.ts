@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { CrytonStep } from '../../classes/cryton-node/cryton-step';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
@@ -9,7 +8,10 @@ import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
+import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { MatDialog } from '@angular/material/dialog';
+import { StepCreatorHelpComponent } from '../step-creator-help/step-creator-help.component';
 
 @Component({
   selector: 'app-step-creator',
@@ -29,17 +31,18 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     this._state.stepForm = value;
   }
 
-  get editedStep(): CrytonStep {
+  get editedStep(): StepNode {
     return this._state.editedStep;
   }
-  set editedStep(value: CrytonStep) {
+  set editedStep(value: StepNode) {
     this._state.editedStep = value;
   }
 
   constructor(
     private _treeManager: DependencyTreeManagerService,
     private _state: TemplateCreatorStateService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +56,13 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  /**
+   * Opens help page.
+   */
+  openHelp(): void {
+    this._dialog.open(StepCreatorHelpComponent, { width: '60%' });
   }
 
   /**
@@ -70,7 +80,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    */
   handleCreateStep(): void {
     if (this.stepForm.valid) {
-      const step: CrytonStep = this._createStep();
+      const step: StepNode = this._createStep();
       this._stepManager.moveToDispenser(step);
       this.stepForm.reset();
       this._alertService.showSuccess('Step created successfully');
@@ -122,7 +132,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    *
    * @param step Step to edit.
    */
-  private _moveToEditor(step: CrytonStep): void {
+  private _moveToEditor(step: StepNode): void {
     if (step !== this.editedStep) {
       if (!this.editedStep) {
         this._state.backupStepForm();
@@ -137,7 +147,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    *
    * @param step Step to fill parameters of.
    */
-  private _fillFormWithStepData(step: CrytonStep): void {
+  private _fillFormWithStepData(step: StepNode): void {
     this.stepForm.setValue({
       name: step.name,
       attackModule: step.attackModule,
@@ -150,11 +160,11 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    *
    * @returns Cryton step.
    */
-  private _createStep(): CrytonStep {
+  private _createStep(): StepNode {
     const formValue = this.stepForm.value as Record<string, string>;
     const { name, attackModule, attackModuleArgs } = formValue;
 
-    return new CrytonStep(name, attackModule, attackModuleArgs, this._parentDepTree);
+    return new StepNode(name, attackModule, attackModuleArgs, this._parentDepTree);
   }
 
   /**
@@ -178,8 +188,8 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       });
   }
 
-  private _createEditNodeSub(editNode$: Observable<CrytonNode>): void {
-    editNode$.pipe(takeUntil(this._destroy$)).subscribe((step: CrytonStep) => {
+  private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
+    editNode$.pipe(takeUntil(this._destroy$)).subscribe((step: StepNode) => {
       if (step) {
         this._moveToEditor(step);
       } else if (this._state.editedStep) {

@@ -19,6 +19,7 @@ import { ResizeService } from 'src/app/services/resize.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { TemplateTimelineHelpComponent } from '../template-timeline-help/template-timeline-help.component';
 import { TimelineNodeParametersComponent } from '../timeline-node-parameters/timeline-node-parameters.component';
 
 @Component({
@@ -83,6 +84,10 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   emitSwapPagesEvent(): void {
     this.swapPages.emit();
+  }
+
+  openHelp(): void {
+    this._dialog.open(TemplateTimelineHelpComponent, { width: '60%' });
   }
 
   /**

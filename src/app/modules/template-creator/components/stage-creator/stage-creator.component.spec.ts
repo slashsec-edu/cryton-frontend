@@ -13,17 +13,18 @@ import { NodeType } from '../../models/enums/node-type';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { CrytonButtonHarness } from 'src/app/modules/shared/components/cryton-button/cryton-button.harness';
-import { CrytonStage } from '../../classes/cryton-node/cryton-stage';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
-import { TriggerFactory } from '../../classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { TriggerType } from '../../models/enums/trigger-type';
-import { CrytonStep } from '../../classes/cryton-node/cryton-step';
-import { CrytonNode } from '../../classes/cryton-node/cryton-node';
-import { Trigger } from '../../classes/cryton-node/triggers/trigger';
+import { Trigger } from '../../classes/triggers/trigger';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { HttpTriggerForm } from '../../classes/stage-creation/forms/http-form';
+import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('StageCreatorComponent', () => {
   let component: StageCreatorComponent;
@@ -39,11 +40,11 @@ describe('StageCreatorComponent', () => {
   // Stage config
   let triggerConfig: Record<string, unknown>;
   let trigger: Trigger<Record<string, any>>;
-  let correctStage: CrytonStage;
+  let correctStage: StageNode;
 
   // Subjects emmiting new dependency trees from tree manager spy.
   const childDepTree$ = new BehaviorSubject<DependencyTree>(null);
-  const fakeEditNode$ = new ReplaySubject<CrytonNode>(1);
+  const fakeEditNode$ = new ReplaySubject<TreeNode>(1);
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
@@ -76,6 +77,8 @@ describe('StageCreatorComponent', () => {
     }
   });
 
+  const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
+
   /**
    * Fills stage creator with valid stage data (valid for creation).
    */
@@ -104,11 +107,11 @@ describe('StageCreatorComponent', () => {
     expect(treeManagerSpy.resetCurrentTree).toHaveBeenCalled();
   };
 
-  const createDeltaStage = (name: string): CrytonStage => {
+  const createDeltaStage = (name: string): StageNode => {
     childDepTree$.next(correctChildDepTree);
     triggerConfig = { hours: 1, minutes: 2, seconds: 3 };
     trigger = TriggerFactory.createTrigger(TriggerType.DELTA, triggerConfig);
-    return new CrytonStage({
+    return new StageNode({
       name,
       parentDepTree,
       childDepTree: correctChildDepTree,
@@ -117,7 +120,7 @@ describe('StageCreatorComponent', () => {
     });
   };
 
-  const createHttpStage = (name: string): CrytonStage => {
+  const createHttpStage = (name: string): StageNode => {
     childDepTree$.next(correctChildDepTree);
     triggerConfig = {
       host: '127.0.0.1',
@@ -125,7 +128,7 @@ describe('StageCreatorComponent', () => {
       routes: [{ path: 'api', method: 'GET', parameters: [{ name: 'value', value: 'test' }] }]
     };
     trigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, triggerConfig);
-    return new CrytonStage({
+    return new StageNode({
       name,
       parentDepTree,
       childDepTree: correctChildDepTree,
@@ -144,7 +147,7 @@ describe('StageCreatorComponent', () => {
 
     // Correctly created dependency tree for testing valid stages.
     correctChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
-    const testingStep = new CrytonStep('testStep', 'module', 'args', correctChildDepTree);
+    const testingStep = new StepNode('testStep', 'module', 'args', correctChildDepTree);
     correctChildDepTree.treeNodeManager.moveToPlan(testingStep);
 
     // Initializing subjects
@@ -215,7 +218,8 @@ describe('StageCreatorComponent', () => {
         providers: [
           { provide: AlertService, useValue: alertServiceStub },
           { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
-          { provide: TemplateCreatorStateService, useValue: tcState }
+          { provide: TemplateCreatorStateService, useValue: tcState },
+          { provide: MatDialog, useValue: matDialogStub }
         ]
       })
         .overrideComponent(StageCreatorComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })

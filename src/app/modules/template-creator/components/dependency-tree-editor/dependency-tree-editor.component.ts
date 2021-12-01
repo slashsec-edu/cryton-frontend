@@ -18,10 +18,11 @@ import { DependencyTreeManagerService, DepTreeRef } from '../../services/depende
 import { Alert } from 'src/app/modules/shared/models/interfaces/alert.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { EdgeParametersComponent } from '../edge-parameters/edge-parameters.component';
-import { CrytonEdge } from '../../classes/cryton-edge/cryton-edge';
-import { CrytonStepEdge } from '../../classes/cryton-edge/cryton-step-edge';
 import { AlertService } from 'src/app/services/alert.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TreeEdge } from '../../classes/dependency-tree/edge/tree-edge';
+import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
+import { DependencyTreeHelpComponent } from '../dependency-tree-help/dependency-tree-help.component';
 
 @Component({
   selector: 'app-dependency-tree-editor',
@@ -85,6 +86,10 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
     this._destroy$.complete();
   }
 
+  showHelp(): void {
+    this._dialog.open(DependencyTreeHelpComponent, { width: '60%' });
+  }
+
   /**
    * Emits swap pages event for swapping back to parent tab.
    */
@@ -118,7 +123,7 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
    * - Opens edge parameters dialog window.
    */
   private _createEditEdgeSub(): void {
-    CrytonStepEdge.editEdge$.pipe(takeUntil(this._destroy$)).subscribe((edge: CrytonEdge) => {
+    StepEdge.editEdge$.pipe(takeUntil(this._destroy$)).subscribe((edge: TreeEdge) => {
       this._dialog.open(EdgeParametersComponent, { data: { edge } });
     });
   }

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import Konva from 'konva';
-import { CrytonNode } from '../classes/cryton-node/cryton-node';
 import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
+import { TreeNode } from '../classes/dependency-tree/node/tree-node';
 import { NodeType } from '../models/enums/node-type';
 
 import { DependencyTreeManagerService, DepTreeRef } from './dependency-tree-manager.service';
@@ -9,14 +9,12 @@ import { DependencyTreeManagerService, DepTreeRef } from './dependency-tree-mana
 describe('DependencyTreeManagerService', () => {
   let service: DependencyTreeManagerService;
 
-  const createTestingNode = (parentDepTree: DependencyTree, nodeType: NodeType): CrytonNode =>
-    jasmine.createSpyObj(nodeType === NodeType.CRYTON_STAGE ? 'CrytonStage' : 'CrytonStep', [], {
+  const createTestingNode = (parentDepTree: DependencyTree, nodeType: NodeType): TreeNode =>
+    jasmine.createSpyObj(nodeType === NodeType.CRYTON_STAGE ? 'StageNode' : 'StepNode', [], {
       name: 'test',
       parentDepTree,
-      treeNode: {
-        konvaObject: new Konva.Rect()
-      }
-    }) as CrytonNode;
+      konvaObject: new Konva.Group()
+    }) as TreeNode;
 
   /**
    * Runs tests which rely on DepTreeRef.

@@ -1,17 +1,17 @@
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { CrytonNode } from '../cryton-node/cryton-node';
-import { CrytonStage } from '../cryton-node/cryton-stage';
+import { StageNode } from './node/stage-node';
+import { TreeNode } from './node/tree-node';
 
 export class NodeManager {
   /**
    * Triggers when a node is edited moved to editor.
    */
-  editNode$: Observable<CrytonNode>;
-  dispenserNodes$: Observable<CrytonNode[]>;
-  canvasNodes: CrytonNode[] = [];
+  editNode$: Observable<TreeNode>;
+  dispenserNodes$: Observable<TreeNode[]>;
+  canvasNodes: TreeNode[] = [];
 
-  private _editNode$ = new ReplaySubject<CrytonNode>(1);
-  private _dispenserNodes$ = new BehaviorSubject<CrytonNode[]>([]);
+  private _editNode$ = new ReplaySubject<TreeNode>(1);
+  private _dispenserNodes$ = new BehaviorSubject<TreeNode[]>([]);
 
   constructor() {
     this._editNode$.next(null);
@@ -31,7 +31,7 @@ export class NodeManager {
    *
    * @returns Array of nodes.
    */
-  getAllNodes(): CrytonNode[] {
+  getAllNodes(): TreeNode[] {
     const allNodes = [...this.canvasNodes];
     allNodes.push(...this._dispenserNodes$.value);
     return allNodes;
@@ -42,7 +42,7 @@ export class NodeManager {
    *
    * @param node Node to move.
    */
-  moveToDispenser(node: CrytonNode): void {
+  moveToDispenser(node: TreeNode): void {
     this.removeCanvasNode(node);
     this._dispenserNodes$.next(this._dispenserNodes$.value.concat(node));
   }
@@ -52,12 +52,12 @@ export class NodeManager {
    *
    * @param node Node to move.
    */
-  moveToPlan(node: CrytonNode): void {
+  moveToPlan(node: TreeNode): void {
     this.removeDispenserNode(node);
     this.canvasNodes.push(node);
     node.parentDepTree.addNode(node);
 
-    if (node instanceof CrytonStage) {
+    if (node instanceof StageNode && node.timelineNode) {
       node.timeline.addNode(node.timelineNode);
     }
   }
@@ -67,7 +67,7 @@ export class NodeManager {
    *
    * @param node Node to edit.
    */
-  editNode(node: CrytonNode): void {
+  editNode(node: TreeNode): void {
     this._editNode$.next(node);
   }
 
@@ -76,7 +76,7 @@ export class NodeManager {
    *
    * @param node Node to remove.
    */
-  removeDispenserNode(node: CrytonNode): void {
+  removeDispenserNode(node: TreeNode): void {
     const withoutNode = this._dispenserNodes$.value.filter(s => s !== node);
     this._dispenserNodes$.next(withoutNode);
   }
@@ -86,7 +86,7 @@ export class NodeManager {
    *
    * @param node Node to remove.
    */
-  removeCanvasNode(node: CrytonNode): void {
+  removeCanvasNode(node: TreeNode): void {
     this.canvasNodes = this.canvasNodes.filter(s => s !== node);
   }
 

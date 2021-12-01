@@ -20,6 +20,8 @@ import { TemplateConverterService } from '../../services/template-converter.serv
 import { TemplateService } from 'src/app/services/template.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { BehaviorSubject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { TemplateCreatorHelpComponent } from '../../components/template-creator-help/template-creator-help.component';
 
 @Component({
   selector: 'app-build-template-page',
@@ -52,7 +54,8 @@ export class BuildTemplatePageComponent implements AfterViewInit {
     private _cd: ChangeDetectorRef,
     private _templateConverter: TemplateConverterService,
     private _templateService: TemplateService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialog: MatDialog
   ) {}
 
   ngAfterViewInit(): void {
@@ -174,5 +177,12 @@ export class BuildTemplatePageComponent implements AfterViewInit {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Opens help page.
+   */
+  openHelp(): void {
+    this._dialog.open(TemplateCreatorHelpComponent, { width: '60%' });
   }
 }

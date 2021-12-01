@@ -1,23 +1,21 @@
 import Konva from 'konva';
-import { NodeType } from '../../models/enums/node-type';
-import { CrytonStep } from '../cryton-node/cryton-step';
-import { DependencyTree } from './dependency-tree';
-import { CONNECTOR_CIRCLE_NAME, CONNECTOR_NAME } from './node-connector';
+import { NodeType } from '../../../models/enums/node-type';
+import { DependencyTree } from '../dependency-tree';
+import { CONNECTOR_CIRCLE_NAME, CONNECTOR_NAME } from '../node-connector';
 import { NODE_HEIGHT, NODE_WIDTH, TreeNode, TREE_NODE_RECT_NAME, TREE_NODE_TEXT_NAME } from './tree-node';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
-import { Theme } from '../../models/interfaces/theme';
-import { TreeEdge } from './tree-edge';
-import { CrytonStepEdge } from '../cryton-edge/cryton-step-edge';
-import { Tabs, TabsRouter } from '../utils/tabs-router';
-import { SETTINGS_BTN_NAME } from './settings-button';
-import { CrytonNode } from '../cryton-node/cryton-node';
-import { CrytonStage } from '../cryton-node/cryton-stage';
-import { TemplateTimeline } from '../timeline/template-timeline';
-import { TriggerFactory } from '../cryton-node/triggers/trigger-factory';
-import { TriggerType } from '../../models/enums/trigger-type';
+import { Theme } from '../../../models/interfaces/theme';
+import { Tabs, TabsRouter } from '../../utils/tabs-router';
+import { SETTINGS_BTN_NAME } from '../settings-button';
+import { TemplateTimeline } from '../../timeline/template-timeline';
+import { TriggerFactory } from '../../triggers/trigger-factory';
+import { TriggerType } from '../../../models/enums/trigger-type';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
 import { of } from 'rxjs';
+import { StepEdge } from '../edge/step-edge';
+import { StepNode } from './step-node';
+import { StageNode } from './stage-node';
 
 const DEFAULT_NAME = 'test';
 
@@ -25,29 +23,25 @@ describe('TreeNode', () => {
   let fixture: ComponentFixture<KonvaContainerComponent>;
   let component: KonvaContainerComponent;
 
-  // Testing primarily with CrytonStep for methods which don't depend on node type.
+  // Testing primarily with StepNode for methods which don't depend on node type.
   let dependencyTree: DependencyTree;
-  let crytonNode: CrytonNode;
   let treeNode: TreeNode;
 
   // Use stepEdgeStub to mock parent / child edges.
-  const edgeStub = jasmine.createSpyObj('TreeEdge', ['moveToParentNode', 'moveToChildNode']) as TreeEdge;
-  const stepEdgeStub = jasmine.createSpyObj('CrytonStepEdge', [], { treeEdge: edgeStub }) as CrytonStepEdge;
+  const stepEdgeStub = jasmine.createSpyObj('StepEdge', ['moveToParentNode', 'moveToChildNode']) as StepEdge;
 
   const createStep = (name: string) => {
-    crytonNode = new CrytonStep(name, '', '', dependencyTree);
-    treeNode = crytonNode.treeNode;
+    treeNode = new StepNode(name, '', '', dependencyTree);
   };
 
   const createStage = (name: string) => {
-    crytonNode = new CrytonStage({
+    treeNode = new StageNode({
       name,
       parentDepTree: dependencyTree,
       childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
       timeline: new TemplateTimeline(),
       trigger: TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 })
     });
-    treeNode = crytonNode.treeNode;
   };
 
   const getNameText = (): Konva.Text => treeNode.konvaObject.findOne(`.${TREE_NODE_TEXT_NAME}`);
@@ -124,7 +118,7 @@ describe('TreeNode', () => {
 
     it('should init. editing of node in dependency tree', () => {
       settingsBtn.fire('click');
-      expect(dependencyTree.treeNodeManager.editNode).toHaveBeenCalledWith(crytonNode);
+      expect(dependencyTree.treeNodeManager.editNode).toHaveBeenCalledWith(treeNode);
     });
   });
 
@@ -155,7 +149,7 @@ describe('TreeNode', () => {
       fixture.detectChanges();
 
       konvaContainer = component.konvaContainer.nativeElement as HTMLDivElement;
-      dependencyTree.addNode(crytonNode);
+      dependencyTree.addNode(treeNode);
     });
 
     it('swap enabled mouse enter', () => {
@@ -169,14 +163,14 @@ describe('TreeNode', () => {
     });
 
     it('move node enabled mouse enter', () => {
-      dependencyTree.toolState.flipMoveNodeTool([crytonNode]);
+      dependencyTree.toolState.flipMoveNodeTool([treeNode]);
 
       treeNode.konvaObject.fire('mouseenter');
       expect(konvaContainer.style.cursor).toBe('grab');
     });
 
     it('move node enabled mouse leave settings button (should remember cursor)', () => {
-      dependencyTree.toolState.flipMoveNodeTool([crytonNode]);
+      dependencyTree.toolState.flipMoveNodeTool([treeNode]);
 
       treeNode.konvaObject.fire('mouseenter');
       expect(konvaContainer.style.cursor).toBe('grab');
@@ -198,7 +192,7 @@ describe('TreeNode', () => {
       dependencyTree.toolState.flipSwapTool();
       testCursorReset('pointer');
 
-      dependencyTree.toolState.flipMoveNodeTool([crytonNode]);
+      dependencyTree.toolState.flipMoveNodeTool([treeNode]);
       testCursorReset('grab');
     });
 
@@ -220,7 +214,7 @@ describe('TreeNode', () => {
       spyOn(treeNode.strokeAnimation, 'deactivate');
       spyOn(dependencyTree.cursorState, 'resetCursor');
       spyOn(dependencyTree.treeNodeManager, 'moveToDispenser');
-      spyOn(crytonNode, 'unattach');
+      spyOn(treeNode, 'unattach');
 
       const rect = getNodeRect();
       rect.fire('click');
@@ -230,26 +224,26 @@ describe('TreeNode', () => {
       expect(dependencyTree.cursorState.resetCursor).toHaveBeenCalled();
 
       // Should move node into dispenser.
-      expect(dependencyTree.treeNodeManager.moveToDispenser).toHaveBeenCalledWith(crytonNode);
+      expect(dependencyTree.treeNodeManager.moveToDispenser).toHaveBeenCalledWith(treeNode);
 
       // Node should be only unattached from the canvas so it can be used again.
-      expect(crytonNode.unattach).toHaveBeenCalled();
+      expect(treeNode.unattach).toHaveBeenCalled();
     });
 
     it('delete enabled click', () => {
       dependencyTree.toolState.flipDeleteTool();
       spyOn(dependencyTree.treeNodeManager, 'removeCanvasNode');
-      spyOn(crytonNode, 'destroy');
+      spyOn(treeNode, 'destroy');
       spyOn(dependencyTree.cursorState, 'resetCursor');
 
       const rect = getNodeRect();
       rect.fire('click');
 
       // Should remove the node from canvas.
-      expect(dependencyTree.treeNodeManager.removeCanvasNode).toHaveBeenCalledWith(crytonNode);
+      expect(dependencyTree.treeNodeManager.removeCanvasNode).toHaveBeenCalledWith(treeNode);
 
       // Cryton node should be destroyed because it won't be used again.
-      expect(crytonNode.destroy).toHaveBeenCalled();
+      expect(treeNode.destroy).toHaveBeenCalled();
 
       // Should reset cursor so that it doesn't stay glitched after node disappears.
       expect(dependencyTree.cursorState.resetCursor).toHaveBeenCalled();
@@ -281,12 +275,12 @@ describe('TreeNode', () => {
   });
 
   it('should update points of all child and parent edges', () => {
-    crytonNode.parentEdges.push(stepEdgeStub, stepEdgeStub, stepEdgeStub);
-    crytonNode.childEdges.push(stepEdgeStub, stepEdgeStub);
+    treeNode.parentEdges.push(stepEdgeStub, stepEdgeStub, stepEdgeStub);
+    treeNode.childEdges.push(stepEdgeStub, stepEdgeStub);
 
     treeNode.updateEdges();
-    expect(edgeStub.moveToParentNode).toHaveBeenCalledTimes(2);
-    expect(edgeStub.moveToChildNode).toHaveBeenCalledTimes(3);
+    expect(stepEdgeStub.moveToParentNode).toHaveBeenCalledTimes(2);
+    expect(stepEdgeStub.moveToChildNode).toHaveBeenCalledTimes(3);
   });
 
   it('should draw the node in konva', () => {

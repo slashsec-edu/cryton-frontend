@@ -1,0 +1,9 @@
+@import 'src/app/styles/help-page.scss';
+
+.small-icon {
+  $icon-size: 16px;
+  font-size: $icon-size;
+  width: $icon-size;
+  height: $icon-size;
+  vertical-align: middle;
+}

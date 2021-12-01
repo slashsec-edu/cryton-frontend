@@ -1,7 +1,7 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DeltaTriggerParametersComponent } from '../../../components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { DeltaArgs } from '../../../models/interfaces/delta-args';
-import { CrytonStage } from '../../cryton-node/cryton-stage';
+import { StageNode } from '../../dependency-tree/node/stage-node';
 import { FormUtils } from './form-utils';
 import { TriggerForm } from './trigger-form.interface';
 
@@ -39,7 +39,7 @@ export class DeltaForm implements TriggerForm {
     this._triggerArgsForm.setValue({ hours: 0, minutes: 0, seconds: 0 });
   }
 
-  fill(stage: CrytonStage): void {
+  fill(stage: StageNode): void {
     this._triggerArgsForm.setValue(stage.trigger.getArgs());
   }
 

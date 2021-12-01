@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { Spied } from 'src/app/testing/utility/utility-types';
-import { CrytonStepEdge } from '../../classes/cryton-edge/cryton-step-edge';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { EdgeParametersComponent } from './edge-parameters.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,6 +12,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
+import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
 
 class CrytonNodeFake {
   name: string;
@@ -71,7 +71,7 @@ describe('EdgeParametersComponent', () => {
   const mockTreeEdge = new CrytonEdgeFake(mockParentStep, mockChildStep);
 
   const dialogDataSpy = jasmine.createSpyObj('MAT_DIALOG_DATA', [], { edge: mockTreeEdge }) as Spied<{
-    edge: CrytonStepEdge;
+    edge: StepEdge;
   }>;
 
   const getFormsCount = (): number => {

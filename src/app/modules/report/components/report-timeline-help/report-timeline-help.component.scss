@@ -1,22 +1,4 @@
-// LAYOUT
-section {
-  margin: 10px 0;
-}
-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-
-  h1 {
-    margin: 0;
-  }
-}
-
-footer {
-  display: flex;
-  justify-content: flex-end;
-}
+@import 'src/app/styles/help-page.scss';
 
 // COLOR LEGEND
 .groups-container {

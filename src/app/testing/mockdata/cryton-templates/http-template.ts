@@ -1,10 +1,10 @@
-import { CrytonStage } from 'src/app/modules/template-creator/classes/cryton-node/cryton-stage';
-import { CrytonStep } from 'src/app/modules/template-creator/classes/cryton-node/cryton-step';
-import { TriggerFactory } from 'src/app/modules/template-creator/classes/cryton-node/triggers/trigger-factory';
+import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
 import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
 
 /**
  * Main template dependency tree.
@@ -58,14 +58,14 @@ const httpStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
 // Create delta stage
 const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 5 });
-const deltaStage = new CrytonStage({
+const deltaStage = new StageNode({
   name: 'stage-one',
   childDepTree: deltaStageChildDepTree,
   parentDepTree: httpTemplateDepTree,
   timeline,
   trigger: deltaTrigger
 });
-const deltaStageStep = new CrytonStep(
+const deltaStageStep = new StepNode(
   'get-request',
   'mod_cmd',
   `cmd: curl http://localhost:8082/index?a=1`,
@@ -80,14 +80,14 @@ const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
   port: 8082,
   routes: [{ path: '/index', method: 'GET', parameters: [{ name: 'a', value: '1' }] }]
 });
-const httpStage = new CrytonStage({
+const httpStage = new StageNode({
   name: 'stage-two',
   childDepTree: httpStageChildDepTree,
   parentDepTree: httpTemplateDepTree,
   timeline,
   trigger: httpTrigger
 });
-const httpStageStep = new CrytonStep('scan-localhost', 'mod_nmap', 'target: 127.0.0.1', httpStageChildDepTree);
+const httpStageStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1', httpStageChildDepTree);
 httpStageChildDepTree.treeNodeManager.moveToPlan(httpStageStep);
 httpTemplateDepTree.treeNodeManager.moveToPlan(httpStage);
 

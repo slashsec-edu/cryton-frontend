@@ -3,8 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { Tick } from 'src/app/modules/shared/classes/tick';
 import { Theme } from '../../models/interfaces/theme';
-import { CrytonStageEdge } from '../cryton-edge/cryton-stage-edge';
-import { CrytonStage } from '../cryton-node/cryton-stage';
 import { TemplateTimeline } from './template-timeline';
 import { TimelineNode } from './timeline-node';
 import {
@@ -14,10 +12,11 @@ import {
   NODE_CIRCLE_NAME,
   NODE_LABEL_NAME,
   NODE_LTICK_NAME,
-  NODE_LTICK_TIMEMARK_NAME,
-  TRIGGER_TAG_NAME
+  NODE_LTICK_TIMEMARK_NAME
 } from './timeline-node-constants';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { StageEdge } from '../dependency-tree/edge/stage-edge';
+import { StageNode } from '../dependency-tree/node/stage-node';
 
 const DEFAULT_STAGE_NAME = 'name';
 const CANVAS_CONTAINER_ID = 'canvasContainer';
@@ -27,10 +26,10 @@ const theme$ = new BehaviorSubject<Theme>(mockTheme);
 const canvasContainer = document.createElement('div');
 canvasContainer.setAttribute('id', CANVAS_CONTAINER_ID);
 
-class CrytonStageFake {
+class StageNodeFake {
   name = DEFAULT_STAGE_NAME;
-  childEdges: CrytonStageEdge[] = [];
-  parentEdges: CrytonStageEdge[] = [];
+  childEdges: StageEdge[] = [];
+  parentEdges: StageEdge[] = [];
   timeline = new TemplateTimeline();
   triggerTag: Konva.Text = null;
 
@@ -53,20 +52,19 @@ class CrytonStageFake {
 
 describe('TimelineNode', () => {
   let timelineNode: TimelineNode;
-  let crytonStage: CrytonStageFake;
+  let crytonStage: StageNodeFake;
 
   const getCircle = (): Konva.Circle => timelineNode.konvaObject.findOne(`.${NODE_CIRCLE_NAME}`);
   const getLabel = (): Konva.Label => timelineNode.konvaObject.findOne(`.${NODE_LABEL_NAME}`);
   const getLabelTag = (): Konva.Tag => getLabel().findOne(`.${LABEL_TAG_NAME}`);
   const getLabelText = (): Konva.Text => getLabel().findOne(`.${LABEL_TEXT_NAME}`);
-  const getTriggerTag = (): Konva.Text => timelineNode.konvaObject.findOne(`.${TRIGGER_TAG_NAME}`);
   const getLTick = (): Tick => timelineNode.timeline.tickLayer.findOne(`.${NODE_LTICK_NAME}`);
   const getLTickTimemark = (): NodeTimemark =>
     timelineNode.timeline.timeMarkLayer.findOne(`.${NODE_LTICK_TIMEMARK_NAME}`);
 
   beforeEach(() => {
-    crytonStage = new CrytonStageFake();
-    timelineNode = new TimelineNode((crytonStage as unknown) as CrytonStage);
+    crytonStage = new StageNodeFake();
+    timelineNode = new TimelineNode((crytonStage as unknown) as StageNode);
   });
 
   it('should create', () => {
@@ -92,25 +90,10 @@ describe('TimelineNode', () => {
       const longName = Array(MAX_NAME_LENGTH + 1)
         .fill('a')
         .join('');
-      crytonStage = new CrytonStageFake(longName);
-      timelineNode = new TimelineNode((crytonStage as unknown) as CrytonStage);
+      crytonStage = new StageNodeFake(longName);
+      timelineNode = new TimelineNode((crytonStage as unknown) as StageNode);
 
       expect(getLabelText().text().endsWith('...')).toBeTrue();
-    });
-
-    it('should render a trigger tag inside konva circle', () => {
-      const triggerText = 'HTTP';
-      crytonStage = new CrytonStageFake(
-        null,
-        new Konva.Text({
-          text: triggerText
-        })
-      );
-      timelineNode = new TimelineNode((crytonStage as unknown) as CrytonStage);
-
-      const triggerTag = getTriggerTag();
-      expect(triggerTag).toBeTruthy();
-      expect(triggerTag.text()).toEqual(triggerText);
     });
   });
 

@@ -44,22 +44,10 @@ export const LT_PADDING = [4, 10];
  */
 export const LT_FONT_SIZE = 12;
 
-/**
- * Dash settings of No Start node parent edge.
- * Indexes: dash length, dash gap.
- */
-export const NS_EDGE_DASH = [5, 5];
-
-/**
- * Distance of node with no trigger start time from it's last parent node.
- */
-export const NS_NODE_DIST = 150;
-
 // Konva names (used as identifiers).
 export const NODE_CIRCLE_NAME = 'timelineNodeCircle';
 export const NODE_LABEL_NAME = 'timelineNodeLabel';
 export const LABEL_TAG_NAME = 'labelTag';
 export const LABEL_TEXT_NAME = 'labelText';
-export const TRIGGER_TAG_NAME = 'triggerTag';
 export const NODE_LTICK_NAME = 'timelineNodeLTick';
 export const NODE_LTICK_TIMEMARK_NAME = 'timelineNodeLTickTimemark';

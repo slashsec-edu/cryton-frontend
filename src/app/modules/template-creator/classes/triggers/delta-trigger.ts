@@ -1,5 +1,5 @@
-import { TriggerType } from '../../../models/enums/trigger-type';
-import { DeltaArgs } from '../../../models/interfaces/delta-args';
+import { TriggerType } from '../../models/enums/trigger-type';
+import { DeltaArgs } from '../../models/interfaces/delta-args';
 import { Trigger } from './trigger';
 
 export class DeltaTrigger extends Trigger<DeltaArgs> {

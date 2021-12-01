@@ -1,7 +1,6 @@
 import Konva from 'konva';
 import { TemplateTimeline } from './template-timeline';
 import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe';
-import { CrytonStage } from '../cryton-node/cryton-stage';
 import { TimelineEdge } from './timeline-edge';
 import {
   NODE_RADIUS,
@@ -10,33 +9,46 @@ import {
   LABEL_MARGIN_BOTTOM,
   NAME_FONT_SIZE,
   MAX_NAME_LENGTH,
-  NS_NODE_DIST,
   NODE_LTICK_TIMEMARK_NAME,
   NODE_LTICK_NAME,
   NODE_CIRCLE_NAME,
   NODE_LABEL_NAME,
   LABEL_TAG_NAME,
-  LABEL_TEXT_NAME,
-  TRIGGER_TAG_NAME
+  LABEL_TEXT_NAME
 } from './timeline-node-constants';
 import { Theme } from '../../models/interfaces/theme';
 import { Tick } from 'src/app/modules/shared/classes/tick';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
 import { CIRCLE_RADIUS } from 'src/app/modules/report/classes/report-step';
+import { StageNode, TriggerArgs } from '../dependency-tree/node/stage-node';
+import { Trigger } from '../triggers/trigger';
 
 export class TimelineNode {
-  crytonNode: CrytonStage;
+  treeNode: StageNode;
   konvaObject: Konva.Group;
   selected = false;
+
+  childEdges: TimelineEdge[] = [];
+  parentEdges: TimelineEdge[] = [];
 
   private _leadingTick: Tick;
 
   // Konva parts
   private _nodeCircle: Konva.Circle;
+
+  // Label
+  private _nameLabel: Konva.Label;
   private _nameText: Konva.Text;
   private _nameTag: Konva.Tag;
-  private _triggerTag: Konva.Text;
+
+  get name(): string {
+    return this.treeNode.name;
+  }
+
+  get trigger(): Trigger<TriggerArgs> {
+    return this.treeNode.trigger;
+  }
 
   get x(): number {
     return this.konvaObject.x();
@@ -60,57 +72,27 @@ export class TimelineNode {
     return 2 * NODE_RADIUS + LABEL_MARGIN_BOTTOM + 2 * LABEL_PADDING[0] + NAME_FONT_SIZE;
   }
 
-  get childEdges(): TimelineEdge[] {
-    return this.crytonNode.childEdges.map(edge => edge.timelineEdge);
-  }
-
-  get parentEdges(): TimelineEdge[] {
-    return this.crytonNode.parentEdges.map(edge => edge.timelineEdge);
-  }
-
   get timeline(): TemplateTimeline {
-    return this.crytonNode.timeline;
+    return this.treeNode.timeline;
   }
 
-  constructor(crytonNode: CrytonStage) {
-    this.crytonNode = crytonNode;
+  constructor(treeNode: StageNode) {
+    this.treeNode = treeNode;
     this._initKonvaObject();
   }
 
   /**
-   * Checks if new trigger start is correct.
-   *
-   * @param triggerStart New trigger start in seconds.
-   * @returns True if trigger start is correct.
+   * Destroys timeline node.
    */
-  checkTriggerStart(triggerStart: number): void {
-    if (!triggerStart) {
-      return;
-    }
+  destroy(): void {
+    this.konvaObject.destroy();
+  }
 
-    let nearestParentStart = -Infinity;
-    let nearestChildStart = Infinity;
-
-    this.childEdges.forEach(edge => {
-      const childTriggerStart = edge.childNode.crytonNode.trigger.getStartTime();
-
-      if (childTriggerStart && childTriggerStart < nearestChildStart) {
-        nearestChildStart = childTriggerStart;
-      }
-    });
-    this.parentEdges.forEach(edge => {
-      const parentTriggerStart = edge.parentNode.crytonNode.trigger.getStartTime();
-
-      if (parentTriggerStart && parentTriggerStart > nearestParentStart) {
-        nearestParentStart = parentTriggerStart;
-      }
-    });
-
-    if (triggerStart <= nearestParentStart || triggerStart >= nearestChildStart) {
-      throw new Error(
-        'Invalid trigger start time. Trigger must start after every parent stage and before every child stage trigger.'
-      );
-    }
+  /**
+   * Removes timeline node from the timeline. Node can be used again.
+   */
+  remove(): void {
+    this.konvaObject.remove();
   }
 
   /**
@@ -118,8 +100,6 @@ export class TimelineNode {
    */
   updateNode(): void {
     this.updateX();
-    this.updateTriggerTag();
-    this.updateEdgesStyle();
   }
 
   /**
@@ -127,23 +107,6 @@ export class TimelineNode {
    */
   updateX(): void {
     this.x = this._calcX();
-  }
-
-  /**
-   * Updates trigger tag.
-   */
-  updateTriggerTag(): void {
-    this._triggerTag?.destroy();
-    this._renderTriggerTag();
-    this.timeline.mainLayer.draw();
-  }
-
-  /**
-   * Updates style of all connected edges.
-   */
-  updateEdgesStyle(): void {
-    this._forEachEdge(edge => edge.updateEdgeStyle());
-    this.timeline.mainLayer.draw();
   }
 
   /**
@@ -207,9 +170,7 @@ export class TimelineNode {
    */
   changeName(name: string): void {
     this._nameText?.text(new ShortStringPipe().transform(name, 10));
-    this._nameText.x(-(this._nameText.width() / 2));
-
-    this._nameTag.x(-(this._nameTag.width() / 2));
+    this._nameLabel.x(-(this._nameLabel.width() / 2));
   }
 
   changeTheme(theme: Theme): void {
@@ -259,13 +220,12 @@ export class TimelineNode {
     this._initKonvaGroup();
 
     this._nodeCircle = this._createNodeCircle();
-    const label = this._createLabel();
+    this._nameLabel = this._createLabel();
 
-    this.konvaObject.add(this._nodeCircle).add(label);
-    this.konvaObject.x(TimelineUtils.calcXFromSeconds(this._calcX(), this.timeline.getParams()));
+    this.konvaObject.add(this._nodeCircle).add(this._nameLabel);
+    this.konvaObject.x(this._calcX());
     this.konvaObject.y(this.timeline.stage ? this.timeline.height / 2 : 250);
 
-    this._renderTriggerTag();
     this._initNodeSelectEvent();
   }
 
@@ -297,7 +257,7 @@ export class TimelineNode {
       }
     });
     this.konvaObject.on('dblclick', () => {
-      this.timeline.openNodeParams$.next(this.crytonNode);
+      this.timeline.openNodeParams$.next(this.treeNode);
     });
   }
 
@@ -320,7 +280,7 @@ export class TimelineNode {
     const timeMark = new NodeTimemark({
       totalSeconds: TimelineUtils.calcSecondsFromX(this.x, this.timeline.getParams()),
       theme: this.timeline.theme,
-      constantText: this.crytonNode.trigger.getStartTime() === null ? 'No start time' : null,
+      constantText: this.treeNode.trigger.getStartTime() === null ? 'No start time' : null,
       useCenterCoords: true,
       timemarkY: 0,
       x: this.konvaObject.x(),
@@ -330,8 +290,8 @@ export class TimelineNode {
     timeMark.centerY(this.timeline.timelinePadding[0]);
 
     const tick = new Tick({
-      topY: this.crytonNode.timeline.timelinePadding[0],
-      bottomY: this.timeline.height - this.crytonNode.timeline.timelinePadding[2],
+      topY: this.treeNode.timeline.timelinePadding[0],
+      bottomY: this.timeline.height - this.treeNode.timeline.timelinePadding[2],
       x: this.konvaObject.x(),
       theme: this.timeline.theme,
       isLeading: true,
@@ -415,7 +375,7 @@ export class TimelineNode {
    */
   private _createNameText(): Konva.Text {
     const nameText = new Konva.Text({
-      text: new ShortStringPipe().transform(this.crytonNode.name, MAX_NAME_LENGTH),
+      text: new ShortStringPipe().transform(this.treeNode.name, MAX_NAME_LENGTH),
       fontFamily: 'roboto',
       fontSize: NAME_FONT_SIZE,
       y: -NODE_RADIUS - NAME_FONT_SIZE - LABEL_MARGIN_BOTTOM,
@@ -438,47 +398,11 @@ export class TimelineNode {
    * @returns X coordinate.
    */
   private _calcX(): number {
-    const triggerStart = this.crytonNode.trigger.getStartTime();
+    const triggerStart = this.treeNode.trigger.getStartTime();
 
     return triggerStart != null
       ? TimelineUtils.calcXFromSeconds(triggerStart, this.timeline.getParams())
-      : this._calcNoStartX();
-  }
-
-  /**
-   * Calculates X coordinate for nodes without defined start time inside trigger.
-   *
-   * Nodes with trigger which doesn't define a start time (HTTPListener for example)
-   * have to be placed at a constant distance from their closest parent node.
-   *
-   * If the node doesn't have a parent, it gets placed to the start of the timeline.
-   *
-   * @returns X coordinate where the node should be placed.
-   */
-  private _calcNoStartX(): number {
-    if (this.parentEdges.length > 0) {
-      const greatestX = Math.max(...this.parentEdges.map(edge => edge.parentNode.x)) - this.timeline.timelinePadding[3];
-      return greatestX + NS_NODE_DIST;
-    }
-
-    return this.timeline.timelinePadding[3];
-  }
-
-  /**
-   * Renders tag defined by stage trigger inside the node circle if it exists.
-   */
-  private _renderTriggerTag(): void {
-    this._triggerTag = this.crytonNode.trigger.getTag();
-
-    if (this._triggerTag) {
-      this._triggerTag.setAttrs({
-        x: -this._triggerTag.width() / 2,
-        y: -this._triggerTag.height() / 2,
-        name: TRIGGER_TAG_NAME
-      });
-      this.konvaObject.add(this._triggerTag);
-      this._triggerTag.moveToTop();
-    }
+      : this.timeline.timelinePadding[3];
   }
 
   private _forEachEdge(func: (e: TimelineEdge) => void): void {

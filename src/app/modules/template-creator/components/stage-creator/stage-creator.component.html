@@ -1,4 +1,5 @@
 <div class="controls">
+  <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
   <ng-container *ngIf="!editedStage; else saveChanges">
     <app-cryton-button
       color="primary"
@@ -28,6 +29,7 @@
   <div class="flex-section">
     <div class="params-wrapper">
       <div class="stage-params cryton-scrollbar">
+        <h5>STAGE PARAMETERS</h5>
         <app-stage-parameters
           *ngIf="parentDepTree?.treeNodeManager"
           [stageForm]="stageForm"
@@ -50,6 +52,7 @@
   <!-- EXECUTION TREE PREVIEW -->
   <div class="flex-section hideable">
     <div class="tree-preview-wrapper">
+      <h5 id="tree-preview-header">TREE PREVIEW</h5>
       <div #container id="stage-creator--tree-preview"></div>
       <div class="flex-end-btn">
         <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>
@@ -61,7 +64,7 @@
 <ng-template #buildDepTree>
   <app-cryton-button
     color="primary"
-    value="Build dependency tree"
+    value="Show dependency tree"
     (clicked)="emitSwapPagesEvent()"
     id="build-dep-tree-btn"
   ></app-cryton-button>
