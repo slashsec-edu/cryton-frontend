@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TabsRouter } from '../../classes/utils/tabs-router';
+import { TemplateConverterService } from '../../services/template-converter.service';
 
 @Component({
   selector: 'app-template-creator',
@@ -16,13 +18,23 @@ export class TemplateCreatorComponent implements OnInit, OnDestroy {
 
   private _destroy$ = new Subject<void>();
 
-  constructor(private _changeDetector: ChangeDetectorRef) {}
+  constructor(
+    private _changeDetector: ChangeDetectorRef,
+    private _route: ActivatedRoute,
+    private _converter: TemplateConverterService
+  ) {}
 
   ngOnInit(): void {
     TabsRouter.selectIndex$.pipe(takeUntil(this._destroy$)).subscribe((index: number) => {
       this.selectedIndex = index;
       this._changeDetector.detectChanges();
     });
+
+    const id = this._route.snapshot.paramMap.get('id');
+
+    if (id) {
+      this._converter.editTemplate(Number(id)).pipe(takeUntil(this._destroy$)).subscribe();
+    }
   }
 
   ngOnDestroy(): void {

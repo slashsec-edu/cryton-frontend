@@ -29,7 +29,6 @@ import { Sort } from '@angular/material/sort';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
-import { SelectionModel } from '@angular/cdk/collections';
 
 export interface ErroneousButton<T> {
   button: Button<T>;
@@ -139,12 +138,10 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   pageSize = 5;
 
   /* TABLE SETTINGS */
+  checkedCheckboxes: T[] = [];
+  checkedRadio: T = null;
   displayedColumns: string[];
   expandedRow: T;
-
-  /* CHECKBOXES */
-  checkboxSelection: SelectionModel<T>;
-  radioSelection: SelectionModel<T>;
 
   /* FILTER SETTINGS */
   filterControl: FormControl = new FormControl('');
@@ -169,12 +166,12 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   ) {}
 
   ngOnInit(): void {
-    this.checkboxSelection = new SelectionModel<T>(true, []);
-    this.radioSelection = new SelectionModel<T>(false);
-
     this.dataSource.loadItems(0, this.pageSize, this.sort, null);
-    this.displayedColumns = this._getDisplayedColumns();
+    this.displayedColumns = this._getColumnNames(this.dataSource.columns);
 
+    if (this.shouldShowButtons()) {
+      this.displayedColumns.push('buttons');
+    }
     if (this.eraseEvent$) {
       this.eraseEvent$.pipe(takeUntil(this._destroy$)).subscribe(() => this._uncheckAll());
     }
@@ -204,8 +201,23 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       .subscribe();
   }
 
+  getButtonsWidth(): string {
+    const buttons = [this.showCheckboxes, this.showRadioButtons, this.expandedComponent];
+    const buttonWidth = 60;
+    let totalWidth = 0;
+
+    buttons.forEach(button => {
+      if (button) {
+        totalWidth += buttonWidth;
+      }
+    });
+    totalWidth += this.buttons ? this.buttons.length * buttonWidth : 0;
+
+    return `${totalWidth}px`;
+  }
+
   loadPage(): void {
-    this._destroyExpandedRowComponents();
+    this.destroyExpandedRowComponents();
 
     this.dataSource.loadItems(
       this.paginator.pageIndex * this.paginator.pageSize,
@@ -225,6 +237,18 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     setTimeout(() => {
       this.loadPage();
     }, RELOAD_TIMEOUT);
+  }
+
+  /**
+   * Decides if table should render a column with buttons.
+   */
+  shouldShowButtons(): boolean {
+    return (
+      (this.buttons && this.buttons.length > 0) ||
+      this.showCheckboxes ||
+      this.showRadioButtons ||
+      this.expandedComponent !== null
+    );
   }
 
   /**
@@ -265,36 +289,26 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   }
 
   checkRadioButton(item: T): void {
-    this.radioSelection.select(item);
+    this.checkedRadio = item;
     this.radioChange.emit(item);
   }
 
+  isRadioChecked(item: T): boolean {
+    return this.checkedRadio != null && this.checkedRadio.id === item.id;
+  }
+
   checkCheckbox(item: T): void {
-    if (item) {
-      this.checkboxSelection.toggle(item);
-      this.checkboxChange.emit(this.checkboxSelection.selected);
-    }
-  }
-
-  /**
-   * Whether the number of elements with checked checkbox matches the total number of rows.
-   **/
-  isAllChecked(): boolean {
-    const numSelected = this.checkboxSelection.selected.length;
-    const numRows = this.dataSource.data.count;
-    return numSelected === numRows;
-  }
-
-  /**
-   * Checks all checkboxes if they are not all checked; otherwise clear selection.
-   **/
-  masterToggle(): void {
-    if (this.isAllChecked()) {
-      this.checkboxSelection.clear();
+    if (this.isCheckboxChecked(item)) {
+      this.checkedCheckboxes = this.checkedCheckboxes.filter(checkbox => checkbox.id !== item.id);
     } else {
-      this.dataSource.data.items.forEach(row => this.checkboxSelection.select(row));
+      this.checkedCheckboxes.push(item);
     }
-    this.checkboxChange.emit(this.checkboxSelection.selected);
+    this.checkboxChange.emit(this.checkedCheckboxes);
+  }
+
+  isCheckboxChecked(item: T): boolean {
+    const checkbox = this.checkedCheckboxes.find(comparedItem => comparedItem.id === item.id);
+    return checkbox != null;
   }
 
   expandRow(row: T, index: number): void {
@@ -308,7 +322,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       this.expandedRow = expandedRow;
     } else {
       this.expandedRow = expandedRow;
-      setTimeout(() => this._destroyExpandedRowComponents(), animationTimeout);
+      setTimeout(() => this.destroyExpandedRowComponents(), animationTimeout);
     }
   }
 
@@ -344,6 +358,10 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     } else {
       this.loadPage();
     }
+  }
+
+  destroyExpandedRowComponents(): void {
+    this.expandedHosts.forEach(host => host.viewContainerRef.clear());
   }
 
   handleButtonClick(button: Button<T>, row: T): void {
@@ -404,32 +422,9 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     }
   }
 
-  private _destroyExpandedRowComponents(): void {
-    this.expandedHosts.forEach(host => host.viewContainerRef.clear());
-  }
-
-  private _getDisplayedColumns(): string[] {
-    const displayedColumns = this._getColumnNames(this.dataSource.columns);
-
-    if (this.showCheckboxes) {
-      displayedColumns.push('checkbox');
-    }
-    if (this.showRadioButtons) {
-      displayedColumns.push('radio');
-    }
-    if (this.buttons && this.buttons.length > 0) {
-      displayedColumns.push(...this.buttons.map(button => button.name));
-    }
-    if (this.expandedComponent) {
-      displayedColumns.push('expand');
-    }
-
-    return displayedColumns;
-  }
-
   private _uncheckAll(): void {
-    this.radioSelection.clear();
-    this.checkboxSelection.clear();
+    this.checkedRadio = null;
+    this.checkedCheckboxes = [];
     this._cd.detectChanges();
   }
 

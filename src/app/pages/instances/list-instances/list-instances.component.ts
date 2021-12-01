@@ -30,7 +30,7 @@ export class ListInstancesComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new InstanceTableDataSource(this._instanceService, this._datePipe);
-    this.buttons = [{ name: 'delete', icon: 'delete', func: this.deleteInstance }];
+    this.buttons = [{ icon: 'delete', func: this.deleteInstance }];
   }
 
   /**
