@@ -7,6 +7,7 @@ import { catchError, concatAll, first, mapTo, mergeMap, pluck, switchMap } from 
 import { Observable, of, throwError } from 'rxjs';
 import { Report } from '../models/api-responses/report/report.interface';
 import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { ExecutionVariableService } from './execution-variable.service';
 
 export interface RunResponse {
   detail: {
@@ -19,10 +20,9 @@ export interface RunResponse {
   providedIn: 'root'
 })
 export class RunService extends CrytonRESTApiService<Run> {
-  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.RUNS, 'v1');
-  private _variablesEndpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.EXECUTION_VARS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.RUNS, 'v1');
 
-  constructor(protected http: HttpClient) {
+  constructor(protected http: HttpClient, private _execVarService: ExecutionVariableService) {
     super(http);
   }
 
@@ -80,7 +80,7 @@ export class RunService extends CrytonRESTApiService<Run> {
    * @param inventoryFiles Selected inventory files (execution variables).
    */
   postRun(body: Record<string, any>, inventoryFiles: Record<string, any>): Observable<string> {
-    return this.http.post<Record<string, any>>(this._endpoint, body).pipe(
+    return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
       catchError(err => this.handleItemError(err, 'Run creation failed.')),
       switchMap((run: RunResponse) => this.http.get(run.detail.link)),
       pluck('plan_executions'),
@@ -92,10 +92,7 @@ export class RunService extends CrytonRESTApiService<Run> {
 
         if (workersFiles && workersFiles.length > 0) {
           return of(workersFiles).pipe(
-            mergeMap(files => {
-              const formData = this._createFormData(execution.id, files);
-              return this.http.post(this._variablesEndpoint, formData);
-            }),
+            mergeMap(files => this._execVarService.uploadVariables(execution.id, files)),
             catchError(() => throwError('Run created but failed to upload execution variables.'))
           );
         } else {
@@ -113,7 +110,7 @@ export class RunService extends CrytonRESTApiService<Run> {
    * @returns Observable of the report from a run.
    */
   fetchReport(runID: number): Observable<Report> {
-    return this.http.get<Report>(`${this._endpoint}/${runID}/report`);
+    return this.http.get<Report>(`${this.endpoint}/${runID}/report`);
   }
 
   downloadReport(runID: number): void {
@@ -128,24 +125,6 @@ export class RunService extends CrytonRESTApiService<Run> {
         link.click();
         link.remove();
       });
-  }
-
-  /**
-   * Creates a form data object for a POST request
-   * to execution variables endpoint.
-   *
-   * @param executionID ID of the plan execution.
-   * @param files Array of inventory files.
-   */
-  private _createFormData(executionID: number, files?: File[]): FormData {
-    const formData = new FormData();
-    formData.append('plan_execution_id', executionID.toString());
-
-    for (const file of files) {
-      formData.append('inventory_file', file, 'inventory_file');
-    }
-
-    return formData;
   }
 
   /**
@@ -164,7 +143,7 @@ export class RunService extends CrytonRESTApiService<Run> {
   }
 
   private _runAction(runID: number, action: string, body: Record<string, any> = {}): Observable<Record<string, any>> {
-    const runUrl = `${this._endpoint}${runID}/${action}/`;
+    const runUrl = `${this.endpoint}${runID}/${action}/`;
 
     return this.http.post<Record<string, any>>(runUrl, body);
   }

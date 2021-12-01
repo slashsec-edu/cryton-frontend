@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $background: map-get($config, background);
+
+  .cryton-id-chip {
+    background: map-get($background, card);
+
+    .id {
+      background: map-get($primary, default);
+    }
+  }
+}

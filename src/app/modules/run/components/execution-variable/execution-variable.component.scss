@@ -1,0 +1,23 @@
+.execution-variable {
+  width: 100%;
+  padding: 10px 15px;
+}
+
+.variable-content {
+  display: flex;
+  justify-content: space-between;
+
+  .variable {
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      margin: 0;
+      font-weight: bold;
+    }
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+  }
+}

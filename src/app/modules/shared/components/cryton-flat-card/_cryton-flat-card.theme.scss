@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $background: map-get($config, background);
+
+  .cryton-flat-card {
+    background: map-get($background, selected-button);
+    border-left: 4px solid map-get($primary, default);
+  }
+}

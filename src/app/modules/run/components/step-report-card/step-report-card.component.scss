@@ -1,0 +1,33 @@
+/* ACCORDION */
+.outputs-accordion,
+.outputs-accordion-item {
+  display: block;
+}
+.outputs-accordion-body {
+  display: block;
+  overflow: hidden;
+}
+
+/* LABEL */
+.output-label {
+  padding: 5px 0;
+  cursor: pointer;
+  color: #8f8f8f;
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    font-size: 14px;
+    width: fit-content;
+    height: fit-content;
+    margin-left: 10px;
+    transition: 0.2s;
+    display: block;
+  }
+}
+.rotated {
+  transform: rotate(180deg);
+}
+.output-label:hover {
+  color: #a0a0a0;
+}

@@ -20,7 +20,7 @@ import { Theme } from '../../models/interfaces/theme';
 import { Tick } from 'src/app/modules/shared/classes/tick';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
-import { CIRCLE_RADIUS } from 'src/app/modules/report/classes/report-step';
+import { CIRCLE_RADIUS } from 'src/app/modules/run/classes/report-step';
 import { StageNode, TriggerArgs } from '../dependency-tree/node/stage-node';
 import { Trigger } from '../triggers/trigger';
 

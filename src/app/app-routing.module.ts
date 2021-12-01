@@ -14,9 +14,9 @@ import { CreateWorkerComponent } from './pages/workers/create-worker/create-work
 import { ListRunsComponent } from './pages/runs/list-runs/list-runs.component';
 import { CreateRunComponent } from './pages/runs/create-run/create-run.component';
 import { UploadTemplateComponent } from './pages/templates/upload-template/upload-template.component';
-import { ReportComponent } from './modules/report/components/report/report.component';
-import { TimelineComponent } from './modules/report/components/timeline/timeline.component';
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
+import { RunPageComponent } from './modules/run/pages/run/run-page.component';
+import { TimelineComponent } from './modules/run/components/timeline/timeline.component';
 
 const routes: Routes = [
   {
@@ -35,6 +35,14 @@ const routes: Routes = [
           { path: 'create', component: CreateRunComponent },
           { path: '', redirectTo: '/app/runs/list', pathMatch: 'full' }
         ]
+      },
+      {
+        path: 'runs/:id',
+        component: RunPageComponent
+      },
+      {
+        path: 'runs/:id/timeline',
+        component: TimelineComponent
       },
       {
         path: 'workers',
@@ -69,11 +77,6 @@ const routes: Routes = [
           { path: '', redirectTo: '/app/templates/list', pathMatch: 'full' }
         ]
       },
-      {
-        path: 'reports/:id',
-        component: ReportComponent
-      },
-      { path: 'reports/:id/timeline', component: TimelineComponent },
       { path: 'logs', component: ListLogsComponent },
       { path: '', redirectTo: '/app/dashboard', pathMatch: 'full' },
       { path: '**', component: PageUnavailableComponent }

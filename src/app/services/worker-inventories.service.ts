@@ -13,7 +13,7 @@ import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.
   providedIn: 'root'
 })
 export class WorkerInventoriesService extends CrytonRESTApiService<Worker> {
-  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.WORKERS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.WORKERS, 'v1');
   private _workers: Worker[] = [];
 
   constructor(protected http: HttpClient) {
@@ -48,7 +48,7 @@ export class WorkerInventoriesService extends CrytonRESTApiService<Worker> {
     }
 
     return this.http
-      .get<CrytonResponse<Worker>>(this._endpoint, { params })
+      .get<CrytonResponse<Worker>>(this.endpoint, { params })
       .pipe(
         mergeMap(items => items.results),
         filter((item: Worker) =>

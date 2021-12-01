@@ -1,0 +1,30 @@
+<div
+  class="execution-variable-uploader"
+  [class.clickable]="!selectedFile"
+  appFileUploadDnd
+  (fileDropped)="handleFileSelection($event)"
+  (click)="!selectedFile && fileInput.click()"
+>
+  <span *ngIf="!selectedFile; else selected">Select or drop file</span>
+
+  <ng-template #selected>
+    <div class="file-preview">
+      <span>{{ selectedFile.name | shortString: 15 }}</span>
+
+      <div class="options">
+        <ng-container *ngIf="!(loading$ | async); else loading">
+          <button mat-icon-button (click)="$event.cancelBubble = true; cancel()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <button mat-icon-button (click)="upload()"><mat-icon>check</mat-icon></button>
+        </ng-container>
+
+        <ng-template #loading>
+          <mat-spinner diameter="30" strokeWidth="3"></mat-spinner>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<input type="file" hidden #fileInput (change)="handleFileInput($event)" />

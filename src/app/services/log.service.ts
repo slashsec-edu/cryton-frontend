@@ -11,7 +11,7 @@ export type LogsResponse = CrytonResponse<string>;
   providedIn: 'root'
 })
 export class LogService {
-  private _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.LOGS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.LOGS, 'v1');
 
   constructor(private _http: HttpClient) {}
 
@@ -21,6 +21,6 @@ export class LogService {
       .set('limit', limit?.toString() ?? '0')
       .set('filter', filter ?? '');
 
-    return this._http.get<LogsResponse>(this._endpoint, { params });
+    return this._http.get<LogsResponse>(this.endpoint, { params });
   }
 }

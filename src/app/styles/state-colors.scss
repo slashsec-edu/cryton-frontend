@@ -1,0 +1,67 @@
+.state-paused,
+.state-down {
+  background: #96a4ac;
+  color: white;
+
+  &.darker {
+    background: #7e8d96;
+  }
+}
+.state-pausing {
+  background: #464849;
+  color: white;
+
+  &.darker {
+    background: #333536;
+  }
+}
+.state-finished,
+.state-up {
+  background: #5fbb62;
+  color: rgb(40, 40, 40);
+
+  &.darker {
+    background: #51a554;
+  }
+}
+.state-ignore {
+  background: #ee8349;
+  color: rgb(255, 255, 255);
+
+  &.darker {
+    background: #e47c44;
+  }
+}
+.state-error {
+  background: #ff0000;
+  color: rgb(255, 255, 255);
+
+  &.darker {
+    background: rgb(236, 0, 0) 0;
+  }
+}
+.state-running,
+.state-ready {
+  background: #448aff;
+  color: white;
+
+  &.darker {
+    background: rgb(59, 124, 238) f;
+  }
+}
+.state-pending {
+  background: #ffb23b;
+  color: rgb(48, 48, 48);
+
+  &.darker {
+    background: rgb(238, 163, 50) b;
+  }
+}
+.state-scheduled {
+  background: #ffdb3b;
+  color: rgb(48, 48, 48);
+
+  &.darker {
+    background: rgb(233, 199, 49) b;
+  }
+}

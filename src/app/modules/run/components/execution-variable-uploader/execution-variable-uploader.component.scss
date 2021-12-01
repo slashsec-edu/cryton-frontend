@@ -1,0 +1,22 @@
+.execution-variable-uploader {
+  height: 68px;
+  width: 100%;
+  padding: 10px 15px;
+  border: 2px dashed gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.clickable {
+    cursor: pointer;
+  }
+}
+.file-preview {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.options {
+  display: flex;
+}

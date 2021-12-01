@@ -101,9 +101,11 @@
     <ng-container matColumnDef="expand">
       <th mat-header-cell *matHeaderCellDef class="button-width"></th>
       <td mat-cell *matCellDef="let row" class="justify-right">
-        <mat-icon class="unselectable" [@expand]="expandedRow === row ? 'expanded' : 'collapsed'">
-          expand_more
-        </mat-icon>
+        <button mat-icon-button onclick="this.blur()">
+          <mat-icon class="unselectable" [@expand]="expandedRow === row ? 'expanded' : 'collapsed'">
+            expand_more
+          </mat-icon>
+        </button>
       </td>
     </ng-container>
 

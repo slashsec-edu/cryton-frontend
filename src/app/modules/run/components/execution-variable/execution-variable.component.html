@@ -1,0 +1,17 @@
+<div class="execution-variable">
+  <div class="variable-content">
+    <aside class="variable">
+      <h3>{{ variable.name | shortString: 8 }}</h3>
+      <span>{{ variable.value | shortString: 9 }}</span>
+    </aside>
+    <aside class="controls">
+      <button mat-icon-button (click)="delete()" *ngIf="!(loading$ | async); else loading">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <ng-template #loading>
+        <mat-spinner diameter="30" strokeWidth="3"></mat-spinner>
+      </ng-template>
+    </aside>
+  </div>
+</div>
