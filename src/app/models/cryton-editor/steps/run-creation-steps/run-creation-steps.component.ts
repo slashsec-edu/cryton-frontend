@@ -51,7 +51,10 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     this.workerDataSource = new WorkerTableDataSource(this._workersService);
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
 
-    this.inventoriesButtons = [{ icon: 'backup', func: this.uploadFile }];
+    this.inventoriesButtons = [
+      { icon: 'clear', func: this._clearFileSelection },
+      { icon: 'backup', func: this._uploadFile }
+    ];
   }
 
   ngOnDestroy(): void {
@@ -92,23 +95,6 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   }
 
   /**
-   * Function for opening a file input window.
-   * Function is attached to upload button in the cryton table of the third step.
-   *
-   * @param row Row data of the row in which the button was clicked.
-   */
-  uploadFile = (row: Worker): Observable<string> => {
-    const rowInput: DebugElement = this.fileInputs.find(input => {
-      const inputElement = input.nativeElement as HTMLElement;
-      return inputElement.id === row.id.toString();
-    });
-
-    const rowInputElement = rowInput.nativeElement as HTMLElement;
-    rowInputElement.click();
-    return of(null) as Observable<string>;
-  };
-
-  /**
    * Takes a FileList from file input and assigns the files to a corresponding worker. Then emits an
    * inputChange event with all the selected files.
    *
@@ -117,13 +103,15 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
    */
   setFiles(changeEvent: Event, workerId: number): void {
     const files = (changeEvent.target as HTMLInputElement).files;
+    this.inventoryFiles[workerId] = Array.from(files);
 
-    if (this.inventoryFiles[workerId]) {
-      this.inventoryFiles[workerId].concat(Array.from(files));
-    } else {
-      this.inventoryFiles[workerId] = Array.from(files);
-    }
+    this.emitSelectedFiles();
+  }
 
+  /**
+   * Emits selectables of currently selected execution variable files.
+   */
+  emitSelectedFiles(): void {
     // Flattens the array of files and emits inputChange event.
     const selectables = Object.entries(this.inventoryFiles).reduce((resultArray, item: [string, File[]]) => {
       const mappedFiles = item[1].map((file: File) => ({ name: file.name, id: parseInt(item[0], 10) } as Selectable));
@@ -154,6 +142,52 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     };
 
     this.create.emit(this._runService.postRun(runPostRequest, this.inventoryFiles));
+  }
+
+  /**
+   * Function for opening a file input window.
+   * Function is attached to upload button in the cryton table of the third step.
+   *
+   * @param row Row data of the row in which the button was clicked.
+   */
+  private _uploadFile = (row: Worker): Observable<string> => {
+    const rowInput = this._findRowInput(row);
+
+    rowInput.click();
+    return of(null) as Observable<string>;
+  };
+
+  /**
+   * Clears file selection for a given worker's execution variables.
+   *
+   * @param row Worker object.
+   * @returns Observable of null.
+   */
+  private _clearFileSelection = (row: Worker): Observable<string> => {
+    const rowInput = this._findRowInput(row);
+    rowInput.value = null;
+
+    this.inventoryFiles[row.id] = [];
+    this.emitSelectedFiles();
+
+    return of(null) as Observable<string>;
+  };
+
+  /**
+   * Finds an input for execution variable files by a given row data.
+   *
+   * @param row Worker data.
+   * @returns Debug element of file input.
+   */
+  private _findRowInput(row: Worker): HTMLInputElement {
+    const rowInput = this.fileInputs.find(input => {
+      const inputElement = input.nativeElement as HTMLElement;
+      return inputElement.id === row.id.toString();
+    });
+
+    if (rowInput) {
+      return rowInput.nativeElement as HTMLInputElement;
+    }
   }
 }
 

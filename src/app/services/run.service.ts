@@ -90,7 +90,7 @@ export class RunService extends CrytonRESTApiService<Run> {
         const worker = execution.worker;
         const workersFiles = inventoryFiles[this._getWorkerID(worker)] as File[];
 
-        if (workersFiles) {
+        if (workersFiles && workersFiles.length > 0) {
           return of(workersFiles).pipe(
             mergeMap(files => {
               const formData = this._createFormData(execution.id, files);
