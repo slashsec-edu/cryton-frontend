@@ -21,7 +21,7 @@ export class RunsDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new RunTableDataSource(this._runService, this._crytonDatetime);
-    this.buttons = [{ icon: 'assignment', func: this.handleReport }];
+    this.buttons = [{ name: 'report', icon: 'assignment', func: this.handleReport }];
   }
 
   // Buttons functionality

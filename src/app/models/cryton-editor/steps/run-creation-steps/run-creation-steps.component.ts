@@ -52,8 +52,8 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
 
     this.inventoriesButtons = [
-      { icon: 'clear', func: this._clearFileSelection },
-      { icon: 'backup', func: this._uploadFile }
+      { name: 'clear', icon: 'clear', func: this._clearFileSelection },
+      { name: 'upload', icon: 'backup', func: this._uploadFile }
     ];
   }
 
