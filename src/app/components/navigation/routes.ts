@@ -55,10 +55,5 @@ export const metaRoutes: Route[] = [
     name: 'Logs',
     icon: 'description',
     href: './logs'
-  },
-  {
-    name: 'Help',
-    icon: 'help',
-    href: './help'
   }
 ];
