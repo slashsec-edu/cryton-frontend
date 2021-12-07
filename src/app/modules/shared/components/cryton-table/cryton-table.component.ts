@@ -15,7 +15,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { tap, takeUntil } from 'rxjs/operators';
+import { tap, takeUntil, debounceTime } from 'rxjs/operators';
 import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
 import { Column } from 'src/app/models/cryton-table/interfaces/column.interface';
 import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
@@ -35,8 +35,6 @@ export interface ErroneousButton<T> {
   button: Button<T>;
   row: T;
 }
-
-export const RELOAD_TIMEOUT = 500;
 
 @Component({
   selector: 'app-cryton-table',
@@ -185,10 +183,12 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       column: this.columnControl
     });
 
-    this.filterOptions.valueChanges.pipe(takeUntil(this._destroy$)).subscribe((filter: TableFilter) => {
-      this.filter = filter;
-      this.loadPage();
-    });
+    this.filterOptions.valueChanges
+      .pipe(takeUntil(this._destroy$), debounceTime(500))
+      .subscribe((filter: TableFilter) => {
+        this.filter = filter;
+        this.loadPage();
+      });
   }
 
   ngOnDestroy(): void {
@@ -215,18 +215,6 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       this.sort,
       this.filter
     );
-  }
-
-  /**
-   * Refreshes table data with a small time-out to simulate loading data even if data gets
-   * loaded almost instantly.
-   */
-  refreshData(): void {
-    this.dataSource.setLoading(true);
-
-    setTimeout(() => {
-      this.loadPage();
-    }, RELOAD_TIMEOUT);
   }
 
   /**

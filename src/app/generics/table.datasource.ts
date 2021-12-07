@@ -1,10 +1,11 @@
 import { DataSource } from '@angular/cdk/collections/data-source';
 import { BehaviorSubject } from 'rxjs';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, delay, first, switchMapTo } from 'rxjs/operators';
 import { CrytonRESTApiService } from './cryton-rest-api-service';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
+import { environment } from 'src/environments/environment';
 
 export interface TableData<T> {
   count: number;
@@ -76,9 +77,17 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
     }
     this._loadingSubject$.next(true);
 
-    this._currentSub = this._service
-      .fetchItems(offset, limit, sort, filter)
-      .pipe(catchError(() => of({ count: 0, data: [] })))
+    this._currentSub = of({})
+      .pipe(
+        first(),
+        delay(environment.loadingDelay),
+        switchMapTo(
+          this._service.fetchItems(offset, limit, sort, filter).pipe(
+            first(),
+            catchError(() => of({ count: 0, data: [] }))
+          )
+        )
+      )
       .subscribe(items => {
         this.data = { count: items.count, items: items.data };
         this._countSubject$.next(items.count);

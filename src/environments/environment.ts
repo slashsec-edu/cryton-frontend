@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  loadingDelay: 300,
   crytonRESTApiHost: 'localhost',
   crytonRESTApiPort: 8000
 };

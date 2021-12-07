@@ -1,5 +1,5 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { CrytonTableComponent, RELOAD_TIMEOUT } from './cryton-table.component';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { CrytonTableComponent } from './cryton-table.component';
 import { runs } from 'src/app/testing/mockdata/runs.mockdata';
 import { CrytonDatetimePipe } from '../../pipes/cryton-datetime.pipe';
 import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
@@ -348,15 +348,15 @@ describe('CrytonTableComponent', () => {
     }
   });
 
-  it('should call refreshData method on refresh button click', async () => {
+  it('should call loadPage method on refresh button click', async () => {
     const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
 
-    spyOn(component, 'refreshData');
+    spyOn(component, 'loadPage');
     await refreshBtn.click();
-    expect(component.refreshData).toHaveBeenCalled();
+    expect(component.loadPage).toHaveBeenCalled();
   });
 
-  it('should load new data on refresh', fakeAsync(async () => {
+  it('should load new data on refresh', async () => {
     let rows = await loader.getAllHarnesses(MatRowHarness);
     const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
 
@@ -366,26 +366,22 @@ describe('CrytonTableComponent', () => {
     runServiceStub.fetchItems.and.returnValue(of({ count: 1, data: [runs[0]] }));
     await refreshBtn.click();
 
-    tick(RELOAD_TIMEOUT);
     fixture.detectChanges();
     rows = await loader.getAllHarnesses(MatRowHarness);
 
     await compareRowsWithData(rows, [runs[0]]);
-  }));
+  });
 
-  it('should update counter on refresh', fakeAsync(async () => {
+  it('should update counter on refresh', async () => {
     const counter = await loader.getHarness(CrytonCounterHarness);
     let count = await counter.getCount();
-
     expect(count).toBe(runs.length);
 
     runServiceStub.fetchItems.and.returnValue(of({ count: 1, data: [runs[0]] }));
     const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
     await refreshBtn.click();
-    tick(RELOAD_TIMEOUT);
-    fixture.detectChanges();
 
     count = await counter.getCount();
     expect(count).toBe(1);
-  }));
+  });
 });

@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { tap, takeUntil } from 'rxjs/operators';
 import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-dahboard.data-source';
-import { RELOAD_TIMEOUT } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { TableDataSource } from 'src/app/generics/table.datasource';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
 import { stagedRenderTrigger } from 'src/app/modules/shared/animations/staged-render.animation';
@@ -50,17 +49,5 @@ export class WorkersListComponent implements OnInit, AfterViewInit, OnDestroy {
   loadWorkers(): void {
     const offset = this.paginator ? this.paginator.pageIndex * this.paginator.pageSize : 0;
     this.dataSource.loadItems(offset, this.pageSize, null, null);
-  }
-
-  /**
-   * Refreshes table data with a small time-out to simulate loading data even if data gets
-   * loaded almost instantly.
-   */
-  refreshData(): void {
-    this.dataSource.setLoading(true);
-
-    setTimeout(() => {
-      this.loadWorkers();
-    }, RELOAD_TIMEOUT);
   }
 }

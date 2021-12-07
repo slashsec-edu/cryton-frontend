@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { BehaviorSubject, merge, Subject } from 'rxjs';
-import { first, takeUntil } from 'rxjs/operators';
-import { RELOAD_TIMEOUT } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
+import { BehaviorSubject, merge, of, Subject } from 'rxjs';
+import { delay, first, switchMapTo, takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
 import { LogService, LogsResponse } from 'src/app/services/log.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-list-logs',
@@ -69,24 +69,15 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this._cd.detectChanges();
   }
 
-  /**
-   * Refreshes table data with a small time-out to simulate loading data even if data gets
-   * loaded almost instantly.
-   */
-  refreshData(): void {
-    this.loading$.next(true);
-
-    setTimeout(() => {
-      this.loadPage();
-    }, RELOAD_TIMEOUT);
-  }
-
   private _fetchLogs(offset = 0, limit = 0, filter = ''): void {
     this.loading$.next(true);
 
-    this._logService
-      .fetchItems(offset, limit, filter)
-      .pipe(first())
+    of({})
+      .pipe(
+        first(),
+        delay(environment.loadingDelay),
+        switchMapTo(this._logService.fetchItems(offset, limit, filter).pipe(first()))
+      )
       .subscribe({
         next: logs => {
           this.logs = logs;
