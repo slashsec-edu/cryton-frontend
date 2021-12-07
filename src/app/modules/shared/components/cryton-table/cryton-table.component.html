@@ -157,8 +157,8 @@
   <div class="paginator">
     <mat-paginator
       [length]="dataSource.getCount() | async"
-      [pageSize]="5"
-      [pageSizeOptions]="[3, 5, 10]"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
       [showFirstLastButtons]="true"
       [hidePageSize]="hidePageSize"
     >

@@ -141,5 +141,22 @@ export const runs: Run[] = [
     state: 'FINISHED',
     aps_job_id: null,
     plan_model: 'http://localhost:8000/cryton/api/v1/plans/1/'
+  },
+  {
+    url: 'http://localhost:8000/cryton/api/v1/runs/10/',
+    id: 10,
+    plan_executions: [
+      'http://localhost:8000/cryton/api/v1/plan_executions/49/',
+      'http://localhost:8000/cryton/api/v1/plan_executions/53/'
+    ],
+    created_at: '2020-07-05T10:07:05.800595',
+    updated_at: '2020-07-05T10:07:05.800607',
+    start_time: null,
+    pause_time: null,
+    finish_time: null,
+    schedule_time: null,
+    state: 'FINISHED',
+    aps_job_id: null,
+    plan_model: 'http://localhost:8000/cryton/api/v1/plans/1/'
   }
 ];

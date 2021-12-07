@@ -136,7 +136,8 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   @Output() checkboxChange = new EventEmitter<T[]>();
 
   /* PAGINATOR SETTINGS */
-  pageSize = 5;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 15, 20, 30, 50];
 
   /* TABLE SETTINGS */
   displayedColumns: string[];

@@ -26,8 +26,6 @@ import { MatPaginatorHarness } from '@angular/material/paginator/testing';
 import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
 import { TestComponent } from 'src/app/testing/components/test.component';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { TestingService } from 'src/app/testing/services/testing.service';
-import { TableFilter } from 'src/app/models/cryton-table/interfaces/table-filter.interface';
 import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
 import { ChangeDetectionStrategy, DebugElement } from '@angular/core';
 import { Subject, of, Observable } from 'rxjs';
@@ -53,15 +51,12 @@ describe('CrytonTableComponent', () => {
   let loader: HarnessLoader;
 
   const eraseSubject$ = new Subject<void>();
-  const testingService = new TestingService(runs);
   const datetimePipe = new CrytonDatetimePipe();
   const shortStringPipe = new ShortStringPipe();
 
   // Uses fake testing service to provide pagination and filtering for mock data.
   const runServiceStub = jasmine.createSpyObj('RunService', ['fetchItems']) as Spied<RunService>;
-  runServiceStub.fetchItems.and.callFake((offset: number, limit: number, orderBy: string, filter: TableFilter) =>
-    testingService.fetchItems(offset, limit, orderBy, filter)
-  );
+  runServiceStub.fetchItems.and.returnValue(of({ count: 10, data: runs }));
 
   const formatDate = (date: string): string =>
     shortStringPipe.transform(datetimePipe.transform(date), component.maxStringLength);
@@ -82,20 +77,6 @@ describe('CrytonTableComponent', () => {
     for (let i = 0; i < rows.length; i++) {
       await compareRowWithData(rows[i], data[i]);
     }
-  };
-
-  const getRows = (): Promise<MatRowHarness[]> => loader.getAllHarnesses(MatRowHarness);
-
-  const getRowIds = async (): Promise<number[]> => {
-    const rows = await getRows();
-    const rowIDs: number[] = [];
-
-    for (const row of rows) {
-      const rowID = (await row.getCellTextByColumnName())['id'];
-      rowIDs.push(Number(rowID));
-    }
-
-    return rowIDs;
   };
 
   /**
@@ -146,17 +127,12 @@ describe('CrytonTableComponent', () => {
   );
 
   beforeEach(() => {
-    testingService.setData(runs);
+    runServiceStub.fetchItems.and.returnValue(of({ count: 10, data: runs }));
     createComponent();
     fixture.detectChanges();
   });
 
-  it('should sort results by ID by default', async () => {
-    const rowIds = await getRowIds();
-    expect(rowIds).toEqual([1, 2, 3, 4, 5]);
-  });
-
-  it('should sort by ID in reverse on click on ID column', async () => {
+  it('should sort by ID in reverse on double click on ID column', () => {
     const idColumn: DebugElement = fixture.debugElement.query(By.css('.mat-column-id'));
     const sortButton = idColumn.query(By.css('[role=button]')).nativeElement as HTMLElement;
 
@@ -164,8 +140,7 @@ describe('CrytonTableComponent', () => {
     sortButton.click();
     fixture.detectChanges();
 
-    const rowIds = await getRowIds();
-    expect(rowIds).toEqual([9, 8, 7, 6, 5]);
+    expect(component.sort).toBe('-id');
   });
 
   describe('Checkbox and radio tests', () => {
@@ -310,32 +285,19 @@ describe('CrytonTableComponent', () => {
     expect(header.textContent).toEqual('TESTING TABLE');
   });
 
-  it('should display 5 runs', async () => {
-    const rows = await getRows();
-    expect(rows.length).toEqual(5);
-  });
+  it('should ask for the second page', async () => {
+    spyOn(component.dataSource, 'loadItems');
+    component.pageSize = 5;
 
-  it('should display 4 runs on the second page', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
     await paginator.goToNextPage();
     fixture.detectChanges();
 
-    expect(fixture.debugElement.queryAll(By.css('.mat-row')).length).toEqual(4);
+    expect(component.dataSource.loadItems).toHaveBeenCalledWith(5, 5, 'id', undefined);
   });
 
-  it('should filter only row with id 1', async () => {
-    component.filter = { column: 'id', filter: '1' };
-    component.loadPage();
-    fixture.detectChanges();
-
-    const rows = await getRows();
-
-    expect(rows.length).toEqual(1);
-    expect((await rows[0].getCellTextByColumnName())['id']).toBe('1');
-  });
-
-  it('should display total number of runs as 9', async () => {
-    const expectedCount = 9;
+  it('should display total number of runs as 10', async () => {
+    const expectedCount = 10;
 
     const counterCount = await loader.getHarness(CrytonCounterHarness).then(counter => counter.getCount());
     const paginatorRange = await loader.getHarness(MatPaginatorHarness).then(paginator => paginator.getRangeLabel());
@@ -399,18 +361,16 @@ describe('CrytonTableComponent', () => {
     const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
 
     // Expect to be page size.
-    expect(rows.length).toBe(5);
-    await compareRowsWithData(rows, runs.slice(0, 5));
+    await compareRowsWithData(rows, runs.slice(0, 10));
 
-    const newData = [runs[0]];
-    testingService.setData(newData);
+    runServiceStub.fetchItems.and.returnValue(of({ count: 1, data: [runs[0]] }));
     await refreshBtn.click();
 
     tick(RELOAD_TIMEOUT);
     fixture.detectChanges();
     rows = await loader.getAllHarnesses(MatRowHarness);
 
-    await compareRowsWithData(rows, newData);
+    await compareRowsWithData(rows, [runs[0]]);
   }));
 
   it('should update counter on refresh', fakeAsync(async () => {
@@ -419,7 +379,7 @@ describe('CrytonTableComponent', () => {
 
     expect(count).toBe(runs.length);
 
-    testingService.setData([runs[0]]);
+    runServiceStub.fetchItems.and.returnValue(of({ count: 1, data: [runs[0]] }));
     const refreshBtn = await loader.getHarness(MatButtonHarness.with({ text: 'refresh' }));
     await refreshBtn.click();
     tick(RELOAD_TIMEOUT);
