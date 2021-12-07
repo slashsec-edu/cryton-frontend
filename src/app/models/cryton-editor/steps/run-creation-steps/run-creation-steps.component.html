@@ -1,12 +1,12 @@
-<!-- STEP 1: CHOOSING INSTANCE -->
+<!-- STEP 1: CHOOSING PLAN -->
 <div [hidden]="isHidden(0)">
   <app-cryton-table
-    header="CHOOSE INSTANCE"
-    [dataSource]="instanceDataSource"
+    header="CHOOSE PLAN"
+    [dataSource]="planDataSource"
     [showRadioButtons]="true"
     [hidePageSize]="true"
     [eraseEvent$]="eraseEvent$"
-    (radioChange)="setInstance($event)"
+    (radioChange)="setPlan($event)"
   >
   </app-cryton-table>
 </div>

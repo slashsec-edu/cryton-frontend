@@ -1,7 +1,7 @@
 export enum Endpoint {
   RUNS = 'runs/',
   EXECUTION_VARS = 'execution_variables/',
-  INSTANCES = 'plans/',
+  PLANS = 'plans/',
   LOGS = 'logs/',
   TEMPLATES = 'templates/',
   WORKERS = 'workers/'

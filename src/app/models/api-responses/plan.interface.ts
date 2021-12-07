@@ -1,4 +1,4 @@
-export interface Instance {
+export interface Plan {
   url: string;
   id: number;
   runs: string[];

@@ -7,13 +7,13 @@ import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { Observable } from 'rxjs';
 import { map, catchError, filter, mergeMap, toArray } from 'rxjs/operators';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { Endpoint } from '../models/enums/endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkerInventoriesService extends CrytonRESTApiService<Worker> {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.WORKERS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.WORKERS, 'v1');
   private _workers: Worker[] = [];
 
   constructor(protected http: HttpClient) {

@@ -4,7 +4,7 @@ import { map, catchError, mapTo } from 'rxjs/operators';
 import { TableData } from '../models/api-responses/table-data.interface';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { Endpoint } from '../models/enums/endpoint.enum';
 import { environment } from 'src/environments/environment';
 
 export abstract class CrytonRESTApiService<T> {
@@ -13,7 +13,7 @@ export abstract class CrytonRESTApiService<T> {
 
   constructor(protected http: HttpClient) {}
 
-  static buildEndpointURL(endpoint: CrytonRESTApiEndpoint, version: string): string {
+  static buildEndpointURL(endpoint: Endpoint, version: string): string {
     return `${this.baseUrl}/${version}/${endpoint}`;
   }
 

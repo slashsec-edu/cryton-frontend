@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { InstancesCreationStepsComponent } from './instances-creation-steps.component';
+import { PlansCreationStepsComponent } from './plans-creation-steps.component';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { templates } from 'src/app/testing/mockdata/templates.mockdata';
-import { InstanceService } from 'src/app/services/instance.service';
+import { PlanService } from 'src/app/services/plan.service';
 import { TestingService } from 'src/app/testing/services/testing.service';
 import { TemplateService } from 'src/app/services/template.service';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -11,11 +11,11 @@ import { AlertService } from 'src/app/services/alert.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { CrytonFileUploaderComponent } from 'src/app/modules/shared/components/cryton-file-uploader/cryton-file-uploader.component';
 
-describe('InstancesCreationStepsComponent', () => {
-  let component: InstancesCreationStepsComponent;
-  let fixture: ComponentFixture<InstancesCreationStepsComponent>;
+describe('PlansCreationStepsComponent', () => {
+  let component: PlansCreationStepsComponent;
+  let fixture: ComponentFixture<PlansCreationStepsComponent>;
 
-  const instanceServiceStub = jasmine.createSpyObj('InstanceService', ['postInstance']) as InstanceService;
+  const planServiceStub = jasmine.createSpyObj('PlanService', ['postPlan']) as PlanService;
   const templateServiceStub = new TestingService(templates);
   const alertServiceStub = jasmine.createSpyObj('AlertService', [
     'showError',
@@ -30,15 +30,15 @@ describe('InstancesCreationStepsComponent', () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [InstancesCreationStepsComponent, CrytonFileUploaderComponent],
+        declarations: [PlansCreationStepsComponent, CrytonFileUploaderComponent],
         imports: [SharedModule, BrowserAnimationsModule],
         providers: [
-          { provide: InstanceService, useValue: instanceServiceStub },
+          { provide: PlanService, useValue: planServiceStub },
           { provide: TemplateService, useValue: templateServiceStub },
           { provide: AlertService, useValue: alertServiceStub }
         ]
       })
-        .overrideComponent(InstancesCreationStepsComponent, {
+        .overrideComponent(PlansCreationStepsComponent, {
           set: { changeDetection: ChangeDetectionStrategy.Default }
         })
         .compileComponents();
@@ -46,7 +46,7 @@ describe('InstancesCreationStepsComponent', () => {
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InstancesCreationStepsComponent);
+    fixture = TestBed.createComponent(PlansCreationStepsComponent);
     component = fixture.componentInstance;
     component.currentStepSubject$ = currentStepSubject$;
     component.eraseEvent$ = eraseEvent$.asObservable();

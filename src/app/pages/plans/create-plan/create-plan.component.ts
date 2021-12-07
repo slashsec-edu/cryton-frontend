@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { StepOverviewItem } from 'src/app/models/cryton-editor/interfaces/step-overview-item.interface';
 import { StepType } from 'src/app/models/cryton-editor/enums/step-type.enum';
-import { InstancesCreationStepsComponent } from 'src/app/models/cryton-editor/steps/instances-creation-steps/instances-creation-steps.component';
+import { PlansCreationStepsComponent } from 'src/app/models/cryton-editor/steps/plans-creation-steps/plans-creation-steps.component';
 
 @Component({
-  selector: 'app-create-instance',
-  templateUrl: './create-instance.component.html',
-  styleUrls: ['./create-instance.component.scss']
+  selector: 'app-create-plan',
+  templateUrl: './create-plan.component.html',
+  styleUrls: ['./create-plan.component.scss']
 })
-export class CreateInstanceComponent implements OnInit {
-  editorSteps = InstancesCreationStepsComponent;
+export class CreatePlanComponent implements OnInit {
+  editorSteps = PlansCreationStepsComponent;
   stepOverviewItems: StepOverviewItem[] = [
     { name: 'Select Template', type: StepType.SELECTABLE, required: true },
     { name: 'Upload Inventories', type: StepType.SELECTABLE, required: false }

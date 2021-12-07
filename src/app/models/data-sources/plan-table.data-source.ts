@@ -1,10 +1,10 @@
-import { Instance } from '../api-responses/instance.interface';
-import { InstanceService } from 'src/app/services/instance.service';
+import { Plan } from '../api-responses/plan.interface';
+import { PlanService } from 'src/app/services/plan.service';
 import { Column } from '../cryton-table/interfaces/column.interface';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 
-export class InstanceTableDataSource extends CrytonTableDataSource<Instance> {
+export class PlanTableDataSource extends CrytonTableDataSource<Plan> {
   columns: Column[] = [
     {
       name: 'id',
@@ -46,12 +46,12 @@ export class InstanceTableDataSource extends CrytonTableDataSource<Instance> {
     null,
     null,
     null,
-    (input: Instance): string => this._datePipe.transform(input.created_at),
-    (input: Instance): string => input.runs.length.toString()
+    (input: Plan): string => this._datePipe.transform(input.created_at),
+    (input: Plan): string => input.runs.length.toString()
   ];
   highlightDictionary = {};
 
-  constructor(protected instanceService: InstanceService, private _datePipe: CrytonDatetimePipe) {
-    super(instanceService);
+  constructor(protected _planService: PlanService, private _datePipe: CrytonDatetimePipe) {
+    super(_planService);
   }
 }

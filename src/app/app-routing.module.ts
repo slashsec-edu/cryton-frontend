@@ -7,8 +7,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
 import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
-import { ListInstancesComponent } from './pages/instances/list-instances/list-instances.component';
-import { CreateInstanceComponent } from './pages/instances/create-instance/create-instance.component';
+import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
 import { CreateWorkerComponent } from './pages/workers/create-worker/create-worker.component';
 import { ListRunsComponent } from './pages/runs/list-runs/list-runs.component';
@@ -18,6 +17,7 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
 import { RunPageComponent } from './modules/run/pages/run/run-page.component';
 import { TimelineComponent } from './modules/run/components/timeline/timeline.component';
 import { RunYamlPreviewComponent } from './modules/run/pages/run-yaml-preview/run-yaml-preview.component';
+import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
 
 const routes: Routes = [
   {
@@ -59,14 +59,14 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'instances',
+        path: 'plans',
         component: OutletComponent,
         children: [
-          { path: 'list', component: ListInstancesComponent },
-          { path: 'create', component: CreateInstanceComponent },
+          { path: 'list', component: ListPlansComponent },
+          { path: 'create', component: CreatePlanComponent },
           {
             path: '',
-            redirectTo: '/app/instances/list',
+            redirectTo: '/app/plans/list',
             pathMatch: 'full'
           }
         ]

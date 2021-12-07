@@ -8,14 +8,14 @@ import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { RunCreationStepsComponent } from './run-creation-steps.component';
 
 import { workers } from 'src/app/testing/mockdata/workers.mockdata';
-import { instances } from 'src/app/testing/mockdata/instances.mockdata';
-import { Instance } from '../../../api-responses/instance.interface';
+import { plans } from 'src/app/testing/mockdata/plans.mockdata';
+import { Plan } from '../../../api-responses/plan.interface';
 import { Worker } from '../../../api-responses/worker.interface';
 
 import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
 import { WorkersService } from 'src/app/services/workers.service';
 import { TestingService } from 'src/app/testing/services/testing.service';
-import { InstanceService } from 'src/app/services/instance.service';
+import { PlanService } from 'src/app/services/plan.service';
 import { RunService } from 'src/app/services/run.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { AlertService } from 'src/app/services/alert.service';
@@ -32,7 +32,7 @@ describe('RunCreationStepsComponent', () => {
   const createSubject$ = new Subject<void>();
   const eraseEvent$ = new Subject<void>();
 
-  const instanceServiceStub = new TestingService<Instance>(instances);
+  const planServiceStub = new TestingService<Plan>(plans);
   const workersServiceStub = new TestingService<Worker>(workers);
   const runServiceStub = jasmine.createSpyObj('RunService', ['postRun']) as RunService;
   const alertServiceStub = jasmine.createSpyObj('AlertService', [
@@ -47,7 +47,7 @@ describe('RunCreationStepsComponent', () => {
         imports: [HttpClientModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule, SharedModule],
         declarations: [RunCreationStepsComponent],
         providers: [
-          { provide: InstanceService, useValue: instanceServiceStub },
+          { provide: PlanService, useValue: planServiceStub },
           { provide: WorkersService, useValue: workersServiceStub },
           { provide: RunService, useValue: runServiceStub },
           { provide: WorkerInventoriesService, useValue: workersServiceStub },
@@ -76,12 +76,12 @@ describe('RunCreationStepsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display title "CHOOSE INSTANCE" in the first step', () => {
+  it('should display title "CHOOSE PLAN" in the first step', () => {
     const title = fixture.debugElement.query(By.css('h2')).nativeElement as HTMLElement;
-    expect(title.textContent).toEqual('CHOOSE INSTANCE');
+    expect(title.textContent).toEqual('CHOOSE PLAN');
   });
 
-  it('should display 3 instances in the first step table', async () => {
+  it('should display 3 plans in the first step table', async () => {
     const count = await counterHarness.getCount();
     expect(count).toEqual(3);
   });
@@ -96,7 +96,7 @@ describe('RunCreationStepsComponent', () => {
     spyOn(component.create, 'emit');
 
     component.workers = workers;
-    component.instance = instances[0];
+    component.plan = plans[0];
 
     createSubject$.next();
     fixture.detectChanges();

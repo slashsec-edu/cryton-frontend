@@ -34,13 +34,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Services
 import { RunService } from './services/run.service';
-import { InstanceService } from './services/instance.service';
+import { PlanService } from './services/plan.service';
 import { WorkersService } from './services/workers.service';
 import { TemplateService } from './services/template.service';
 import { ExecutionVariableService } from './services/execution-variable.service';
 
 // Components
-import { InstancesDashboardComponent } from './pages/dashboard-page/instances-dashboard/instances-dashboard.component';
+import { PlansDashboardComponent } from './pages/dashboard-page/plans-dashboard/plans-dashboard.component';
 import { AppComponent } from './app.component';
 import { RunsDashboardComponent } from './pages/dashboard-page/runs-dashboard/runs-dashboard.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -50,12 +50,12 @@ import { WorkerCreationStepsComponent } from './models/cryton-editor/steps/worke
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { TemplateUploadStepsComponent } from './models/cryton-editor/steps/template-upload-steps/template-upload-steps.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
-import { InstancesCreationStepsComponent } from './models/cryton-editor/steps/instances-creation-steps/instances-creation-steps.component';
+import { PlansCreationStepsComponent } from './models/cryton-editor/steps/plans-creation-steps/plans-creation-steps.component';
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
 import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
-import { ListInstancesComponent } from './pages/instances/list-instances/list-instances.component';
-import { CreateInstanceComponent } from './pages/instances/create-instance/create-instance.component';
+import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
+import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
 import { CreateWorkerComponent } from './pages/workers/create-worker/create-worker.component';
 import { ListRunsComponent } from './pages/runs/list-runs/list-runs.component';
@@ -69,20 +69,20 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
   declarations: [
     AppComponent,
     RunsDashboardComponent,
-    InstancesDashboardComponent,
+    PlansDashboardComponent,
     DashboardPageComponent,
     PageUnavailableComponent,
     RunCreationStepsComponent,
     WorkerCreationStepsComponent,
     LoginPageComponent,
     TemplateUploadStepsComponent,
-    InstancesCreationStepsComponent,
+    PlansCreationStepsComponent,
     NavigationComponent,
     ListTemplatesComponent,
     OutletComponent,
     CreateTemplateComponent,
-    ListInstancesComponent,
-    CreateInstanceComponent,
+    ListPlansComponent,
+    CreatePlanComponent,
     ListWorkersComponent,
     CreateWorkerComponent,
     ListRunsComponent,
@@ -124,7 +124,7 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
     RunModule,
     WorkerModule
   ],
-  providers: [RunService, InstanceService, WorkersService, TemplateService, ExecutionVariableService],
+  providers: [RunService, PlanService, WorkersService, TemplateService, ExecutionVariableService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
