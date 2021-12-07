@@ -19,9 +19,19 @@
     <div class="backend-status">
       <span [class]="{ dot: true, live: isBackendLive, offline: !isBackendLive }"></span>
       <small>{{ 'Cryton is ' + (isBackendLive ? 'live&nbsp;' : 'offline&nbsp;') }}</small>
-      <button mat-icon-button matTooltip="Refresh status" (click)="checkBackendStatus()">
+
+      <button
+        mat-icon-button
+        matTooltip="Refresh status"
+        *ngIf="!(loadingStatus$ | async); else loadingStatus"
+        (click)="checkBackendStatus()"
+      >
         <mat-icon>refresh</mat-icon>
       </button>
+
+      <ng-template #loadingStatus>
+        <mat-spinner diameter="20" strokeWidth="3" color="accent"></mat-spinner>
+      </ng-template>
     </div>
 
     <!-- ACCOUNT BUTTON -->

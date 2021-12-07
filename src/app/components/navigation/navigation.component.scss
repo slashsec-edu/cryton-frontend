@@ -122,6 +122,10 @@ mat-toolbar {
     margin-left: 7px;
     font-size: 14px;
   }
+
+  mat-spinner {
+    margin: 0 10px;
+  }
 }
 .dot {
   $dot-diameter: 15px;
