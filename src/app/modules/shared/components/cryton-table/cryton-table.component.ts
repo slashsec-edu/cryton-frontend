@@ -240,7 +240,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     }
     if (highlight && typeof content === 'string') {
       const color: string = this.dataSource.getHighlight(content.toLowerCase());
-      return `highlight ${color}`;
+      return `highlight state-${color}`;
     }
   }
 

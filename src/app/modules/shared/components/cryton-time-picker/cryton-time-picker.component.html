@@ -1,0 +1,22 @@
+<div class="center-both time-picker">
+  <ng-container *ngFor="let timeInput of timeInputs; index as i">
+    <div class="input-number">
+      <button mat-icon-button appHoldClick (click)="changeTime(timeInput.key, 1)">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </button>
+      <input
+        [(ngModel)]="time[timeInput.key]"
+        (blur)="checkInput(timeInput.key)"
+        type="text"
+        class="time-input"
+        [placeholder]="timeInput.placeholder"
+        maxlength="2"
+      />
+      <button mat-icon-button appHoldClick (click)="changeTime(timeInput.key, -1)">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </div>
+
+    <h2 *ngIf="i < timeInputs.length - 1">:</h2>
+  </ng-container>
+</div>

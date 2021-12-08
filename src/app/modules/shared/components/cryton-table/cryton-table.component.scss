@@ -100,33 +100,7 @@ mat-form-field {
 
 /* HIGHLIGHT */
 .highlight {
-  color: white;
   font-weight: 700;
   padding: 5px 10px;
   border-radius: 5px;
-}
-.highlight.blue {
-  background: #448aff;
-}
-.highlight.undefined {
-  background: #d8d8d8;
-  color: gray;
-}
-.highlight.yellow {
-  background: #ffd942;
-  color: rgb(48, 48, 48);
-}
-.highlight.red {
-  background: #d50027;
-}
-.highlight.green {
-  background: #71cc55;
-  color: black;
-}
-.highlight.black {
-  background: #000000;
-}
-.highlight.gray {
-  background: #d3d3d3;
-  color: #6d6d6d;
 }

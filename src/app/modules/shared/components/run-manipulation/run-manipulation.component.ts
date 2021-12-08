@@ -4,10 +4,11 @@ import { RunService } from 'src/app/services/run.service';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { CrytonDatetimePickerComponent } from 'src/app/modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.component';
 import { MatDialog } from '@angular/material/dialog';
-import { mergeMap, first } from 'rxjs/operators';
+import { mergeMap, first, switchMap } from 'rxjs/operators';
 import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
+import { PostponeRunComponent } from 'src/app/modules/run/components/postpone-run/postpone-run.component';
 
 type RunState = 'PENDING' | 'SCHEDULED' | 'RUNNING' | 'FINISHED' | 'PAUSED' | 'PAUSING' | 'TERMINATED';
 
@@ -19,7 +20,9 @@ enum RunAction {
   UNPAUSE,
   SCHEDULE,
   UNSCHEDULE,
-  RESCHEDULE
+  RESCHEDULE,
+  POSTPONE,
+  KILL
 }
 
 interface Button {
@@ -62,13 +65,21 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
       icon: 'pause_circle_outline',
       activeStates: ['PAUSED'],
       action: RunAction.UNPAUSE
+    },
+    {
+      id: 4,
+      value: 'Kill run',
+      icon: 'not_interested',
+      activeStates: ['RUNNING'],
+      action: RunAction.KILL
     }
   ];
 
   schedulingButtons: Button[] = [
     { id: 1, value: 'Schedule run', icon: 'today', activeStates: ['PENDING'], action: RunAction.SCHEDULE },
     { id: 2, value: 'Reschedule run', icon: 'today', activeStates: ['SCHEDULED'], action: RunAction.RESCHEDULE },
-    { id: 3, value: 'Unschedule run', icon: 'event_busy', activeStates: ['SCHEDULED'], action: RunAction.UNSCHEDULE }
+    { id: 3, value: 'Postpone run', icon: 'more_time', activeStates: ['SCHEDULED'], action: RunAction.POSTPONE },
+    { id: 4, value: 'Unschedule run', icon: 'event_busy', activeStates: ['SCHEDULED'], action: RunAction.UNSCHEDULE }
   ];
 
   constructor(protected _runService: RunService, protected _dialog: MatDialog, protected _alertService: AlertService) {}
@@ -92,6 +103,10 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
         return this.executeRunAction(() => this._runService.unpauseRun(this.rowData.id));
       case RunAction.UNSCHEDULE:
         return this.executeRunAction(() => this._runService.unscheduleRun(this.rowData.id));
+      case RunAction.KILL:
+        return this.executeRunAction(() => this._runService.killRun(this.rowData.id));
+      case RunAction.POSTPONE:
+        return this.postponeRun();
       default:
         throw new Error('Tried to execute unknown run action.');
     }
@@ -162,6 +177,36 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
             this.loadingSubject$.next(false);
             this._updateRowData();
             this._alertService.showSuccess(successMsg);
+          }
+        },
+        error: err => {
+          this.loadingSubject$.next(false);
+          this._alertService.showError(err);
+        }
+      });
+  }
+
+  postponeRun(): void {
+    const postponer = this._dialog.open(PostponeRunComponent);
+
+    postponer
+      .afterClosed()
+      .pipe(
+        first(),
+        switchMap(delta => {
+          if (delta) {
+            this.loadingSubject$.next(true);
+            return this._runService.postponeRun(this.rowData.id, delta);
+          }
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: msg => {
+          if (msg) {
+            this.loadingSubject$.next(false);
+            this._updateRowData();
+            this._alertService.showSuccess(msg);
           }
         },
         error: err => {

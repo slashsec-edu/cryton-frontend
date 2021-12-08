@@ -58,6 +58,7 @@ import { CrytonDatetimePipe } from './pipes/cryton-datetime.pipe';
 import { EscapePipe } from './pipes/escape.pipe';
 import { YamlPipe } from './pipes/yaml.pipe';
 import { CrytonCodeComponent } from './components/cryton-code/cryton-code.component';
+import { CrytonTimePickerComponent } from './components/cryton-time-picker/cryton-time-picker.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { CrytonCodeComponent } from './components/cryton-code/cryton-code.compon
     ExpandedRunManipulationComponent,
     ReportManiupulationComponent,
     YamlPipe,
-    CrytonCodeComponent
+    CrytonCodeComponent,
+    CrytonTimePickerComponent
   ],
   imports: [
     CommonModule,
@@ -142,7 +144,8 @@ import { CrytonCodeComponent } from './components/cryton-code/cryton-code.compon
     ExpandedRunManipulationComponent,
     ReportManiupulationComponent,
     YamlPipe,
-    CrytonCodeComponent
+    CrytonCodeComponent,
+    CrytonTimePickerComponent
   ],
   providers: [CrytonDatetimePipe, EscapePipe, ShortStringPipe, YamlPipe]
 })

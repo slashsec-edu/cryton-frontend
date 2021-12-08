@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { catchError, delay, first, switchMapTo } from 'rxjs/operators';
 import { Report } from 'src/app/models/api-responses/report/report.interface';
@@ -17,12 +17,7 @@ export class RunPageComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   runID: number;
 
-  constructor(
-    private _route: ActivatedRoute,
-    private _runService: RunService,
-    private _router: Router,
-    private _alert: AlertService
-  ) {}
+  constructor(private _route: ActivatedRoute, private _runService: RunService, private _alert: AlertService) {}
 
   ngOnInit(): void {
     this.runID = parseInt(this._route.snapshot.paramMap.get('id'), 10);

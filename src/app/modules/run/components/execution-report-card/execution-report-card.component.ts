@@ -28,16 +28,14 @@ export class ExecutionReportCardComponent implements OnInit {
   initialized = false;
 
   private _execution: PlanExecutionReport;
-  private _executionEndpoint: string;
 
   constructor(private _variableService: ExecutionVariableService, private _alert: AlertService) {}
 
-  ngOnInit(): void {
-    this._executionEndpoint =
-      CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.PLAN_EXECUTIONS, 'v1') + `/${this.execution.id}/`;
-  }
+  ngOnInit(): void {}
 
   loadVariables(): void {
+    const executionEndpoint =
+      CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.PLAN_EXECUTIONS, 'v1') + `/${this.execution.id}/`;
     this.loading$.next(true);
 
     of({})
@@ -49,7 +47,7 @@ export class ExecutionReportCardComponent implements OnInit {
             first(),
             pluck('data'),
             concatAll(),
-            filter((variable: ExecutionVariable) => variable.plan_execution === this._executionEndpoint),
+            filter((variable: ExecutionVariable) => variable.plan_execution === executionEndpoint),
             toArray()
           )
         ),

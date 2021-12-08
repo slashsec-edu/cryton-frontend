@@ -67,8 +67,22 @@ export class RunService extends CrytonRESTApiService<Run> {
 
   executeRun(runID: number): Observable<string> {
     return this._runAction(runID, 'execute').pipe(
-      mapTo(`Execution of run run with ID: ${runID} started successfully.`),
+      mapTo(`Run with ID: ${runID} started successfully.`),
       catchError(err => this.handleItemError(err, `Execution of run with ID: ${runID} failed.`))
+    );
+  }
+
+  killRun(runID: number): Observable<string> {
+    return this._runAction(runID, 'kill').pipe(
+      mapTo(`Run with ID: ${runID} killed successfully.`),
+      catchError(err => this.handleItemError(err, `Failed to kill run with ID: ${runID}.`))
+    );
+  }
+
+  postponeRun(runID: number, delta: string): Observable<string> {
+    return this._runAction(runID, 'postpone', { delta }).pipe(
+      mapTo(`Run with ID: ${runID} postponed successfully.`),
+      catchError(err => this.handleItemError(err, `Failed to postpone run with ID: ${runID}.`))
     );
   }
 

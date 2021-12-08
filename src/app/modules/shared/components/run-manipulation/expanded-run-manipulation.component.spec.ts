@@ -21,7 +21,9 @@ enum Button {
   SCHEDULE = 'Schedule run',
   UNSCHEDULE = 'Unschedule run',
   RESCHEDULE = 'Reschedule run',
-  DELETE = 'Delete run'
+  DELETE = 'Delete run',
+  KILL = 'Kill run',
+  POSTPONE = 'Postpone run'
 }
 
 describe('ExpandedRunManipulationComponent', () => {
@@ -94,8 +96,8 @@ describe('ExpandedRunManipulationComponent', () => {
 
   const scenarios: Scenario[] = [
     new Scenario(1, rowData0, [Button.EXECUTE, Button.SCHEDULE, Button.DELETE]),
-    new Scenario(2, rowData1, [Button.PAUSE, Button.DELETE]),
-    new Scenario(3, rowData2, [Button.RESCHEDULE, Button.UNSCHEDULE, Button.DELETE]),
+    new Scenario(2, rowData1, [Button.PAUSE, Button.DELETE, Button.KILL]),
+    new Scenario(3, rowData2, [Button.RESCHEDULE, Button.UNSCHEDULE, Button.DELETE, Button.POSTPONE]),
     new Scenario(4, rowData3, [Button.UNPAUSE, Button.DELETE]),
     new Scenario(5, rowData4, [Button.DELETE])
   ];

@@ -21,6 +21,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { RunYamlPreviewComponent } from './pages/run-yaml-preview/run-yaml-preview.component';
+import { PostponeRunComponent } from './components/postpone-run/postpone-run.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { RunYamlPreviewComponent } from './pages/run-yaml-preview/run-yaml-previ
     RunReportCardComponent,
     StepReportCardComponent,
     TimelineComponent,
-    RunYamlPreviewComponent
+    RunYamlPreviewComponent,
+    PostponeRunComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +50,8 @@ import { RunYamlPreviewComponent } from './pages/run-yaml-preview/run-yaml-previ
     MatProgressBarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    CdkAccordionModule
+    CdkAccordionModule,
+    MatDialogModule
   ]
 })
 export class RunModule {}
