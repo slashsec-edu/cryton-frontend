@@ -1,15 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, AfterViewInit } from '@angular/core';
 
 export interface Time {
   hours: string;
   minutes: string;
   seconds: string;
 }
-interface TimeInput {
+export interface TimeInput {
   key: TimeUnit;
   placeholder: string;
 }
-type TimeUnit = 'hours' | 'minutes' | 'seconds';
+export type TimeUnit = 'hours' | 'minutes' | 'seconds';
 
 @Component({
   selector: 'app-cryton-time-picker',
@@ -17,29 +17,26 @@ type TimeUnit = 'hours' | 'minutes' | 'seconds';
   styleUrls: ['./cryton-time-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonTimePickerComponent implements OnInit {
+export class CrytonTimePickerComponent implements OnInit, AfterViewInit {
   @Output() timeChange = new EventEmitter<Time>();
   @Output() dayChange = new EventEmitter<number>();
+  @Output() initialized = new EventEmitter<void>();
 
   timeInputs: TimeInput[] = [
     { key: 'hours', placeholder: 'HH' },
     { key: 'minutes', placeholder: 'MM' },
     { key: 'seconds', placeholder: 'SS' }
   ];
-
-  private _time: Time;
-
-  get time(): Time {
-    return this._time;
-  }
-  set time(_: Time) {
-    throw new Error('Time is not editable.');
-  }
+  time: Time;
 
   constructor() {}
 
   ngOnInit(): void {
-    this._time = { hours: '00', minutes: '00', seconds: '00' };
+    this.time = { hours: '00', minutes: '00', seconds: '00' };
+  }
+
+  ngAfterViewInit(): void {
+    this.initialized.emit();
   }
 
   /**
@@ -47,13 +44,13 @@ export class CrytonTimePickerComponent implements OnInit {
    */
   checkInput(input: string): void {
     if (input === 'hours') {
-      this._time.hours = this._formatTimeRange(this._time.hours, 23);
+      this.time.hours = this._formatTimeRange(this.time.hours, 23);
     } else if (input === 'minutes') {
-      this._time.minutes = this._formatTimeRange(this._time.minutes, 59);
+      this.time.minutes = this._formatTimeRange(this.time.minutes, 59);
     } else {
-      this._time.seconds = this._formatTimeRange(this._time.seconds, 59);
+      this.time.seconds = this._formatTimeRange(this.time.seconds, 59);
     }
-    this.timeChange.emit(this._time);
+    this.timeChange.emit(this.time);
   }
 
   /**
@@ -64,7 +61,7 @@ export class CrytonTimePickerComponent implements OnInit {
    */
   changeTime(input: TimeUnit, increment: number): void {
     if (input === 'hours') {
-      let newHours = Number(this._time.hours) + increment;
+      let newHours = Number(this.time.hours) + increment;
 
       if (newHours > 23) {
         newHours = 0;
@@ -74,9 +71,9 @@ export class CrytonTimePickerComponent implements OnInit {
         this.dayChange.emit(-1);
       }
 
-      this._time.hours = this._formatTimeWidth(newHours.toString());
+      this.time.hours = this._formatTimeWidth(newHours.toString());
     } else if (input === 'minutes') {
-      let newMinutes = Number(this._time.minutes) + increment;
+      let newMinutes = Number(this.time.minutes) + increment;
 
       if (newMinutes > 59) {
         newMinutes = 0;
@@ -86,9 +83,9 @@ export class CrytonTimePickerComponent implements OnInit {
         this.changeTime('hours', -1);
       }
 
-      this._time.minutes = this._formatTimeWidth(newMinutes.toString());
+      this.time.minutes = this._formatTimeWidth(newMinutes.toString());
     } else {
-      let newSeconds = Number(this._time.seconds) + increment;
+      let newSeconds = Number(this.time.seconds) + increment;
 
       if (newSeconds > 59) {
         newSeconds = 0;
@@ -98,7 +95,7 @@ export class CrytonTimePickerComponent implements OnInit {
         this.changeTime('minutes', -1);
       }
 
-      this._time.seconds = this._formatTimeWidth(newSeconds.toString());
+      this.time.seconds = this._formatTimeWidth(newSeconds.toString());
     }
   }
 

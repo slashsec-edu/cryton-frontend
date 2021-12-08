@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
   name: 'crytonDatetime'
 })
 export class CrytonDatetimePipe implements PipeTransform {
-  transform(input: string): string {
+  transform(input: string | Date): string {
     if (!input) {
       return 'None';
     }

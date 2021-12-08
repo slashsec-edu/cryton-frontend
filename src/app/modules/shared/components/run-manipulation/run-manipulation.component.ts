@@ -151,7 +151,7 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
    */
   scheduleRun(shouldReschedule: boolean): void {
     const dialogRef = this._dialog.open(CrytonDatetimePickerComponent, {
-      panelClass: 'app-no-padding-dialog'
+      width: '380px'
     });
 
     dialogRef

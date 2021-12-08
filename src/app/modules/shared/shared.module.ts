@@ -23,6 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 
 // COMPONENTS
 import { CrytonCounterComponent } from './components/cryton-counter/cryton-counter.component';
@@ -114,7 +115,8 @@ import { CrytonTimePickerComponent } from './components/cryton-time-picker/cryto
     ReactiveFormsModule,
     AppRoutingModule,
     MatCardModule,
-    ClipboardModule
+    ClipboardModule,
+    MatDividerModule
   ],
   exports: [
     CrytonButtonComponent,
