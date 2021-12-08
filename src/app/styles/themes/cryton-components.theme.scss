@@ -15,6 +15,7 @@
 @use '../../modules/shared/components/cryton-id-chip/cryton-id-chip.theme' as id-chip;
 @use '../../modules/run/components/execution-variable/execution-variable.theme' as execution-variable;
 @use '../../modules/run/components/execution-variable-uploader/execution-variable-uploader.theme' as execution-variable-uploader;
+@use '../../modules//shared/components/cryton-code/cryton-code.theme' as cryton-code;
 
 // CRYTON WORKER THEME
 $worker-primary: mat-palette($mat-blue, A200);
@@ -39,6 +40,7 @@ $worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
   @include id-chip.color($config);
   @include execution-variable.color($config);
   @include execution-variable-uploader.color($config);
+  @include cryton-code.color($config);
 
   @include worker-table.color($worker-theme);
 }

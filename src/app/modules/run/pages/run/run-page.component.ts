@@ -33,10 +33,6 @@ export class RunPageComponent implements OnInit {
     this._runService.downloadReport(this.runID);
   }
 
-  showTimeline(): void {
-    this._router.navigate(['app', 'runs', this.runID, 'timeline']);
-  }
-
   loadReport(): void {
     this.loading$.next(true);
     of({})

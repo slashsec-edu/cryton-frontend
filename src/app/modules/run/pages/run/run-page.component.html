@@ -4,8 +4,8 @@
 
     <div class="buttons">
       <button mat-button (click)="loadReport()"><mat-icon color="primary">refresh</mat-icon> Refresh</button>
-      <button mat-button (click)="showTimeline()"><mat-icon color="primary">schedule</mat-icon> Show timeline</button>
-      <button mat-button><mat-icon color="primary">description</mat-icon> Show YAML</button>
+      <a mat-button routerLink="timeline"><mat-icon color="primary">schedule</mat-icon> Show timeline</a>
+      <a mat-button routerLink="yaml"><mat-icon color="primary">description</mat-icon> Show YAML</a>
       <button mat-button (click)="downloadReport()">
         <mat-icon color="primary">download</mat-icon> Download report
       </button>
@@ -20,7 +20,7 @@
 
   <app-run-report-card [report]="report"></app-run-report-card>
 
-  <div class="plan-execution-header">
+  <div class="plan-execution-header render-item">
     <h2>Execution</h2>
     <mat-paginator
       #paginator
@@ -41,8 +41,15 @@
 </div>
 
 <ng-template #noRun>
-  <div class="no-run">
+  <div class="no-run" *ngIf="!(loading$ | async); else loading">
     <h1>We are sorry</h1>
     <h2>The run you are looking for was not found</h2>
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  <div class="loading">
+    <h1>Loading run</h1>
+    <mat-spinner></mat-spinner>
   </div>
 </ng-template>

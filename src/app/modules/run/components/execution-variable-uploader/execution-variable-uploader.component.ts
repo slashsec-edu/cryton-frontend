@@ -58,7 +58,7 @@ export class ExecutionVariableUploaderComponent {
       .subscribe({
         next: msg => {
           this.loading$.next(false);
-          this.selectedFile = null;
+          this.cancel();
           this._alert.showSuccess(msg);
           this.uploaded.emit();
         },

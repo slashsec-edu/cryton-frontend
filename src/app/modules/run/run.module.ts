@@ -20,6 +20,7 @@ import { TimelineComponent } from './components/timeline/timeline.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { RunYamlPreviewComponent } from './pages/run-yaml-preview/run-yaml-preview.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CdkAccordionModule } from '@angular/cdk/accordion';
     ReportTimelineHelpComponent,
     RunReportCardComponent,
     StepReportCardComponent,
-    TimelineComponent
+    TimelineComponent,
+    RunYamlPreviewComponent
   ],
   imports: [
     CommonModule,

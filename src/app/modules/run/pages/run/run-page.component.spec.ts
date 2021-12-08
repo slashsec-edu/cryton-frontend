@@ -17,6 +17,7 @@ import { StageReportCardComponent } from '../../components/stage-report-card/sta
 import { StepReportCardComponent } from '../../components/step-report-card/step-report-card.component';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('RunPageComponent', () => {
   let component: RunPageComponent;
@@ -34,7 +35,14 @@ describe('RunPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatPaginatorModule, MatIconModule, MatDividerModule, MatButtonModule, SharedModule],
+      imports: [
+        MatPaginatorModule,
+        MatIconModule,
+        MatDividerModule,
+        MatButtonModule,
+        SharedModule,
+        MatProgressSpinnerModule
+      ],
       declarations: [
         RunPageComponent,
         ExecutionReportCardComponent,

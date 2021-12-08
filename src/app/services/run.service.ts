@@ -113,6 +113,10 @@ export class RunService extends CrytonRESTApiService<Run> {
     return this.http.get<Report>(`${this.endpoint}/${runID}/report`);
   }
 
+  fetchPlan(runID: number): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${this.endpoint}/${runID}/get_plan`);
+  }
+
   downloadReport(runID: number): void {
     this.fetchReport(runID)
       .pipe(first())

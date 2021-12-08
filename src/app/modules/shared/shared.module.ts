@@ -3,6 +3,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { CommonModule } from '@angular/common';
 
+// CDK
+import { ClipboardModule } from '@angular/cdk/clipboard';
+
 // MATERIAL
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +56,8 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { ShortStringPipe } from './pipes/short-string.pipe';
 import { CrytonDatetimePipe } from './pipes/cryton-datetime.pipe';
 import { EscapePipe } from './pipes/escape.pipe';
+import { YamlPipe } from './pipes/yaml.pipe';
+import { CrytonCodeComponent } from './components/cryton-code/cryton-code.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +87,9 @@ import { EscapePipe } from './pipes/escape.pipe';
     CrytonFlatCardComponent,
     CrytonLabeledItemComponent,
     ExpandedRunManipulationComponent,
-    ReportManiupulationComponent
+    ReportManiupulationComponent,
+    YamlPipe,
+    CrytonCodeComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +111,8 @@ import { EscapePipe } from './pipes/escape.pipe';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    MatCardModule
+    MatCardModule,
+    ClipboardModule
   ],
   exports: [
     CrytonButtonComponent,
@@ -132,8 +140,10 @@ import { EscapePipe } from './pipes/escape.pipe';
     CrytonFlatCardComponent,
     CrytonLabeledItemComponent,
     ExpandedRunManipulationComponent,
-    ReportManiupulationComponent
+    ReportManiupulationComponent,
+    YamlPipe,
+    CrytonCodeComponent
   ],
-  providers: [CrytonDatetimePipe, EscapePipe, ShortStringPipe]
+  providers: [CrytonDatetimePipe, EscapePipe, ShortStringPipe, YamlPipe]
 })
 export class SharedModule {}

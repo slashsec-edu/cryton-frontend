@@ -17,6 +17,7 @@ import { UploadTemplateComponent } from './pages/templates/upload-template/uploa
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
 import { RunPageComponent } from './modules/run/pages/run/run-page.component';
 import { TimelineComponent } from './modules/run/components/timeline/timeline.component';
+import { RunYamlPreviewComponent } from './modules/run/pages/run-yaml-preview/run-yaml-preview.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,10 @@ const routes: Routes = [
       {
         path: 'runs/:id/timeline',
         component: TimelineComponent
+      },
+      {
+        path: 'runs/:id/yaml',
+        component: RunYamlPreviewComponent
       },
       {
         path: 'workers',
