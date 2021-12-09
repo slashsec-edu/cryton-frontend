@@ -1,11 +1,10 @@
 import { DataSource } from '@angular/cdk/collections/data-source';
 import { BehaviorSubject } from 'rxjs';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError, delay, first, switchMapTo } from 'rxjs/operators';
+import { catchError, first } from 'rxjs/operators';
 import { CrytonRESTApiService } from './cryton-rest-api-service';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
-import { environment } from 'src/environments/environment';
 
 export interface TableData<T> {
   count: number;
@@ -19,6 +18,7 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
   protected _countSubject$ = new BehaviorSubject<number>(0);
   protected _loadingSubject$ = new BehaviorSubject<boolean>(false);
   protected _currentSub: Subscription;
+  protected _currentTimeout: any;
 
   constructor(private _service?: CrytonRESTApiService<T>) {}
 
@@ -71,29 +71,29 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
    * @param sort Column to order results by.
    * @param filter TableFilter object for filtering results by column and search value.
    */
-  loadItems(offset: number, limit: number, sort: string, filter: TableFilter): void {
+  loadItems(offset: number, limit: number, sort: string, filter: TableFilter, delay: number = 0): void {
     if (this._currentSub) {
       this._currentSub.unsubscribe();
     }
+    if (this._currentTimeout) {
+      clearTimeout(this._currentTimeout);
+    }
     this._loadingSubject$.next(true);
 
-    this._currentSub = of({})
-      .pipe(
-        first(),
-        delay(environment.loadingDelay),
-        switchMapTo(
-          this._service.fetchItems(offset, limit, sort, filter).pipe(
-            first(),
-            catchError(() => of({ count: 0, data: [] }))
-          )
+    this._currentTimeout = setTimeout(() => {
+      this._service
+        .fetchItems(offset, limit, sort, filter)
+        .pipe(
+          first(),
+          catchError(() => of({ count: 0, data: [] }))
         )
-      )
-      .subscribe(items => {
-        this.data = { count: items.count, items: items.data };
-        this._countSubject$.next(items.count);
-        this._dataSubject$.next(items.data);
-        this._loadingSubject$.next(false);
-      });
+        .subscribe(items => {
+          this.data = { count: items.count, items: items.data };
+          this._countSubject$.next(items.count);
+          this._dataSubject$.next(items.data);
+          this._loadingSubject$.next(false);
+        });
+    }, delay);
   }
 
   updateRow(row: T): void {

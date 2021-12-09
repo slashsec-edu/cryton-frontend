@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { BehaviorSubject, merge, of, Subject } from 'rxjs';
-import { delay, first, switchMapTo, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, merge, Subject } from 'rxjs';
+import { first, takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
 import { LogService, LogsResponse } from 'src/app/services/log.service';
 import { environment } from 'src/environments/environment';
@@ -62,32 +62,32 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyFilter();
   }
 
-  loadPage(): void {
+  loadPage(useDelay = false): void {
     const { filter } = this.filterForm.value as Record<string, string>;
     const offset = this.paginator.pageSize * this.paginator.pageIndex;
-    this._fetchLogs(offset, this.paginator.pageSize, filter ?? '');
+
+    this._fetchLogs(offset, this.paginator.pageSize, filter ?? '', useDelay ? environment.refreshDelay : 0);
     this._cd.detectChanges();
   }
 
-  private _fetchLogs(offset = 0, limit = 0, filter = ''): void {
+  private _fetchLogs(offset = 0, limit = 0, filter = '', delay = 0): void {
     this.loading$.next(true);
 
-    of({})
-      .pipe(
-        first(),
-        delay(environment.loadingDelay),
-        switchMapTo(this._logService.fetchItems(offset, limit, filter).pipe(first()))
-      )
-      .subscribe({
-        next: logs => {
-          this.logs = logs;
-          this.paginator.length = logs.count;
-          this.loading$.next(false);
-        },
-        error: () => {
-          this.loading$.next(false);
-          this._alertService.showError('An error occured during loading logs.');
-        }
-      });
+    setTimeout(() => {
+      this._logService
+        .fetchItems(offset, limit, filter)
+        .pipe(first())
+        .subscribe({
+          next: logs => {
+            this.logs = logs;
+            this.paginator.length = logs.count;
+            this.loading$.next(false);
+          },
+          error: () => {
+            this.loading$.next(false);
+            this._alertService.showError('An error occured during loading logs.');
+          }
+        });
+    }, delay);
   }
 }

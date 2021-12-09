@@ -2,13 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
-import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
 import { PlanTableDataSource } from 'src/app/models/data-sources/plan-table.data-source';
 import { Plan } from 'src/app/models/api-responses/plan.interface';
 import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { PlanService } from 'src/app/services/plan.service';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
 
 @Component({
   selector: 'app-list-plans',
@@ -19,7 +19,7 @@ export class ListPlansComponent implements OnInit {
   @ViewChild(CrytonTableComponent) table: CrytonTableComponent<Plan>;
 
   dataSource: PlanTableDataSource;
-  buttons: Button<Plan>[];
+  buttons: ActionButton<Plan>[];
   filesToUpload: FileList;
 
   constructor(private _planService: PlanService, private _dialog: MatDialog, private _datePipe: CrytonDatetimePipe) {}

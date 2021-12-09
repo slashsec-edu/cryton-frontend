@@ -15,9 +15,9 @@ import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-t
 import { Plan } from '../../../api-responses/plan.interface';
 import { Worker } from '../../../api-responses/worker.interface';
 import { Selectable } from '../../../cryton-editor/interfaces/selectable.interface';
-import { Button } from '../../../cryton-table/interfaces/button.interface';
 import { Column } from '../../../cryton-table/interfaces/column.interface';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
 
 @Component({
   selector: 'app-run-creation-steps',
@@ -31,7 +31,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   workerDataSource: WorkerTableDataSource;
   inventoriesDataSource: WorkerInventoriesDataSource;
 
-  inventoriesButtons: Button<Worker>[];
+  inventoriesButtons: ActionButton<Worker>[];
   workers: Worker[];
   plan: Plan;
   inventoryFiles: Record<number, File[]> = {};

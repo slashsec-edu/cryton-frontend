@@ -3,13 +3,10 @@
     <h2>{{ header }}</h2>
     <div class="header-options">
       <div class="header-section">
-        <a *ngIf="createButton" [href]="createButton.link">
-          <app-cryton-button [value]="createButton.value" icon="add_circle" color="primary"></app-cryton-button>
-        </a>
         <app-cryton-counter name="Total" [count]="data.count"></app-cryton-counter>
 
         <!-- REFRESH BUTTON -->
-        <button mat-icon-button color="accent" (click)="loadPage()">
+        <button mat-icon-button color="accent" (click)="loadPage(true)">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -109,13 +106,23 @@
       </td>
     </ng-container>
 
-    <!-- CUSTOM BUTTONS -->
-    <ng-container *ngFor="let button of buttons" [matColumnDef]="button.name">
+    <!-- ACTION BUTTONS -->
+    <ng-container *ngFor="let button of actionButtons" [matColumnDef]="button.name">
       <th mat-header-cell *matHeaderCellDef class="button-width"></th>
       <td mat-cell *matCellDef="let row" class="justify-right">
         <button mat-icon-button onclick="this.blur()" (click)="handleButtonClick(button, row)">
           <mat-icon [@error]="isErroneous(button, row) ? 'error' : 'noError'">{{ button.icon }}</mat-icon>
         </button>
+      </td>
+    </ng-container>
+
+    <!-- LINK BUTTONS -->
+    <ng-container *ngFor="let button of linkButtons" [matColumnDef]="button.name">
+      <th mat-header-cell *matHeaderCellDef class="button-width"></th>
+      <td mat-cell *matCellDef="let row" class="justify-right">
+        <a mat-icon-button onclick="this.blur()" [routerLink]="button.constructLink(row)">
+          <mat-icon>{{ button.icon }}</mat-icon>
+        </a>
       </td>
     </ng-container>
 

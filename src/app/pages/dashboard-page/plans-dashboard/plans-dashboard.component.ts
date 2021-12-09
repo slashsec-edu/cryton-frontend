@@ -9,7 +9,6 @@ import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime
 })
 export class PlansDashboardComponent implements OnInit {
   dataSource: PlanTableDataSource;
-  buttons = [];
   searchValue = '';
 
   constructor(private _planService: PlanService, private _datePipe: CrytonDatetimePipe) {}

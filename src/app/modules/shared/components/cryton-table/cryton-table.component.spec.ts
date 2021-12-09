@@ -26,7 +26,6 @@ import { MatPaginatorHarness } from '@angular/material/paginator/testing';
 import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
 import { TestComponent } from 'src/app/testing/components/test.component';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
 import { ChangeDetectionStrategy, DebugElement } from '@angular/core';
 import { Subject, of, Observable } from 'rxjs';
 import { Run } from 'src/app/models/api-responses/run.interface';
@@ -44,6 +43,7 @@ import { MatRadioButtonHarness } from '@angular/material/radio/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatRowHarness } from '@angular/material/table/testing';
 import { ShortStringPipe } from '../../pipes/short-string.pipe';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
 
 describe('CrytonTableComponent', () => {
   let component: CrytonTableComponent<HasID>;
@@ -93,7 +93,6 @@ describe('CrytonTableComponent', () => {
     component.filter = undefined;
     component.eraseEvent$ = eraseSubject$.asObservable();
     component.dataSource = new RunTableDataSource((runServiceStub as unknown) as RunService, new CrytonDatetimePipe());
-    component.createButton = { value: 'test', link: '/test' };
   };
 
   beforeEach(
@@ -293,7 +292,7 @@ describe('CrytonTableComponent', () => {
     await paginator.goToNextPage();
     fixture.detectChanges();
 
-    expect(component.dataSource.loadItems).toHaveBeenCalledWith(5, 5, 'id', undefined);
+    expect(component.dataSource.loadItems).toHaveBeenCalledWith(5, 5, 'id', undefined, 0);
   });
 
   it('should display total number of runs as 10', async () => {
@@ -309,12 +308,6 @@ describe('CrytonTableComponent', () => {
     expect(paginatorCount).toEqual(expectedCount);
   });
 
-  it('should display a button with value "test" in the header', () => {
-    const nativeEl = fixture.nativeElement as HTMLElement;
-    const button = nativeEl.querySelector('header').querySelector('.button');
-    expect(button.textContent).toContain('test');
-  });
-
   it('should display expand icons', () => {
     createComponent();
     component.expandedComponent = TestComponent;
@@ -326,7 +319,7 @@ describe('CrytonTableComponent', () => {
     expect(expandColumn).toBeTruthy();
   });
 
-  it('should display custom button with a custom icon and function', async () => {
+  it('should display action button with a custom icon and function', async () => {
     let testRow: Run;
 
     const testFunction = (inputRow: Run): Observable<string> => {
@@ -334,10 +327,10 @@ describe('CrytonTableComponent', () => {
       return of('test');
     };
 
-    const testingButtons: Button<Run>[] = [{ name: 'test', icon: 'test', func: testFunction }];
+    const testingButtons: ActionButton<Run>[] = [{ name: 'test', icon: 'test', func: testFunction }];
 
     createComponent();
-    component.buttons = testingButtons;
+    component.actionButtons = testingButtons;
     fixture.detectChanges();
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'test' }));

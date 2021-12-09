@@ -3,13 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
-import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
 import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { Template } from 'src/app/models/api-responses/template.interface';
 import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { TemplateService } from 'src/app/services/template.service';
 import { Router } from '@angular/router';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
 
 @Component({
   selector: 'app-list-templates',
@@ -22,7 +22,7 @@ export class ListTemplatesComponent implements OnInit {
   templatesTable: CrytonTableComponent<Template>;
 
   dataSource: TemplatesTableDataSource;
-  buttons: Button<Template>[];
+  buttons: ActionButton<Template>[];
 
   constructor(private _templateService: TemplateService, private _dialog: MatDialog, private _router: Router) {}
 

@@ -7,6 +7,7 @@ import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-
 import { TableDataSource } from 'src/app/generics/table.datasource';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
 import { stagedRenderTrigger } from 'src/app/modules/shared/animations/staged-render.animation';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-workers-list',
@@ -46,8 +47,8 @@ export class WorkersListComponent implements OnInit, AfterViewInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  loadWorkers(): void {
+  loadWorkers(useDelay = false): void {
     const offset = this.paginator ? this.paginator.pageIndex * this.paginator.pageSize : 0;
-    this.dataSource.loadItems(offset, this.pageSize, null, null);
+    this.dataSource.loadItems(offset, this.pageSize, null, null, useDelay ? environment.refreshDelay : 0);
   }
 }
