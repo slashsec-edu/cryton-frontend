@@ -76,9 +76,9 @@ describe('RunCreationStepsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display title "CHOOSE PLAN" in the first step', () => {
+  it('should display title "Choose plan" in the first step', () => {
     const title = fixture.debugElement.query(By.css('h2')).nativeElement as HTMLElement;
-    expect(title.textContent).toEqual('CHOOSE PLAN');
+    expect(title.textContent).toEqual('Choose plan');
   });
 
   it('should display 3 plans in the first step table', async () => {

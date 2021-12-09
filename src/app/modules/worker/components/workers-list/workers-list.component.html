@@ -5,12 +5,12 @@
     count: dataSource.getCount() | async
   } as data"
 >
-  <section class="workers-list" [hidden]="data.count === 0">
+  <section class="workers-list">
     <!-- HEADER & PAGINATOR -->
     <header>
       <div class="workers-header">
         <div class="header-section">
-          <h1>WORKERS</h1>
+          <h2>Workers</h2>
           <button mat-icon-button color="accent" (click)="loadWorkers(true)">
             <mat-icon>refresh</mat-icon>
           </button>
@@ -30,13 +30,15 @@
     </header>
 
     <!-- WORKER TABLES -->
-    <div class="workers-wrapper" [@renderTrigger]="(dataSource.isLoading() | async) ? 'loading' : 'loaded'">
-      <ng-container *ngIf="!(dataSource.isLoading() | async)">
+    <div class="workers-wrapper" [@renderTrigger]="data.loading ? 'loading' : 'loaded'">
+      <ng-container *ngIf="!data.loading">
         <div *ngFor="let worker of data.workers" class="worker">
           <app-worker-table [data]="worker" [clickable]="clickableWorkers" (click)="workerClick.emit(worker)">
           </app-worker-table>
         </div>
       </ng-container>
+
+      <h2 *ngIf="!data.loading && (!data.count || data.count === 0)">No workers found</h2>
     </div>
   </section>
 </ng-container>

@@ -9,7 +9,7 @@
     <ng-container *ngIf="!(creatingSubject$.asObservable() | async); else creatingDisplay">
       <!-- OVERVIEW HEADER -->
       <header class="overview-header">
-        <h2>{{ itemName | uppercase }} OVERVIEW</h2>
+        <h2>{{ itemName | titlecase }} overview</h2>
         <app-cryton-button
           [value]="'Erase ' + (itemName | lowercase)"
           icon="delete"
@@ -112,7 +112,7 @@
     <ng-template #creatingDisplay>
       <section class="creating center-both">
         <mat-spinner></mat-spinner>
-        <h2>{{ 'CREATING ' + (itemName | uppercase) }}</h2>
+        <h2>{{ 'Creating ' + (itemName | lowercase) }}</h2>
       </section>
     </ng-template>
   </div>

@@ -1,7 +1,7 @@
 <!-- STEP 1: CHOOSING PLAN -->
 <div [hidden]="isHidden(0)">
   <app-cryton-table
-    header="CHOOSE PLAN"
+    header="Choose plan"
     [dataSource]="planDataSource"
     [showRadioButtons]="true"
     [hidePageSize]="true"
@@ -14,7 +14,7 @@
 <!-- STEP 2: CHOOSING WORKERS -->
 <div [hidden]="isHidden(1)">
   <app-cryton-table
-    header="CHOOSE WORKERS"
+    header="Choose workers"
     [dataSource]="workerDataSource"
     [showCheckboxes]="true"
     [hidePageSize]="true"
@@ -28,7 +28,7 @@
 <div [hidden]="isHidden(2)">
   <app-cryton-table
     #inventoryTable
-    header="CHOOSE INVENTORY FILES"
+    header="Choose inventory files"
     [dataSource]="inventoriesDataSource"
     [hidePageSize]="true"
     [eraseEvent$]="eraseEvent$"
