@@ -1,4 +1,4 @@
-import { ComponentFixture, waitForAsync, TestBed } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { WorkersListComponent } from './workers-list.component';
@@ -78,8 +78,8 @@ describe('WorkersListComponent', () => {
 
   it('should show fetched workers', async () => {
     const workerTables = await loader.getAllHarnesses(WorkerTableHarness);
-    expect(workerTables.length).toBe(workers.length);
 
+    expect(workerTables.length).toBe(workers.length);
     compareWorkersWithData(workerTables, workers);
   });
 

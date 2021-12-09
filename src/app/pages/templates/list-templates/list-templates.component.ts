@@ -10,6 +10,7 @@ import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-t
 import { TemplateService } from 'src/app/services/template.service';
 import { Router } from '@angular/router';
 import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
 
 @Component({
   selector: 'app-list-templates',
@@ -22,13 +23,17 @@ export class ListTemplatesComponent implements OnInit {
   templatesTable: CrytonTableComponent<Template>;
 
   dataSource: TemplatesTableDataSource;
-  buttons: ActionButton<Template>[];
+  actionButtons: ActionButton<Template>[];
+  linkButtons: LinkButton<Template>[];
 
   constructor(private _templateService: TemplateService, private _dialog: MatDialog, private _router: Router) {}
 
   ngOnInit(): void {
     this.dataSource = new TemplatesTableDataSource(this._templateService);
-    this.buttons = [{ name: 'delete', icon: 'delete', func: this._deleteTemplate }];
+    this.actionButtons = [{ name: 'Delete', icon: 'delete', func: this._deleteTemplate }];
+    this.linkButtons = [
+      { name: 'Show YAML', icon: 'description', constructLink: (row: Template) => `/app/templates/${row.id}/yaml` }
+    ];
   }
 
   /**

@@ -137,7 +137,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
 
   /* PAGINATOR SETTINGS */
   pageSize = 10;
-  pageSizeOptions = [5, 10, 15, 20, 30, 50];
+  pageSizeOptions = [5, 10, 15, 20, 30];
 
   /* TABLE SETTINGS */
   displayedColumns: string[];
@@ -189,7 +189,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       .pipe(takeUntil(this._destroy$), debounceTime(500))
       .subscribe((filter: TableFilter) => {
         this.filter = filter;
-        this.loadPage();
+        this.loadPage(true);
       });
   }
 
@@ -410,11 +410,11 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     if (this.showRadioButtons) {
       displayedColumns.push('radio');
     }
-    if (this.actionButtons && this.actionButtons.length > 0) {
-      displayedColumns.push(...this.actionButtons.map(button => button.name));
-    }
     if (this.linkButtons && this.linkButtons.length > 0) {
       displayedColumns.push(...this.linkButtons.map(button => button.name));
+    }
+    if (this.actionButtons && this.actionButtons.length > 0) {
+      displayedColumns.push(...this.actionButtons.map(button => button.name));
     }
     if (this.expandedComponent) {
       displayedColumns.push('expand');

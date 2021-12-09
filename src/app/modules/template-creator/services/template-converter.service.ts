@@ -32,9 +32,11 @@ export class TemplateConverterService {
   ) {}
 
   editTemplate(templateID: number): Observable<boolean> {
-    return this._templateService.getTemplateDetail(templateID).pipe(
+    return this._templateService.fetchYaml(templateID).pipe(
       first(),
-      tap((template: TemplateDetail) => this.importTemplate(template.detail.template)),
+      tap((template: Record<string, unknown>) =>
+        this.importTemplate(((template as unknown) as TemplateDetail).detail.template)
+      ),
       mapTo(true)
     );
   }

@@ -64,6 +64,9 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { UploadTemplateComponent } from './pages/templates/upload-template/upload-template.component';
 import { ThemeColorGetterComponent } from './components/theme-color-getter/theme-color-getter.component';
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
+import { PlanYamlComponent } from './pages/yaml/plan-yaml.component';
+import { TemplateYamlComponent } from './pages/yaml/template-yaml.component';
+import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +92,10 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
     CreateRunComponent,
     UploadTemplateComponent,
     ThemeColorGetterComponent,
-    ListLogsComponent
+    ListLogsComponent,
+    PlanYamlComponent,
+    TemplateYamlComponent,
+    RunYamlPreviewComponent
   ],
   imports: [
     BrowserModule,

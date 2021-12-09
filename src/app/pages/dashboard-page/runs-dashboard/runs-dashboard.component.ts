@@ -19,7 +19,11 @@ export class RunsDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new RunTableDataSource(this._runService, this._crytonDatetime);
-    this.buttons = [{ name: 'Show run', icon: 'visibility', constructLink: (row: Run) => `/app/runs/${row.id}` }];
+    this.buttons = [
+      { name: 'Show run', icon: 'visibility', constructLink: (row: Run) => `/app/runs/${row.id}` },
+      { name: 'Show timeline', icon: 'schedule', constructLink: (row: Run) => `/app/runs/${row.id}/timeline` },
+      { name: 'Show YAML', icon: 'description', constructLink: (row: Run) => `/app/runs/${row.id}/yaml` }
+    ];
   }
 
   viewRun = (run: Run): Observable<string> => {

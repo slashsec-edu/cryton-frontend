@@ -5,7 +5,6 @@ import { Run } from 'src/app/models/api-responses/run.interface';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { RunService } from 'src/app/services/run.service';
-import { Router } from '@angular/router';
 import { ExpandedRunManipulationComponent } from 'src/app/modules/shared/components/run-manipulation/expanded-run-manipulation.component';
 import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
 
@@ -22,8 +21,12 @@ export class ListRunsComponent implements OnInit {
   expandedComponent = ExpandedRunManipulationComponent;
   buttons: LinkButton<Run>[];
 
-  constructor(private _runService: RunService, private _crytonDatetime: CrytonDatetimePipe, private _router: Router) {
-    this.buttons = [{ name: 'Show run', icon: 'visibility', constructLink: (row: Run) => `/app/runs/${row.id}` }];
+  constructor(private _runService: RunService, private _crytonDatetime: CrytonDatetimePipe) {
+    this.buttons = [
+      { name: 'Show run', icon: 'visibility', constructLink: (row: Run) => `/app/runs/${row.id}` },
+      { name: 'Show timeline', icon: 'schedule', constructLink: (row: Run) => `/app/runs/${row.id}/timeline` },
+      { name: 'Show YAML', icon: 'description', constructLink: (row: Run) => `/app/runs/${row.id}/yaml` }
+    ];
   }
 
   ngOnInit(): void {

@@ -5,11 +5,12 @@ import { Plan } from '../models/api-responses/plan.interface';
 import { Observable } from 'rxjs';
 import { catchError, mapTo } from 'rxjs/operators';
 import { Endpoint } from '../models/enums/endpoint.enum';
+import { HasYaml } from '../models/services/has-yaml.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlanService extends CrytonRESTApiService<Plan> {
+export class PlanService extends CrytonRESTApiService<Plan> implements HasYaml {
   endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.PLANS, 'v1');
 
   constructor(protected http: HttpClient) {
@@ -30,5 +31,9 @@ export class PlanService extends CrytonRESTApiService<Plan> {
       mapTo('Plan created successfully.'),
       catchError(err => this.handleItemError(err, 'Plan creation failed.'))
     );
+  }
+
+  fetchYaml(planID: number): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${this.endpoint}/${planID}/get_plan`);
   }
 }

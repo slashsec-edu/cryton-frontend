@@ -16,8 +16,10 @@ import { UploadTemplateComponent } from './pages/templates/upload-template/uploa
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
 import { RunPageComponent } from './modules/run/pages/run/run-page.component';
 import { TimelineComponent } from './modules/run/components/timeline/timeline.component';
-import { RunYamlPreviewComponent } from './modules/run/pages/run-yaml-preview/run-yaml-preview.component';
+import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component';
 import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
+import { PlanYamlComponent } from './pages/yaml/plan-yaml.component';
+import { TemplateYamlComponent } from './pages/yaml/template-yaml.component';
 
 const routes: Routes = [
   {
@@ -72,6 +74,10 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'plans/:id/yaml',
+        component: PlanYamlComponent
+      },
+      {
         path: 'templates',
         component: OutletComponent,
         children: [
@@ -82,6 +88,7 @@ const routes: Routes = [
           { path: '', redirectTo: '/app/templates/list', pathMatch: 'full' }
         ]
       },
+      { path: 'templates/:id/yaml', component: TemplateYamlComponent },
       { path: 'logs', component: ListLogsComponent },
       { path: '', redirectTo: '/app/dashboard', pathMatch: 'full' },
       { path: '**', component: PageUnavailableComponent }

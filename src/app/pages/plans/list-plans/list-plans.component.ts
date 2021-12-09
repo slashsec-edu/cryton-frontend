@@ -9,6 +9,7 @@ import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-t
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { PlanService } from 'src/app/services/plan.service';
 import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
 
 @Component({
   selector: 'app-list-plans',
@@ -19,14 +20,18 @@ export class ListPlansComponent implements OnInit {
   @ViewChild(CrytonTableComponent) table: CrytonTableComponent<Plan>;
 
   dataSource: PlanTableDataSource;
-  buttons: ActionButton<Plan>[];
+  actionButtons: ActionButton<Plan>[];
+  linkButtons: LinkButton<Plan>[];
   filesToUpload: FileList;
 
   constructor(private _planService: PlanService, private _dialog: MatDialog, private _datePipe: CrytonDatetimePipe) {}
 
   ngOnInit(): void {
     this.dataSource = new PlanTableDataSource(this._planService, this._datePipe);
-    this.buttons = [{ name: 'delete', icon: 'delete', func: this.deletePlan }];
+    this.actionButtons = [{ name: 'Delete', icon: 'delete', func: this.deletePlan }];
+    this.linkButtons = [
+      { name: 'Show YAML', icon: 'description', constructLink: (row: Plan) => `/app/plans/${row.id}/yaml` }
+    ];
   }
 
   /**

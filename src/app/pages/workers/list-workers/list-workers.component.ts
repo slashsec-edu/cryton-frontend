@@ -26,7 +26,7 @@ export class ListWorkersComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new WorkerTableDataSource(this._workersService);
-    this.buttons = [{ name: 'delete', icon: 'delete', func: this.deleteWorker }];
+    this.buttons = [{ name: 'Delete', icon: 'delete', func: this.deleteWorker }];
   }
 
   /**

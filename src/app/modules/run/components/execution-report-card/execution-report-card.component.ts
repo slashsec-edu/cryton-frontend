@@ -4,7 +4,7 @@ import { first, pluck, concatAll, filter, toArray, delay, catchError, switchMapT
 import { CrytonRESTApiService } from 'src/app/generics/cryton-rest-api-service';
 import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
 import { PlanExecutionReport } from 'src/app/models/api-responses/report/plan-execution-report.interface';
-import { CrytonRESTApiEndpoint } from 'src/app/models/enums/cryton-rest-api-endpoint.enum';
+import { Endpoint } from 'src/app/models/enums/endpoint.enum';
 import { AlertService } from 'src/app/services/alert.service';
 import { ExecutionVariableService } from 'src/app/services/execution-variable.service';
 
@@ -35,7 +35,7 @@ export class ExecutionReportCardComponent implements OnInit {
 
   loadVariables(): void {
     const executionEndpoint =
-      CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.PLAN_EXECUTIONS, 'v1') + `/${this.execution.id}/`;
+      CrytonRESTApiService.buildEndpointURL(Endpoint.PLAN_EXECUTIONS, 'v1') + `/${this.execution.id}/`;
     this.loading$.next(true);
 
     of({})

@@ -80,24 +80,32 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
     }
     this._loadingSubject$.next(true);
 
-    this._currentTimeout = setTimeout(() => {
-      this._service
-        .fetchItems(offset, limit, sort, filter)
-        .pipe(
-          first(),
-          catchError(() => of({ count: 0, data: [] }))
-        )
-        .subscribe(items => {
-          this.data = { count: items.count, items: items.data };
-          this._countSubject$.next(items.count);
-          this._dataSubject$.next(items.data);
-          this._loadingSubject$.next(false);
-        });
-    }, delay);
+    if (delay && delay > 0) {
+      this._currentTimeout = setTimeout(() => {
+        this._fetchItems(offset, limit, sort, filter);
+      }, delay);
+    } else {
+      this._fetchItems(offset, limit, sort, filter);
+    }
   }
 
   updateRow(row: T): void {
     const updatedRow = this._dataSubject$.value.find(currentRow => currentRow.id === row.id);
     Object.assign(updatedRow, row);
+  }
+
+  private _fetchItems(offset: number, limit: number, sort: string, filter: TableFilter): void {
+    this._service
+      .fetchItems(offset, limit, sort, filter)
+      .pipe(
+        first(),
+        catchError(() => of({ count: 0, data: [] }))
+      )
+      .subscribe(items => {
+        this.data = { count: items.count, items: items.data };
+        this._countSubject$.next(items.count);
+        this._dataSubject$.next(items.data);
+        this._loadingSubject$.next(false);
+      });
   }
 }
