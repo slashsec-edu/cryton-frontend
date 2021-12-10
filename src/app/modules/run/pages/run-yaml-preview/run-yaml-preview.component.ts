@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { first, map, pluck, switchMap } from 'rxjs/operators';
 import { RunService } from 'src/app/services/run.service';
 
 @Component({
@@ -21,8 +21,10 @@ export class RunYamlPreviewComponent implements OnInit {
       first(),
       switchMap((params: Params) => {
         this.runID = Number(params['id']);
-        return this._runService.fetchPlan(params['id']);
-      })
-    );
+        return this._runService.fetchPlan(this.runID);
+      }),
+      pluck('detail', 'plan'),
+      map(yaml => ({ plan: yaml }))
+    ) as Observable<Record<string, unknown>>;
   }
 }

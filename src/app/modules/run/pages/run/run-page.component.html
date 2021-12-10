@@ -21,7 +21,7 @@
   <app-run-report-card [report]="report"></app-run-report-card>
 
   <div class="plan-execution-header render-item">
-    <h2>Execution</h2>
+    <h2>{{ 'Execution: ' + report.plan_executions[paginator.pageIndex].id }}</h2>
     <mat-paginator
       #paginator
       id="paginator"
