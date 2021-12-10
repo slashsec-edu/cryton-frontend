@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 
 export abstract class CrytonRESTApiService<T> {
   static baseUrl = `http://${environment.crytonRESTApiHost}:${environment.crytonRESTApiPort}/cryton/api`;
-  protected abstract _endpoint: string;
+  abstract endpoint: string;
 
   constructor(protected http: HttpClient) {}
 
@@ -18,7 +18,7 @@ export abstract class CrytonRESTApiService<T> {
   }
 
   postItem(body: Record<string, any>): Observable<string> {
-    return this.http.post<Record<string, any>>(this._endpoint, body).pipe(
+    return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
       mapTo('Item created successfully.'),
       catchError(err => {
         console.error(err);
@@ -28,20 +28,24 @@ export abstract class CrytonRESTApiService<T> {
   }
 
   deleteItem(id: number): Observable<string> {
-    const url = `${this._endpoint}${id}`;
+    const url = `${this.endpoint}${id}`;
 
     return this.http.delete<Record<string, string>>(url).pipe(
-      mapTo('Deleted successfully.'),
+      mapTo('Item deleted successfully.'),
       catchError(err => {
         console.error(err);
-        return throwError('Deletion failed.');
+        return throwError('Item deletion failed.');
       })
     );
   }
 
   fetchItem(id: number): Observable<T | string> {
-    const url = `${this._endpoint}${id}`;
+    const url = `${this.endpoint}${id}`;
 
+    return this.http.get<T>(url).pipe(catchError(err => this.handleItemError(err, `Item couldn't be fetched.`)));
+  }
+
+  fetchItemByUrl(url: string): Observable<T | string> {
     return this.http.get<T>(url).pipe(catchError(err => this.handleItemError(err, `Item couldn't be fetched.`)));
   }
 
@@ -53,9 +57,15 @@ export abstract class CrytonRESTApiService<T> {
    * @param orderBy Column to order results by.
    * @param filter TableFilter object for filtering results by column and search value.
    */
-  fetchItems(offset: number, limit: number, orderBy: string = 'id', filter: TableFilter): Observable<TableData<T>> {
-    let params: HttpParams = new HttpParams().set('offset', offset.toString()).set('limit', limit.toString());
+  fetchItems(offset?: number, limit?: number, orderBy: string = 'id', filter?: TableFilter): Observable<TableData<T>> {
+    let params: HttpParams = new HttpParams();
 
+    if (offset) {
+      params.set('offset', offset.toString());
+    }
+    if (limit) {
+      params.set('limit', limit.toString());
+    }
     if (orderBy && orderBy !== '') {
       params = params.append('order_by', orderBy);
     }
@@ -64,7 +74,7 @@ export abstract class CrytonRESTApiService<T> {
     }
 
     return this.http
-      .get<CrytonResponse<T>>(this._endpoint, { params })
+      .get<CrytonResponse<T>>(this.endpoint, { params })
       .pipe(
         map(items => ({ count: items.count, data: items.results } as TableData<T>)),
         catchError(this.handleDatasetError)

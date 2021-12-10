@@ -1,0 +1,38 @@
+/* HEADER */
+header {
+  display: flex;
+  padding-bottom: 15px;
+  flex-direction: column;
+  gap: 15px;
+
+  section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  aside {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+mat-progress-bar {
+  height: 1px;
+}

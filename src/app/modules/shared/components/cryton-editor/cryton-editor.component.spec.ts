@@ -15,6 +15,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { CrytonButtonHarness } from '../cryton-button/cryton-button.harness';
 import { findAsync } from 'src/app/testing/utility/async-find';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 describe('CrytonEditorComponent', () => {
   let component: CrytonEditorComponent;
@@ -33,7 +36,15 @@ describe('CrytonEditorComponent', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [CrytonEditorComponent, ComponentInputDirective],
-        imports: [HttpClientModule, BrowserAnimationsModule, SharedModule],
+        imports: [
+          HttpClientModule,
+          BrowserAnimationsModule,
+          SharedModule,
+          FormsModule,
+          ReactiveFormsModule,
+          MatInputModule,
+          MatFormFieldModule
+        ],
         providers: [
           { MatSnackBar, useValue: matSnackBarSpy },
           { provide: AlertService, useValue: alertServiceSpy }

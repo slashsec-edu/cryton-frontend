@@ -1,0 +1,57 @@
+<app-cryton-flat-card>
+  <header>
+    <section>
+      <aside>
+        <app-cryton-labeled-item label="Step state:">
+          <app-cryton-state-chip [state]="step.state"></app-cryton-state-chip>
+        </app-cryton-labeled-item>
+
+        <app-cryton-labeled-item label="Step info:">
+          <app-cryton-id-chip [id]="step.id" [name]="step.step_name"></app-cryton-id-chip>
+        </app-cryton-labeled-item>
+      </aside>
+
+      <aside>
+        <app-cryton-labeled-item>
+          <label>Start time:</label>
+          <span class="time"
+            ><mat-icon color="primary">play_arrow</mat-icon>{{ step.start_time | crytonDatetime }}</span
+          >
+        </app-cryton-labeled-item>
+        <app-cryton-labeled-item>
+          <label>Finish time:</label>
+          <span class="time"><mat-icon color="primary">stop</mat-icon>{{ step.finish_time | crytonDatetime }}</span>
+        </app-cryton-labeled-item>
+      </aside>
+    </section>
+
+    <section>
+      <app-cryton-labeled-item label="Evidence file:">
+        <span>{{ step.evidence_file }}</span>
+      </app-cryton-labeled-item>
+    </section>
+  </header>
+
+  <div class="section-header">
+    <h3>Outputs</h3>
+    <button mat-button (click)="masterToggle()">Toggle all outputs</button>
+  </div>
+  <mat-divider></mat-divider>
+
+  <main>
+    <cdk-accordion class="outputs" [multi]="true">
+      <cdk-accordion-item
+        *ngFor="let output of outputs; let index = index"
+        #accordionItem="cdkAccordionItem"
+        class="outputs-accordion-item"
+      >
+        <label class="output-label" (click)="accordionItem.toggle()"
+          >{{ output.name + ':' }}<mat-icon [class.rotated]="accordionItem.expanded">expand_more</mat-icon></label
+        >
+        <code [@expansion]="getExpandedState(accordionItem.expanded)" class="outputs-accordion-body">{{
+          output.content
+        }}</code>
+      </cdk-accordion-item>
+    </cdk-accordion>
+  </main>
+</app-cryton-flat-card>

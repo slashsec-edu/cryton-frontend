@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+
+  .execution-variable-uploader.active {
+    border-color: map-get($primary, default);
+  }
+}

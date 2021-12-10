@@ -1,39 +1,17 @@
-<app-cryton-card [noPadding]="true" [noBorder]="true">
-  <div class="datetime-picker">
-    <!-- TIME PICKER -->
-    <div class="center-both cryton-datetime-picker--time-picker">
-      <ng-container *ngFor="let timeInput of timeInputs; index as i">
-        <div class="input-number">
-          <button mat-icon-button appHoldClick (click)="changeTime(timeInput.key, 1)">
-            <mat-icon>keyboard_arrow_up</mat-icon>
-          </button>
-          <input
-            [(ngModel)]="time[timeInput.key]"
-            (blur)="checkInput(timeInput.key)"
-            type="text"
-            class="time-input"
-            [placeholder]="timeInput.placeholder"
-            maxlength="2"
-          />
-          <button mat-icon-button appHoldClick (click)="changeTime(timeInput.key, -1)">
-            <mat-icon>keyboard_arrow_down</mat-icon>
-          </button>
-        </div>
+<!-- TIME PICKER -->
+<mat-dialog-content>
+  <app-cryton-time-picker (dayChange)="handleDayChange($event)"></app-cryton-time-picker>
 
-        <h2 *ngIf="i < timeInputs.length - 1">:</h2>
-      </ng-container>
+  <!-- DATEPICKER CALENDAR -->
+  <mat-divider></mat-divider>
+  <mat-calendar [selected]="selectedDate" [dateFilter]="filterDates" (selectedChange)="selectDate($event)">
+  </mat-calendar>
+
+  <!-- FOOTER -->
+  <div class="datetime-picker-footer">
+    <div>
+      <span *ngIf="this.getDateTime() as datetime" class="selected-datetime">{{ datetime | crytonDatetime }}</span>
     </div>
-
-    <!-- DATEPICKER CALENDAR -->
-    <mat-calendar [selected]="selectedDate" [dateFilter]="filterDates" (selectedChange)="selectDate($event)">
-    </mat-calendar>
-
-    <!-- FOOTER -->
-    <div class="datetime-picker-footer">
-      <div class="selection-overview">
-        <span class="selected-datetime">{{ getDate() }}</span>
-        <app-cryton-button value="Select" (clicked)="selectDatetime()"></app-cryton-button>
-      </div>
-    </div>
+    <app-cryton-button value="Select" (clicked)="selectDatetime()"></app-cryton-button>
   </div>
-</app-cryton-card>
+</mat-dialog-content>

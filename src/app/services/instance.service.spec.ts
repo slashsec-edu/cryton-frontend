@@ -1,7 +1,7 @@
 import { InstanceService } from './instance.service';
 import { of } from 'rxjs';
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Endpoint } from '../models/enums/endpoint.enum';
 import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
@@ -50,18 +50,4 @@ describe('InstanceService', () => {
       expect(httpClientStub.get).toHaveBeenCalledWith(endpoint + '1');
     })
   );
-
-  it('should make a GET request with HTTP parameters', () => {
-    const params = new HttpParams().set('offset', '1').set('limit', '1').set('order_by', 'id').set('id', '1');
-
-    httpClientStub.get.and.callFake((callEndpoint: string, callParams: Record<string, any>) => {
-      const resultParams = callParams['params'] as HttpParams;
-      expect(resultParams.toString()).toEqual(params.toString());
-      expect(callEndpoint).toEqual(endpoint);
-      return of({ count: 0, results: [] });
-    });
-
-    service.fetchItems(1, 1, 'id', { column: 'id', filter: '1' });
-    expect(httpClientStub.get).toHaveBeenCalled();
-  });
 });
