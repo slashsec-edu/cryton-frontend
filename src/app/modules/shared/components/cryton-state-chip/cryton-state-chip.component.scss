@@ -1,0 +1,12 @@
+@import '../../styles/chip.scss';
+
+/* STATE */
+.state {
+  height: $chip-height;
+  padding: 0 20px;
+  font-weight: 600;
+  width: fit-content;
+  border-radius: $chip-border-radius;
+  display: flex;
+  align-items: center;
+}

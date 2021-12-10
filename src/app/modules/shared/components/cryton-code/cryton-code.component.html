@@ -1,0 +1,8 @@
+<div class="cryton-code">
+  <button mat-icon-button class="copy-btn" [cdkCopyToClipboard]="text.textContent" matTooltip="Copy to clipboard">
+    <mat-icon>content_copy</mat-icon>
+  </button>
+  <code>
+    <pre #text>{{ code }}</pre>
+  </code>
+</div>

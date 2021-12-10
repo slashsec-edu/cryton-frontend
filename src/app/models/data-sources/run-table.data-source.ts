@@ -42,13 +42,13 @@ export class RunTableDataSource extends CrytonTableDataSource<Run> {
     (input: Run): string => this._crytonDatetime.transform(input.schedule_time)
   ];
   highlightDictionary = {
-    pending: 'yellow',
-    scheduled: 'yellow',
-    running: 'blue',
-    finished: 'green',
-    pausing: 'gray',
-    paused: 'black',
-    terminated: 'red'
+    pending: 'pending',
+    scheduled: 'scheduled',
+    running: 'running',
+    finished: 'finished',
+    pausing: 'pausing',
+    paused: 'paused',
+    terminated: 'terminated'
   };
 
   constructor(protected runService: RunService, private _crytonDatetime: CrytonDatetimePipe) {

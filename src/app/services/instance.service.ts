@@ -10,7 +10,7 @@ import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.
   providedIn: 'root'
 })
 export class InstanceService extends CrytonRESTApiService<Instance> {
-  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.INSTANCES, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.INSTANCES, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -26,7 +26,7 @@ export class InstanceService extends CrytonRESTApiService<Instance> {
       }
     }
 
-    return this.http.post(this._endpoint, formData).pipe(
+    return this.http.post(this.endpoint, formData).pipe(
       mapTo('Instance created successfully.'),
       catchError(err => this.handleItemError(err, 'Instance creation failed.'))
     );

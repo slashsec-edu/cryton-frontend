@@ -1,0 +1,55 @@
+<div *ngIf="this.report$ | async as report; else noRun">
+  <div class="run-header">
+    <h1>{{ 'Run: ' + report.id }}</h1>
+
+    <div class="buttons">
+      <button mat-button (click)="loadReport()"><mat-icon color="primary">refresh</mat-icon> Refresh</button>
+      <a mat-button routerLink="timeline"><mat-icon color="primary">schedule</mat-icon> Show timeline</a>
+      <a mat-button routerLink="yaml"><mat-icon color="primary">description</mat-icon> Show YAML</a>
+      <button mat-button (click)="downloadReport()">
+        <mat-icon color="primary">download</mat-icon> Download report
+      </button>
+    </div>
+  </div>
+
+  <mat-divider *ngIf="!(loading$ | async); else loadingBar"></mat-divider>
+
+  <ng-template #loadingBar>
+    <mat-progress-bar mode="query"></mat-progress-bar>
+  </ng-template>
+
+  <app-run-report-card [report]="report"></app-run-report-card>
+
+  <div class="plan-execution-header render-item">
+    <h2>{{ 'Execution: ' + report.plan_executions[paginator.pageIndex].id }}</h2>
+    <mat-paginator
+      #paginator
+      id="paginator"
+      [hidePageSize]="true"
+      [length]="report.plan_executions.length"
+      [pageSize]="1"
+      [showFirstLastButtons]="true"
+    >
+    </mat-paginator>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <ng-container *ngIf="report.plan_executions[paginator.pageIndex] as executionReport">
+    <app-execution-report-card [execution]="executionReport"></app-execution-report-card>
+  </ng-container>
+</div>
+
+<ng-template #noRun>
+  <div class="no-run" *ngIf="!(loading$ | async); else loading">
+    <h1>We are sorry</h1>
+    <h2>The run you are looking for was not found</h2>
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  <div class="loading">
+    <h1>Loading run</h1>
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

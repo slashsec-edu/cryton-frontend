@@ -9,7 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from './modules/shared/shared.module';
 import { TemplateCreatorModule } from './modules/template-creator/template-creator.module';
 import { CommonModule } from '@angular/common';
-import { ReportModule } from './modules/report/report.module';
+import { RunModule } from './modules/run/run.module';
+import { WorkerModule } from './modules/worker/worker.module';
 
 // Material
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -43,11 +44,8 @@ import { InstancesDashboardComponent } from './pages/dashboard-page/instances-da
 import { AppComponent } from './app.component';
 import { RunsDashboardComponent } from './pages/dashboard-page/runs-dashboard/runs-dashboard.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
-import { WorkerTableComponent } from './components/worker-table/worker-table.component';
-import { WorkersDashboardComponent } from './pages/dashboard-page/workers-dashboard/workers-dashboard.component';
 import { PageUnavailableComponent } from './components/page-unavailable/page-unavailable.component';
 import { RunCreationStepsComponent } from './models/cryton-editor/steps/run-creation-steps/run-creation-steps.component';
-import { RunManipulationComponent } from './components/run-manipulation/run-manipulation.component';
 import { WorkerCreationStepsComponent } from './models/cryton-editor/steps/worker-creation-steps/worker-creation-steps.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { TemplateUploadStepsComponent } from './models/cryton-editor/steps/template-upload-steps/template-upload-steps.component';
@@ -73,11 +71,8 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
     RunsDashboardComponent,
     InstancesDashboardComponent,
     DashboardPageComponent,
-    WorkerTableComponent,
-    WorkersDashboardComponent,
     PageUnavailableComponent,
     RunCreationStepsComponent,
-    RunManipulationComponent,
     WorkerCreationStepsComponent,
     LoginPageComponent,
     TemplateUploadStepsComponent,
@@ -124,9 +119,10 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
     MatTabsModule,
     MatMenuModule,
     CommonModule,
-    ReportModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    RunModule,
+    WorkerModule
   ],
   providers: [RunService, InstanceService, WorkersService, TemplateService, ExecutionVariableService],
   bootstrap: [AppComponent]

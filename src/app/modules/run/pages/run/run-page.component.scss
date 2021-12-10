@@ -1,0 +1,44 @@
+/* HEADER STYLE */
+h1,
+h2 {
+  margin: 0;
+}
+h1 {
+  font-weight: bold;
+}
+h2 {
+  font-weight: lighter;
+}
+
+/* RUN HEADER */
+.run-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* PLAN EXECUTION HEADER */
+.plan-execution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#paginator {
+  background: none;
+  padding: 0 !important;
+}
+
+/* NO RUN */
+.no-run {
+  text-align: center;
+}
+
+/* LOADING */
+.loading {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}

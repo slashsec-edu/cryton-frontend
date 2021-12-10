@@ -1,0 +1,53 @@
+/* LAYOUT */
+header {
+  flex-direction: column;
+  gap: 15px;
+
+  section {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+main {
+  margin-top: 15px;
+}
+
+/* EXECUTION VARIABLES */
+.execution-variables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.variable-container {
+  width: calc(20% - 40px / 5);
+}
+
+/* OTHER */
+.no-data-text {
+  color: gray;
+}
+mat-progress-bar {
+  height: 1px;
+}
+
+/* MEDIA QUERIES */
+@media only screen and (max-width: 1230px) {
+  .variable-container {
+    width: calc(25% - 30px / 4);
+  }
+}
+@media only screen and (max-width: 930px) {
+  .variable-container {
+    width: calc(33% - 20px / 3);
+  }
+}
+@media only screen and (max-width: 550px) {
+  .variable-container {
+    width: calc(50% - 10px / 2);
+  }
+}
+@media only screen and (max-width: 360px) {
+  .variable-container {
+    width: 100%;
+  }
+}

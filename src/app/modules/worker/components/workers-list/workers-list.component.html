@@ -1,0 +1,42 @@
+<ng-container
+  *ngIf="{
+    workers: dataSource.connect() | async,
+    loading: dataSource.isLoading() | async,
+    count: dataSource.getCount() | async
+  } as data"
+>
+  <section class="workers-list" [hidden]="data.count === 0">
+    <!-- HEADER & PAGINATOR -->
+    <header>
+      <div class="workers-header">
+        <div class="header-section">
+          <h2>Workers</h2>
+          <button mat-icon-button color="accent" (click)="refreshData()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+
+        <mat-paginator
+          id="paginator"
+          [hidePageSize]="true"
+          [length]="data.count"
+          [pageSize]="pageSize"
+          [showFirstLastButtons]="true"
+        >
+        </mat-paginator>
+      </div>
+      <mat-progress-bar mode="query" class="progress-bar" *ngIf="data.loading"></mat-progress-bar>
+      <mat-divider *ngIf="!data.loading"></mat-divider>
+    </header>
+
+    <!-- WORKER TABLES -->
+    <div class="workers-wrapper" [@renderTrigger]="(dataSource.isLoading() | async) ? 'loading' : 'loaded'">
+      <ng-container *ngIf="!(dataSource.isLoading() | async)">
+        <div *ngFor="let worker of data.workers" class="worker">
+          <app-worker-table [data]="worker" [clickable]="clickableWorkers" (click)="workerClick.emit(worker)">
+          </app-worker-table>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+</ng-container>

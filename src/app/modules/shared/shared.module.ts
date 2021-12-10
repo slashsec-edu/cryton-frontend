@@ -3,6 +3,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { CommonModule } from '@angular/common';
 
+// CDK
+import { ClipboardModule } from '@angular/cdk/clipboard';
+
 // MATERIAL
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 
 // COMPONENTS
 import { CrytonCounterComponent } from './components/cryton-counter/cryton-counter.component';
@@ -30,11 +34,22 @@ import { CrytonDatetimePickerComponent } from './components/cryton-datetime-pick
 import { CertainityCheckComponent } from './components/certainity-check/certainity-check.component';
 import { CrytonFileUploaderComponent } from './components/cryton-file-uploader/cryton-file-uploader.component';
 import { CrytonCardComponent } from './components/cryton-card/cryton-card.component';
+import { CrytonLogComponent } from './components/cryton-log/cryton-log.component';
+import { CrytonIdChipComponent } from './components/cryton-id-chip/cryton-id-chip.component';
+import { CrytonStateChipComponent } from './components/cryton-state-chip/cryton-state-chip.component';
+import { CrytonFlatCardComponent } from './components/cryton-flat-card/cryton-flat-card.component';
+import { CrytonLabeledItemComponent } from './components/cryton-labeled-item/cryton-labeled-item.component';
+import { TickSizePickerComponent } from './components/tick-size-picker/tick-size-picker.component';
+import { CrytonSnackbarAlertComponent } from './components/cryton-snackbar-alert/cryton-snackbar-alert.component';
+import { ExpandedRunManipulationComponent } from './components/run-manipulation/expanded-run-manipulation.component';
+import { ReportManiupulationComponent } from './components/run-manipulation/report-manipulation.component';
 
 // DIRECTIVES
 import { ComponentInputDirective } from './directives/component-input.directive';
 import { HoldClickDirective } from './directives/hold-click.directive';
 import { FileUploadDndDirective } from './directives/file-upload-dnd.directive';
+import { NoScrollDirective } from './directives/no-scroll.directive';
+import { EnableTabDirective } from './directives/enable-tab.directive';
 
 // PIPES
 import { FileNamePipe } from './pipes/file-name.pipe';
@@ -42,11 +57,9 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { ShortStringPipe } from './pipes/short-string.pipe';
 import { CrytonDatetimePipe } from './pipes/cryton-datetime.pipe';
 import { EscapePipe } from './pipes/escape.pipe';
-import { NoScrollDirective } from './directives/no-scroll.directive';
-import { TickSizePickerComponent } from './components/tick-size-picker/tick-size-picker.component';
-import { CrytonSnackbarAlertComponent } from './components/cryton-snackbar-alert/cryton-snackbar-alert.component';
-import { EnableTabDirective } from './directives/enable-tab.directive';
-import { CrytonLogComponent } from './components/cryton-log/cryton-log.component';
+import { YamlPipe } from './pipes/yaml.pipe';
+import { CrytonCodeComponent } from './components/cryton-code/cryton-code.component';
+import { CrytonTimePickerComponent } from './components/cryton-time-picker/cryton-time-picker.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +83,16 @@ import { CrytonLogComponent } from './components/cryton-log/cryton-log.component
     TickSizePickerComponent,
     CrytonLogComponent,
     CrytonSnackbarAlertComponent,
-    EnableTabDirective
+    EnableTabDirective,
+    CrytonIdChipComponent,
+    CrytonStateChipComponent,
+    CrytonFlatCardComponent,
+    CrytonLabeledItemComponent,
+    ExpandedRunManipulationComponent,
+    ReportManiupulationComponent,
+    YamlPipe,
+    CrytonCodeComponent,
+    CrytonTimePickerComponent
   ],
   imports: [
     CommonModule,
@@ -92,7 +114,9 @@ import { CrytonLogComponent } from './components/cryton-log/cryton-log.component
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    MatCardModule
+    MatCardModule,
+    ClipboardModule,
+    MatDividerModule
   ],
   exports: [
     CrytonButtonComponent,
@@ -114,8 +138,17 @@ import { CrytonLogComponent } from './components/cryton-log/cryton-log.component
     EnableTabDirective,
     CrytonLogComponent,
     CrytonSnackbarAlertComponent,
-    EnableTabDirective
+    EnableTabDirective,
+    CrytonIdChipComponent,
+    CrytonStateChipComponent,
+    CrytonFlatCardComponent,
+    CrytonLabeledItemComponent,
+    ExpandedRunManipulationComponent,
+    ReportManiupulationComponent,
+    YamlPipe,
+    CrytonCodeComponent,
+    CrytonTimePickerComponent
   ],
-  providers: [CrytonDatetimePipe, EscapePipe]
+  providers: [CrytonDatetimePipe, EscapePipe, ShortStringPipe, YamlPipe]
 })
 export class SharedModule {}

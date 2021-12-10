@@ -14,7 +14,7 @@ import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.
   providedIn: 'root'
 })
 export class TemplateService extends CrytonRESTApiService<Template> {
-  protected _endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.TEMPLATES, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.TEMPLATES, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -36,7 +36,7 @@ export class TemplateService extends CrytonRESTApiService<Template> {
     }
 
     return this.http
-      .get<CrytonResponse<Template>>(this._endpoint, { params })
+      .get<CrytonResponse<Template>>(this.endpoint, { params })
       .pipe(
         // Extracting file name from file url
         tap(items => {
@@ -69,7 +69,7 @@ export class TemplateService extends CrytonRESTApiService<Template> {
 
   getTemplateDetail(templateID: number): Observable<TemplateDetail | string> {
     return this.http
-      .get<TemplateDetail>(`${this._endpoint}${templateID}/get_template/`)
+      .get<TemplateDetail>(`${this.endpoint}${templateID}/get_template/`)
       .pipe(catchError(err => this.handleItemError(err, `Template detail couldn't be fetched.`)));
   }
 

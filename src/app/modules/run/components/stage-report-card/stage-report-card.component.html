@@ -1,0 +1,50 @@
+<app-cryton-flat-card>
+  <header>
+    <section>
+      <aside>
+        <app-cryton-labeled-item label="Stage state:">
+          <app-cryton-state-chip [state]="stage.state"></app-cryton-state-chip>
+        </app-cryton-labeled-item>
+
+        <app-cryton-labeled-item label="Stage info:">
+          <app-cryton-id-chip [id]="stage.id" [name]="stage.stage_name"></app-cryton-id-chip>
+        </app-cryton-labeled-item>
+      </aside>
+
+      <aside>
+        <app-cryton-labeled-item label="Scheduled for:" *ngIf="stage.schedule_time; else startTime">
+          <span class="time"><mat-icon color="primary">today</mat-icon>{{ stage.schedule_time | crytonDatetime }}</span>
+        </app-cryton-labeled-item>
+
+        <ng-template #startTime>
+          <app-cryton-labeled-item label="Start time:">
+            <span class="time"
+              ><mat-icon color="primary">play_arrow</mat-icon>{{ stage.start_time | crytonDatetime }}</span
+            >
+          </app-cryton-labeled-item>
+        </ng-template>
+
+        <app-cryton-labeled-item label="Pause time:">
+          <span class="time"><mat-icon color="primary">pause</mat-icon>{{ stage.pause_time | crytonDatetime }}</span>
+        </app-cryton-labeled-item>
+
+        <app-cryton-labeled-item label="Finish time:">
+          <span class="time"><mat-icon color="primary">stop</mat-icon>{{ stage.finish_time | crytonDatetime }}</span>
+        </app-cryton-labeled-item>
+      </aside>
+    </section>
+  </header>
+
+  <main>
+    <button mat-button class="show-steps-btn" (click)="this.toggleSteps()">
+      <mat-icon color="primary">{{ this.showSteps ? 'expand_less' : 'expand_more' }}</mat-icon>
+      {{ (this.showSteps ? 'Hide' : 'Show') + ' steps' }}
+    </button>
+  </main>
+</app-cryton-flat-card>
+
+<ng-container *ngIf="showSteps">
+  <div class="nested">
+    <app-step-report-card *ngFor="let step of stage.step_executions" [step]="step"></app-step-report-card>
+  </div>
+</ng-container>

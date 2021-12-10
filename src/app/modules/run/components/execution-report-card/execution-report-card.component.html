@@ -1,0 +1,79 @@
+<app-cryton-flat-card>
+  <header>
+    <section>
+      <aside>
+        <app-cryton-labeled-item label="Execution state:">
+          <app-cryton-state-chip [state]="execution.state"></app-cryton-state-chip>
+        </app-cryton-labeled-item>
+
+        <app-cryton-labeled-item label="Used worker:">
+          <app-cryton-id-chip [id]="execution.worker_id" [name]="execution.worker_name"></app-cryton-id-chip>
+        </app-cryton-labeled-item>
+      </aside>
+
+      <aside>
+        <app-cryton-labeled-item label="Scheduled for:" *ngIf="execution.schedule_time; else startTime">
+          <span class="time"
+            ><mat-icon color="primary">today</mat-icon>{{ execution.schedule_time | crytonDatetime }}</span
+          >
+        </app-cryton-labeled-item>
+
+        <ng-template #startTime>
+          <app-cryton-labeled-item label="Start time:">
+            <span class="time"
+              ><mat-icon color="primary">play_arrow</mat-icon>{{ execution.start_time | crytonDatetime }}</span
+            >
+          </app-cryton-labeled-item>
+        </ng-template>
+
+        <app-cryton-labeled-item label="Pause time:">
+          <span class="time"
+            ><mat-icon color="primary">pause</mat-icon>{{ execution.pause_time | crytonDatetime }}</span
+          >
+        </app-cryton-labeled-item>
+
+        <app-cryton-labeled-item label="Finish time:">
+          <span class="time"
+            ><mat-icon color="primary">stop</mat-icon>{{ execution.finish_time | crytonDatetime }}</span
+          >
+        </app-cryton-labeled-item>
+      </aside>
+    </section>
+
+    <section>
+      <app-cryton-labeled-item label="Evidence dir:">
+        <span>{{ execution.evidence_dir ? execution.evidence_dir : 'NONE' }}</span>
+      </app-cryton-labeled-item>
+    </section>
+  </header>
+
+  <div class="section-header">
+    <h3>Execution variables</h3>
+    <button mat-icon-button (click)="loadVariables()">
+      <mat-icon color="accent">refresh</mat-icon>
+    </button>
+  </div>
+  <mat-divider *ngIf="!(loading$ | async)"></mat-divider>
+  <mat-progress-bar mode="query" *ngIf="loading$ | async"></mat-progress-bar>
+
+  <main>
+    <div class="execution-variables">
+      <div class="variable-container" *ngFor="let variable of variables; trackBy: trackByFn">
+        <app-execution-variable [variable]="variable" (deleted)="removeVariable(variable)"></app-execution-variable>
+      </div>
+
+      <div class="variable-container">
+        <app-execution-variable-uploader
+          [executionID]="execution.id"
+          (uploaded)="loadVariables()"
+        ></app-execution-variable-uploader>
+      </div>
+    </div>
+  </main>
+</app-cryton-flat-card>
+
+<h2>Stages:</h2>
+
+<ng-container *ngFor="let stage of execution.stage_executions">
+  <app-stage-report-card [stage]="stage"></app-stage-report-card>
+</ng-container>

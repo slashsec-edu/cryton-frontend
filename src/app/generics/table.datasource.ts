@@ -14,10 +14,10 @@ export interface TableData<T> {
 export abstract class TableDataSource<T extends HasID> implements DataSource<T> {
   data: TableData<T> = { count: 0, items: [] };
 
-  private _dataSubject$ = new BehaviorSubject<T[]>([]);
-  private _countSubject$ = new BehaviorSubject<number>(0);
-  private _loadingSubject$ = new BehaviorSubject<boolean>(false);
-  private _currentSub: Subscription;
+  protected _dataSubject$ = new BehaviorSubject<T[]>([]);
+  protected _countSubject$ = new BehaviorSubject<number>(0);
+  protected _loadingSubject$ = new BehaviorSubject<boolean>(false);
+  protected _currentSub: Subscription;
 
   constructor(private _service?: CrytonRESTApiService<T>) {}
 
