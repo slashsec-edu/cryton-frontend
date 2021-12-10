@@ -10,7 +10,7 @@ import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 @Component({
   selector: 'app-tree-node-dispenser',
   templateUrl: './tree-node-dispenser.component.html',
-  styleUrls: ['./tree-node-dispenser.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./tree-node-dispenser.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeNodeDispenserComponent implements OnInit, OnDestroy {

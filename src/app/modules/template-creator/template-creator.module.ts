@@ -15,6 +15,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatCardModule } from '@angular/material/card';
 
 // COMPONENTS
 import { TemplateCreatorComponent } from './components/template-creator/template-creator.component';
@@ -36,6 +38,8 @@ import { StepCreatorHelpComponent } from './components/step-creator-help/step-cr
 import { StageCreatorHelpComponent } from './components/stage-creator-help/stage-creator-help.component';
 import { TemplateCreatorHelpComponent } from './components/template-creator-help/template-creator-help.component';
 import { DependencyTreeHelpComponent } from './components/dependency-tree-help/dependency-tree-help.component';
+import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
+import { TemplateCreatorIntroductionComponent } from './components/template-creator-introduction/template-creator-introduction.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +61,9 @@ import { DependencyTreeHelpComponent } from './components/dependency-tree-help/d
     StepCreatorHelpComponent,
     StageCreatorHelpComponent,
     TemplateCreatorHelpComponent,
-    DependencyTreeHelpComponent
+    DependencyTreeHelpComponent,
+    TemplateCreatorPageComponent,
+    TemplateCreatorIntroductionComponent
   ],
   imports: [
     CommonModule,
@@ -73,7 +79,9 @@ import { DependencyTreeHelpComponent } from './components/dependency-tree-help/d
     MatDividerModule,
     PortalModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatStepperModule,
+    MatCardModule
   ],
   exports: [TemplateCreatorComponent]
 })

@@ -1,0 +1,13 @@
+.step-container {
+  overflow: hidden;
+  padding-top: 10px;
+  min-height: 400px;
+}
+
+/* NAVIGATION */
+nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px;
+}

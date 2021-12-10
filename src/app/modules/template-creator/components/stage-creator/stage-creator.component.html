@@ -1,30 +1,46 @@
-<div class="controls">
-  <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
+<section class="buttons">
+  <button mat-button (click)="openHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
+  <button mat-button (click)="eraseParameters()" type="button">
+    <mat-icon color="primary">delete</mat-icon> Erase parameters
+  </button>
+  <button mat-button (click)="navigate.emit(CreateStageComponent.DEP_TREE)" id="build-dep-tree-btn" type="button">
+    <mat-icon color="primary">account_tree</mat-icon> Show dependency tree
+  </button>
+
   <ng-container *ngIf="!editedStage; else saveChanges">
-    <app-cryton-button
-      color="primary"
-      icon="add_circle"
-      value="Create stage"
-      (clicked)="handleCreateStage()"
-      [disabled]="isCreationDisabled()"
-      [matTooltip]="getCreationErrors()"
-      matTooltipClass="tooltip-error"
-    ></app-cryton-button>
+    <div [matTooltip]="getCreationErrors()" matTooltipClass="tooltip-error">
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="handleCreateStage()"
+        [disabled]="isCreationDisabled()"
+      >
+        <mat-icon>add_circle</mat-icon> Create stage
+      </button>
+    </div>
   </ng-container>
 
   <ng-template #saveChanges>
-    <app-cryton-button value="Cancel" (clicked)="handleCancelClick()"></app-cryton-button>
+    <button mat-flat-button (click)="handleCancelClick()" type="button" color="warn">
+      <mat-icon>close</mat-icon> Cancel
+    </button>
 
-    <app-cryton-button
-      color="primary"
-      icon="save"
-      value="Save changes"
-      (clicked)="handleSaveChanges()"
-      [disabled]="isCreationDisabled()"
-    ></app-cryton-button>
+    <div [matTooltip]="getCreationErrors()" matTooltipClass="tooltip-error">
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="handleSaveChanges()"
+        [disabled]="isCreationDisabled()"
+      >
+        <mat-icon>save</mat-icon> Save changes
+      </button>
+    </div>
   </ng-template>
-</div>
-<main class="tc-responsive-container">
+</section>
+
+<main>
   <!-- STAGE PARAMETERS -->
   <div class="flex-section">
     <div class="params-wrapper">
@@ -36,14 +52,6 @@
           [nodeManager]="parentDepTree.treeNodeManager"
         ></app-stage-parameters>
       </div>
-
-      <div class="parameters-buttons">
-        <app-cryton-button icon="delete" value="Erase parameters" (clicked)="eraseParameters()"></app-cryton-button>
-
-        <div class="showable">
-          <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -54,18 +62,6 @@
     <div class="tree-preview-wrapper">
       <h5 id="tree-preview-header">TREE PREVIEW</h5>
       <div #container id="stage-creator--tree-preview"></div>
-      <div class="flex-end-btn">
-        <ng-container *ngTemplateOutlet="buildDepTree"></ng-container>
-      </div>
     </div>
   </div>
 </main>
-
-<ng-template #buildDepTree>
-  <app-cryton-button
-    color="primary"
-    value="Show dependency tree"
-    (clicked)="emitSwapPagesEvent()"
-    id="build-dep-tree-btn"
-  ></app-cryton-button>
-</ng-template>

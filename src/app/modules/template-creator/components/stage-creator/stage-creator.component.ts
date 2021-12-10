@@ -18,20 +18,22 @@ import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
 import { StageCreatorHelpComponent } from '../stage-creator-help/stage-creator-help.component';
+import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
 
 @Component({
   selector: 'app-stage-creator',
   templateUrl: './stage-creator.component.html',
-  styleUrls: ['./stage-creator.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./stage-creator.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('container') canvasContainer: DebugElement;
   @ViewChild(StageParametersComponent) stageParams: StageParametersComponent;
-  @Output() swapPages = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
 
   previewDepTree: PreviewDependencyTree;
   parentDepTree: DependencyTree;
+  CreateStageComponent = CreateStageComponent;
 
   private _stageManager: NodeManager;
   private _destroy$ = new Subject<void>();
@@ -94,10 +96,6 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   openHelp(): void {
     this._dialog.open(StageCreatorHelpComponent, { width: '60%' });
-  }
-
-  emitSwapPagesEvent(): void {
-    this.swapPages.emit();
   }
 
   /**
@@ -301,6 +299,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this._treeManager.editTree(DepTreeRef.STAGE_CREATION, stage.childDepTree, this.editedStage == null);
       this.editedStage = stage;
+      this._cd.detectChanges();
     }
   }
 

@@ -98,11 +98,6 @@ export class StageNode extends TreeNode {
     this.timelineNode?.remove();
   }
 
-  protected _onSettingsClick(): void {
-    TabsRouter.selectIndex(Tabs.CREATE_STAGE);
-    super._onSettingsClick();
-  }
-
   /**
    * Handles change from delta to non-delta trigger.
    * Recreates all timeline edges as needed.

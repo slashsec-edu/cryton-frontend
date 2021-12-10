@@ -75,6 +75,6 @@ export class TemplateService extends CrytonRESTApiService<Template> {
 
   private _getFileName(url: string): string {
     const lastSlash = url.lastIndexOf('/');
-    return url.substr(lastSlash + 1);
+    return url.substring(lastSlash + 1);
   }
 }

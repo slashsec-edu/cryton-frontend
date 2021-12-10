@@ -220,11 +220,7 @@ export class DependencyTree extends KonvaWrapper {
     if (nodeCount === 0) {
       return false;
     }
-    if (this.nodeType === NodeType.CRYTON_STEP) {
-      const rootNodes = this.treeNodeManager.canvasNodes.filter((node: TreeNode) => node.parentEdges.length === 0)
-        .length;
-      return rootNodes === 1;
-    }
+
     return true;
   }
 
@@ -249,15 +245,6 @@ export class DependencyTree extends KonvaWrapper {
       errors.push('Dependency tree is empty.');
     }
 
-    if (this.nodeType === NodeType.CRYTON_STEP) {
-      try {
-        this.findRootNode();
-      } catch (error) {
-        if (error instanceof Error) {
-          errors.push(error.message);
-        }
-      }
-    }
     return errors;
   }
 

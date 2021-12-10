@@ -5,7 +5,6 @@ import { CONNECTOR_CIRCLE_NAME, CONNECTOR_NAME } from '../node-connector';
 import { NODE_HEIGHT, NODE_WIDTH, TreeNode, TREE_NODE_RECT_NAME, TREE_NODE_TEXT_NAME } from './tree-node';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { Theme } from '../../../models/interfaces/theme';
-import { Tabs, TabsRouter } from '../../utils/tabs-router';
 import { SETTINGS_BTN_NAME } from '../settings-button';
 import { TemplateTimeline } from '../../timeline/template-timeline';
 import { TriggerFactory } from '../../triggers/trigger-factory';
@@ -90,35 +89,6 @@ describe('TreeNode', () => {
     it('should create settings button correctly', () => {
       const settingsBtn = getSettingsButton();
       expect(settingsBtn).toBeTruthy();
-    });
-  });
-
-  describe('Settings button click', () => {
-    let settingsBtn: Konva.Group;
-
-    beforeEach(() => {
-      settingsBtn = getSettingsButton();
-      spyOn(TabsRouter, 'selectIndex');
-      spyOn(dependencyTree.treeNodeManager, 'editNode');
-    });
-
-    it('should re-route to stage creation', () => {
-      settingsBtn.fire('click');
-      expect(TabsRouter.selectIndex).toHaveBeenCalledWith(Tabs.CREATE_STEP);
-    });
-
-    it('should re-route to stage creation', () => {
-      createStage('test');
-
-      // settingsBtn points to button in step not stage
-      settingsBtn = getSettingsButton();
-      settingsBtn.fire('click');
-      expect(TabsRouter.selectIndex).toHaveBeenCalledWith(Tabs.CREATE_STAGE);
-    });
-
-    it('should init. editing of node in dependency tree', () => {
-      settingsBtn.fire('click');
-      expect(dependencyTree.treeNodeManager.editNode).toHaveBeenCalledWith(treeNode);
     });
   });
 

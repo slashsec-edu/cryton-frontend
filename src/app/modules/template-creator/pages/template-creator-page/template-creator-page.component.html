@@ -1,0 +1,40 @@
+<app-cryton-card>
+  <mat-horizontal-stepper #stepper (selectionChange)="stepChanged(stepper)">
+    <mat-step label="Introduction" [editable]="true">
+      <div class="step-container">
+        <app-template-creator-introduction></app-template-creator-introduction>
+      </div>
+    </mat-step>
+    <mat-step label="Create steps" [editable]="true" [hasError]="false">
+      <div class="step-container">
+        <app-step-creator></app-step-creator>
+      </div>
+    </mat-step>
+    <mat-step label="Create stages" [editable]="true">
+      <div class="step-container">
+        <app-create-stage-page></app-create-stage-page>
+      </div>
+    </mat-step>
+    <mat-step label="Create template" [editable]="true">
+      <div class="step-container">
+        <app-build-template-page></app-build-template-page>
+      </div>
+    </mat-step>
+
+    <ng-template #navigation>
+      <mat-divider></mat-divider>
+      <nav>
+        <button mat-button matStepperPrevious [disabled]="stepper.selectedIndex === 0">
+          <mat-icon>navigate_before</mat-icon> Previous step
+        </button>
+        <button mat-button matStepperNext [disabled]="stepper.selectedIndex === 3">
+          <mat-icon>navigate_next</mat-icon> Next step
+        </button>
+      </nav>
+    </ng-template>
+  </mat-horizontal-stepper>
+
+  <mat-card-footer>
+    <ng-container *ngTemplateOutlet="navigation"></ng-container>
+  </mat-card-footer>
+</app-cryton-card>

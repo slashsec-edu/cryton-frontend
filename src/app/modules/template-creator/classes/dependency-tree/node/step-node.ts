@@ -1,4 +1,3 @@
-import { Tabs, TabsRouter } from '../../utils/tabs-router';
 import { DependencyTree } from '../dependency-tree';
 import { TreeNode } from './tree-node';
 
@@ -30,10 +29,5 @@ export class StepNode extends TreeNode {
     if (this.konvaObject.getStage()) {
       this.draw();
     }
-  }
-
-  protected _onSettingsClick(): void {
-    super._onSettingsClick();
-    TabsRouter.selectIndex(Tabs.CREATE_STEP);
   }
 }

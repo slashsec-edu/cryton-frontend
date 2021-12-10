@@ -1,20 +1,28 @@
-<main class="tc-responsive-page" *ngIf="!(creating$.asObservable() | async); else spinner">
-  <div class="tc-responsive-page" [@verticalSlide]="getAnimationState()">
-    <section class="create-button-wrapper">
-      <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
-      <app-cryton-button
-        icon="add_circle"
-        value="Create template"
-        color="primary"
-        (click)="createTemplate()"
-        [disabled]="isCreationDisabled()"
-        [matTooltip]="getCreationErrors()"
-        matTooltipClass="tooltip-error"
-      ></app-cryton-button>
-    </section>
+<ng-container *ngIf="!(creating$.asObservable() | async); else spinner">
+  <div [ngSwitch]="currentComponent">
+    <main *ngSwitchCase="'template_params'">
+      <section class="buttons">
+        <button mat-button (click)="openHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
+        <button mat-button (click)="currentComponent = 'dep_tree'" type="button">
+          <mat-icon color="primary">account_tree</mat-icon> Show dependency tree
+        </button>
+        <button mat-button (click)="currentComponent = 'timeline'" type="button">
+          <mat-icon color="primary">schedule</mat-icon> Show timeline
+        </button>
+        <div [matTooltip]="getCreationErrors()" matTooltipClass="tooltip-error">
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="createTemplate()"
+            [disabled]="isCreationDisabled()"
+          >
+            <mat-icon>add_circle</mat-icon> Create template
+          </button>
+        </div>
+      </section>
 
-    <section class="main-content tc-responsive-container">
-      <div class="content-wrapper">
+      <section class="template-parameters">
         <h5>TEMPLATE PARAMETERS</h5>
         <form [formGroup]="templateForm">
           <mat-form-field appearance="fill">
@@ -29,36 +37,26 @@
             <mat-error>Template owner is required.</mat-error>
           </mat-form-field>
         </form>
-
-        <div class="buttons">
-          <button mat-flat-button color="primary" (click)="showDepTree()">Show dependency tree</button>
-          <button mat-flat-button color="primary" (click)="showTimeline()">Show timeline</button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
+    <div *ngSwitchCase="'dep_tree'">
+      <app-dependency-tree-editor
+        (navigate)="currentComponent = $event"
+        [depTreeRef]="templateDepTreeRef"
+        [navigationButtons]="depTreeNavigationBtns"
+        nodeName="stage"
+      ></app-dependency-tree-editor>
+    </div>
+    <div *ngSwitchCase="'timeline'">
+      <app-timeline [navigationButtons]="timelineNavigationBtns" (navigate)="currentComponent = $event"></app-timeline>
+    </div>
+    <div *ngSwitchDefault></div>
   </div>
-
-  <!-- Portal outlet for rendering content below build template tab. -->
-  <div class="tc-responsive-page" [@verticalSlide]="getAnimationState()">
-    <ng-template [cdkPortalOutlet]="selectedPortal"></ng-template>
-  </div>
-
-  <ng-template #depTreePortalContent>
-    <app-dependency-tree-editor
-      (swapPages)="showBuildTemplate()"
-      [depTreeRef]="templateDepTreeRef"
-      nodeName="stage"
-    ></app-dependency-tree-editor>
-  </ng-template>
-
-  <ng-template #timelinePortalContent>
-    <app-timeline (swapPages)="showBuildTemplate()"></app-timeline>
-  </ng-template>
-</main>
+</ng-container>
 
 <ng-template #spinner>
-  <div class="tc-responsive-page center-both spinner-container">
+  <div class="center-both spinner-container">
     <mat-spinner [diameter]="150"></mat-spinner>
-    <h2>CREATING TEMPLATE</h2>
+    <h2>Creating template</h2>
   </div>
 </ng-template>

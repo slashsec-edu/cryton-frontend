@@ -1,26 +1,10 @@
 /* LAYOUT */
-main {
-  overflow: hidden;
-}
-.build-template {
+.template-parameters {
   display: flex;
   flex-direction: column;
-}
-.main-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.content-wrapper {
-  width: 320px;
-}
-.create-button-wrapper {
-  display: flex;
-  justify-content: flex-end;
-}
-.buttons {
-  display: flex;
-  justify-content: space-between;
+  width: 300px;
+  margin: auto;
+  margin-top: 50px;
 }
 
 /* BODY */

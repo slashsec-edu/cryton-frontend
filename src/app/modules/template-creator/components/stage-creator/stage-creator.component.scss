@@ -12,10 +12,9 @@ main {
 }
 .tree-preview-wrapper {
   width: 65%;
-  max-width: 350px;
+  max-width: 330px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
   align-items: center;
 
   #tree-preview-header {
@@ -27,13 +26,6 @@ main {
   margin-top: 1.34375em; /* Same as mat-form-field */
 }
 
-/* CONTROLS */
-.controls {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
 /* STAGE PARAMETERS */
 .stage-params {
   display: flex;
@@ -41,7 +33,6 @@ main {
   width: 100%;
   max-height: 405px;
   padding-right: $scrollbar-padding;
-  margin-bottom: 10px;
   overflow: auto;
 }
 .params-wrapper {
@@ -83,9 +74,6 @@ main {
   .params-wrapper {
     width: 50%;
   }
-  .stage-params {
-    max-height: 355px;
-  }
   #build-dep-tree-btn {
     margin-left: 10px;
   }
@@ -93,9 +81,6 @@ main {
 @media only screen and (max-width: 1400px) {
   .params-wrapper {
     width: 60%;
-  }
-  .stage-params {
-    max-height: 305px;
   }
 }
 @media only screen and (max-width: 1000px) {

@@ -21,13 +21,6 @@ textarea {
   overflow: hidden;
 }
 
-/* BUTTONS */
-.buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
 @media only screen and (max-width: 1800px) {
   form {
     width: 50%;

@@ -4,21 +4,20 @@ import { StepCreatorComponent } from './step-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
-import { CrytonButtonHarness } from 'src/app/modules/shared/components/cryton-button/cryton-button.harness';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spied } from 'src/app/testing/utility/utility-types';
 import { DependencyTreeManagerService } from '../../services/dependency-tree-manager.service';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
-import { of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { NodeType } from '../../models/enums/node-type';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
 
 const EMPTY_FORM_VALUE = { name: null, attackModule: null, attackModuleArgs: null };
 const TESTING_ARGS1 = { name: 'a1', attackModule: 'b1', attackModuleArgs: 'c1' };
@@ -29,25 +28,23 @@ describe('StepCreatorComponent', () => {
   let fixture: ComponentFixture<StepCreatorComponent>;
   let loader: HarnessLoader;
 
-  const tcState = new TemplateCreatorStateService();
   const testingDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
   const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): StepNode =>
     new StepNode(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs, testingDepTree);
 
-  const getCreateBtn = (): Promise<CrytonButtonHarness> =>
-    loader.getHarness(CrytonButtonHarness.with({ text: /.*Create step/ })) as Promise<CrytonButtonHarness>;
+  const getCreateBtn = (): Promise<MatButtonHarness> =>
+    loader.getHarness(MatButtonHarness.with({ text: /.*Create step/ }));
 
-  const getCancelBtn = (): Promise<CrytonButtonHarness> =>
-    loader.getHarness(CrytonButtonHarness.with({ text: 'Cancel' })) as Promise<CrytonButtonHarness>;
+  const getCancelBtn = (): Promise<MatButtonHarness> => loader.getHarness(MatButtonHarness.with({ text: /.*Cancel/ }));
 
-  const getSaveChangesBtn = (): Promise<CrytonButtonHarness> =>
-    loader.getHarness(CrytonButtonHarness.with({ text: /.*Save changes/ })) as Promise<CrytonButtonHarness>;
+  const getSaveChangesBtn = (): Promise<MatButtonHarness> =>
+    loader.getHarness(MatButtonHarness.with({ text: /.*Save changes/ }));
 
   /**
    * Fake subject for simulating edit node event.
    */
-  const fakeEditNode$ = new ReplaySubject<TreeNode>();
+  const fakeEditNode$ = new BehaviorSubject<TreeNode>(null);
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
@@ -56,7 +53,7 @@ describe('StepCreatorComponent', () => {
     editNode$: fakeEditNode$.asObservable()
   }) as Spied<NodeManager>;
   nodeManagerSpy.clearEditNode.and.callFake(() => {
-    fakeEditNode$.next();
+    fakeEditNode$.next(null);
   });
 
   const depTreeSpy = jasmine.createSpyObj('DependencyTree', [], {
@@ -81,7 +78,6 @@ describe('StepCreatorComponent', () => {
         providers: [
           { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
           { provide: AlertService, useValue: alertServiceStub },
-          { provide: TemplateCreatorStateService, useValue: tcState },
           { provide: MatDialog, useValue: matDialogStub }
         ]
       })
@@ -91,13 +87,12 @@ describe('StepCreatorComponent', () => {
   );
 
   beforeEach(() => {
-    tcState.clear();
+    fakeEditNode$.next(null);
     fixture = TestBed.createComponent(StepCreatorComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
 
     nodeManagerSpy.isNodeNameUnique.and.returnValue(true);
-    fakeEditNode$.next();
     fixture.detectChanges();
   });
 
@@ -123,9 +118,12 @@ describe('StepCreatorComponent', () => {
   });
 
   it('should cancel editing step correctly', async () => {
-    const step = createStep(TESTING_ARGS1);
+    const step = createStep({ name: 'once', attackModule: 'only', attackModuleArgs: 'pls' });
     fakeEditNode$.next(step);
+    const saveChangesBtn = await getSaveChangesBtn();
+    expect(saveChangesBtn).toBeDefined();
 
+    nodeManagerSpy.clearEditNode();
     component.cancelEditing();
 
     expect(component.stepForm.value).toEqual(EMPTY_FORM_VALUE);
@@ -137,10 +135,9 @@ describe('StepCreatorComponent', () => {
 
   it('should disable create button when a step with same name already exists', async () => {
     nodeManagerSpy.isNodeNameUnique.and.returnValue(false);
-    component.stepForm.setValue(TESTING_ARGS1);
+    component.stepForm.setValue({ name: 'ha', attackModule: 'he', attackModuleArgs: 'hi' });
 
     const createBtn = await getCreateBtn();
-
     expect(await createBtn.isDisabled()).toBeTrue();
   });
 
@@ -168,10 +165,10 @@ describe('StepCreatorComponent', () => {
     const step2 = createStep(TESTING_ARGS2);
 
     fakeEditNode$.next(step1);
-    spyOn(tcState, 'backupStepForm');
+    spyOn(component, 'backupStepForm');
     fakeEditNode$.next(step2);
 
-    expect(tcState.backupStepForm).not.toHaveBeenCalled();
+    expect(component.backupStepForm).not.toHaveBeenCalled();
   });
 
   it('should reset form after canceling editing if there is no backup', async () => {
@@ -190,10 +187,10 @@ describe('StepCreatorComponent', () => {
     const backedUpFormValue = { name: 'backup1', attackModule: 'backup2', attackModuleArgs: 'backup3' };
     component.stepForm.setValue(backedUpFormValue);
 
-    spyOn(tcState, 'backupStepForm');
+    spyOn(component, 'backupStepForm');
     fakeEditNode$.next(step1);
 
-    expect(tcState.backupStepForm).toHaveBeenCalled();
+    expect(component.backupStepForm).toHaveBeenCalled();
   });
 
   it('should load backed up form state after cancelling editing', async () => {

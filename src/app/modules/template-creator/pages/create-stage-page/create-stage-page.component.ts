@@ -1,84 +1,45 @@
-import { Portal, TemplatePortal } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  TemplateRef,
-  ViewChild,
-  ViewContainerRef
-} from '@angular/core';
-import {
-  verticalSlideAnimation,
-  DEFAULT_SLIDE_DURATION
-} from 'src/app/modules/shared/animations/vertical-slide.animation';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { StageCreatorComponent } from '../../components/stage-creator/stage-creator.component';
+import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { NavigationButton } from '../../models/interfaces/navigation-button';
 import { DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { TCRoute, TcRoutingService } from '../../services/tc-routing.service';
 
 @Component({
   selector: 'app-create-stage-page',
   templateUrl: './create-stage-page.component.html',
-  styleUrls: ['./create-stage-page.component.scss', '../../models/styles/responsive-height.scss'],
-  animations: [verticalSlideAnimation()],
+  styleUrls: ['./create-stage-page.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateStagePageComponent implements AfterViewInit {
-  @ViewChild('depTreePortalContent') depTreePortalContent: TemplateRef<unknown>;
+export class CreateStagePageComponent implements OnInit, OnDestroy {
   @ViewChild(StageCreatorComponent) stageCreator: StageCreatorComponent;
-
-  selectedPortal: Portal<any>;
-  depTreePortal: TemplatePortal<any>;
   depTreeRef = DepTreeRef.STAGE_CREATION;
+  currentComponent: string = CreateStageComponent.STAGE_PARAMS;
+  CreateStageComponent = CreateStageComponent;
 
-  private _shouldForceShowStage = false;
+  depTreeNavigationBtns: NavigationButton[] = [
+    { icon: 'description', name: 'Show stage parameters', componentName: CreateStageComponent.STAGE_PARAMS }
+  ];
 
-  constructor(
-    private _viewContainerRef: ViewContainerRef,
-    private _state: TemplateCreatorStateService,
-    private _cd: ChangeDetectorRef
-  ) {}
+  private _destroy$ = new Subject<void>();
 
-  ngAfterViewInit(): void {
-    this.depTreePortal = new TemplatePortal(this.depTreePortalContent, this._viewContainerRef);
+  constructor(private _tcRouter: TcRoutingService, private _cd: ChangeDetectorRef) {}
 
-    if (this._state.isDependencyTreeDisplayed) {
-      this.selectedPortal = this.depTreePortal;
-      this._cd.detectChanges();
-    }
+  ngOnInit(): void {
+    this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
+      if (route.stepIndex === 2) {
+        console.log('routing to ', route.componentName);
+
+        this.currentComponent = route.componentName;
+        this._cd.detectChanges();
+      }
+    });
   }
 
-  /**
-   * Gets vertical slide animation state.
-   *
-   * @returns Animation state.
-   */
-  getAnimationState(): string {
-    if (this._shouldForceShowStage || !this._state.isDependencyTreeDisplayed) {
-      return 'not-shifted';
-    }
-    return 'shifted';
-  }
-
-  /**
-   * Resets portal and slides back to stage creation page.
-   */
-  showStageCreation(): void {
-    this.stageCreator.createTreePreview();
-    this._shouldForceShowStage = true;
-
-    setTimeout(() => {
-      this.selectedPortal = null;
-      this._shouldForceShowStage = false;
-      this._state.isDependencyTreeDisplayed = false;
-    }, DEFAULT_SLIDE_DURATION);
-  }
-
-  /**
-   * Loads dependency tree component into the portal.
-   */
-  showDepTree(): void {
-    this.selectedPortal = this.depTreePortal;
-    this._state.isDependencyTreeDisplayed = true;
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

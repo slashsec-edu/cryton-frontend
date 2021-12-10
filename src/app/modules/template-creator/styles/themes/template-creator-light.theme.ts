@@ -1,4 +1,4 @@
-import { TCTheme } from '../../interfaces/template-creator-theme';
+import { TCTheme } from '../../models/interfaces/template-creator-theme';
 
 export const tcLightTheme: TCTheme = {
   treeNodeRect: '#212121',

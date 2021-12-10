@@ -14,10 +14,8 @@ main {
 .node-dispenser {
   width: 100%;
 }
-.top-section {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
+section.buttons {
+  padding-bottom: 10px !important;
 }
 
 /* TREE CREATION */

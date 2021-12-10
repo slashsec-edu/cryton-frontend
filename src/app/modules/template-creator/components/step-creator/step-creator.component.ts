@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
@@ -16,31 +15,24 @@ import { StepCreatorHelpComponent } from '../step-creator-help/step-creator-help
 @Component({
   selector: 'app-step-creator',
   templateUrl: './step-creator.component.html',
-  styleUrls: ['./step-creator.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./step-creator.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StepCreatorComponent implements OnInit, OnDestroy {
+  stepForm = new FormGroup({
+    name: new FormControl(null, [Validators.required]),
+    attackModule: new FormControl(null, [Validators.required]),
+    attackModuleArgs: new FormControl(null, [Validators.required])
+  });
+  editedStep: StepNode;
+
   private _destroy$ = new Subject<void>();
   private _stepManager: NodeManager;
   private _parentDepTree: DependencyTree;
-
-  get stepForm(): FormGroup {
-    return this._state.stepForm;
-  }
-  set stepForm(value: FormGroup) {
-    this._state.stepForm = value;
-  }
-
-  get editedStep(): StepNode {
-    return this._state.editedStep;
-  }
-  set editedStep(value: StepNode) {
-    this._state.editedStep = value;
-  }
+  private _stepFormValueBackup: Record<string, string>;
 
   constructor(
     private _treeManager: DependencyTreeManagerService,
-    private _state: TemplateCreatorStateService,
     private _alertService: AlertService,
     private _dialog: MatDialog
   ) {}
@@ -49,7 +41,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     this._createDepTreeSub();
 
     if (!this.editedStep) {
-      this._state.restoreStepForm();
+      this.restoreStepForm();
     }
   }
 
@@ -72,7 +64,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @returns Form control error.
    */
   getControlError(controlName: string): string {
-    return getControlError(this._state.stepForm, controlName);
+    return getControlError(this.stepForm, controlName);
   }
 
   /**
@@ -95,7 +87,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   cancelEditing(): void {
     this.editedStep = null;
 
-    if (!this._state.restoreStepForm()) {
+    if (!this.restoreStepForm()) {
       this.stepForm.reset();
     }
   }
@@ -128,17 +120,46 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Backs up step form.
+   */
+  backupStepForm(): void {
+    this._stepFormValueBackup = JSON.parse(JSON.stringify(this.stepForm.value)) as Record<string, string>;
+  }
+
+  /**
+   * Restores step form from backup, returns true if there was a backed up form value.
+   */
+  restoreStepForm(): boolean {
+    if (this._stepFormValueBackup) {
+      this.stepForm.setValue(this._stepFormValueBackup);
+      this.stepForm.markAsUntouched();
+      this._stepFormValueBackup = null;
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Initializes editing of the step passed in the argument.
    *
    * @param step Step to edit.
    */
-  private _moveToEditor(step: StepNode): void {
+  private _startEditing(step: StepNode): void {
     if (step !== this.editedStep) {
       if (!this.editedStep) {
-        this._state.backupStepForm();
+        this.backupStepForm();
       }
       this._fillFormWithStepData(step);
       this.editedStep = step;
+
+      // Reset unique name validator so that it ignores edited node name.
+      const nameControl = this.stepForm.get('name');
+
+      if (this._parentDepTree) {
+        nameControl.clearValidators();
+        nameControl.setValidators([Validators.required, this._uniqueNameValidator]);
+        nameControl.updateValueAndValidity();
+      }
     }
   }
 
@@ -148,6 +169,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @param step Step to fill parameters of.
    */
   private _fillFormWithStepData(step: StepNode): void {
+    this.stepForm.reset();
     this.stepForm.setValue({
       name: step.name,
       attackModule: step.attackModule,
@@ -184,15 +206,15 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       .subscribe(depTree => {
         this._parentDepTree = depTree;
         this._stepManager = depTree.treeNodeManager;
-        this._state.stepForm.get('name').setValidators([Validators.required, this._uniqueNameValidator]);
+        this.stepForm.get('name').setValidators([Validators.required, this._uniqueNameValidator]);
       });
   }
 
   private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
     editNode$.pipe(takeUntil(this._destroy$)).subscribe((step: StepNode) => {
       if (step) {
-        this._moveToEditor(step);
-      } else if (this._state.editedStep) {
+        this._startEditing(step);
+      } else if (this.editedStep) {
         this.cancelEditing();
       }
     });

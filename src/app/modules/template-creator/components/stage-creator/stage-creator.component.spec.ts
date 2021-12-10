@@ -93,7 +93,7 @@ describe('StageCreatorComponent', () => {
     loader.getHarness(CrytonButtonHarness.with({ text: /.*Create stage/ })) as Promise<CrytonButtonHarness>;
 
   const getCancelBtn = (): Promise<CrytonButtonHarness> =>
-    loader.getHarness(CrytonButtonHarness.with({ text: 'Cancel' })) as Promise<CrytonButtonHarness>;
+    loader.getHarness(CrytonButtonHarness.with({ text: /.*Cancel/ })) as Promise<CrytonButtonHarness>;
 
   const getSaveChangesBtn = (): Promise<CrytonButtonHarness> =>
     loader.getHarness(CrytonButtonHarness.with({ text: /.*Save changes/ })) as Promise<CrytonButtonHarness>;

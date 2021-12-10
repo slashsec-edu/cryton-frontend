@@ -1,12 +1,10 @@
-<div class="top-section">
-  <app-cryton-button icon="info" value="Help" (clicked)="showHelp()"></app-cryton-button>
-  <app-cryton-button
-    color="primary"
-    value="Go back"
-    icon="arrow_upward"
-    (clicked)="emitSwapPagesEvent()"
-  ></app-cryton-button>
-</div>
+<section class="buttons">
+  <button mat-button (click)="showHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
+  <button mat-button *ngFor="let button of navigationButtons" (click)="navigateTo(button.componentName)" type="button">
+    <mat-icon color="primary">{{ button.icon }}</mat-icon
+    >{{ ' ' + button.name }}
+  </button>
+</section>
 <div class="execution-tree-creation">
   <aside>
     <div class="node-dispenser">

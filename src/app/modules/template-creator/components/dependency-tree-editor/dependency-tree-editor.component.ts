@@ -12,7 +12,7 @@ import {
   DebugElement
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { mergeMap, takeUntil } from 'rxjs/operators';
+import { mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { Alert } from 'src/app/modules/shared/models/interfaces/alert.interface';
@@ -23,20 +23,21 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TreeEdge } from '../../classes/dependency-tree/edge/tree-edge';
 import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
 import { DependencyTreeHelpComponent } from '../dependency-tree-help/dependency-tree-help.component';
+import { NavigationButton } from '../../models/interfaces/navigation-button';
+import { TcRoutingService } from '../../services/tc-routing.service';
 
 @Component({
   selector: 'app-dependency-tree-editor',
   templateUrl: './dependency-tree-editor.component.html',
-  styleUrls: ['./dependency-tree-editor.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./dependency-tree-editor.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() nodeName: string;
   @Input() depTreeRef: DepTreeRef = DepTreeRef.STAGE_CREATION;
-
+  @Input() navigationButtons?: NavigationButton[];
   @ViewChild('container') canvasContainer: DebugElement;
-
-  @Output() swapPages = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
 
   depTree: DependencyTree;
   private _destroy$ = new Subject<void>();
@@ -45,7 +46,8 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
     private _treeManager: DependencyTreeManagerService,
     private _dialog: MatDialog,
     private _alertService: AlertService,
-    private _themeService: ThemeService
+    private _themeService: ThemeService,
+    private _tcRouter: TcRoutingService
   ) {}
 
   get isSwapEnabled(): boolean {
@@ -90,11 +92,16 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
     this._dialog.open(DependencyTreeHelpComponent, { width: '60%' });
   }
 
-  /**
-   * Emits swap pages event for swapping back to parent tab.
-   */
-  emitSwapPagesEvent(): void {
-    this.swapPages.emit();
+  navigateTo(componentName: string): void {
+    this.navigate.emit(componentName);
+  }
+
+  navigateToNodeEditor(): void {
+    if (this.depTreeRef === DepTreeRef.STAGE_CREATION) {
+      this._tcRouter.navigateTo(1);
+    } else {
+      this._tcRouter.navigateTo(2, 'stage_params');
+    }
   }
 
   /**
@@ -108,11 +115,19 @@ export class DependencyTreeEditorComponent implements OnInit, AfterViewInit, OnD
 
     this._treeManager
       .getCurrentTree(this.depTreeRef)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe(depTree => {
-        depTree.initKonva(this.canvasContainer.nativeElement, theme$);
-        depTree.cursorState.container = this.canvasContainer.nativeElement as HTMLDivElement;
-        depTree.fitScreen();
+      .pipe(
+        takeUntil(this._destroy$),
+        tap(depTree => {
+          depTree.initKonva(this.canvasContainer.nativeElement, theme$);
+          depTree.cursorState.container = this.canvasContainer.nativeElement as HTMLDivElement;
+          depTree.fitScreen();
+        }),
+        switchMap(depTree => depTree.treeNodeManager.editNode$)
+      )
+      .subscribe(node => {
+        if (node) {
+          this.navigateToNodeEditor();
+        }
       });
   }
 

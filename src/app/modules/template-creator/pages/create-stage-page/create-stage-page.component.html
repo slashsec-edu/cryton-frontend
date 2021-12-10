@@ -1,18 +1,14 @@
-<main class="tc-responsive-page">
-  <div class="tc-responsive-page" [@verticalSlide]="getAnimationState()">
-    <app-stage-creator (swapPages)="showDepTree()" #stageCreator></app-stage-creator>
+<main [ngSwitch]="currentComponent">
+  <div *ngSwitchCase="CreateStageComponent.STAGE_PARAMS">
+    <app-stage-creator (navigate)="currentComponent = CreateStageComponent.DEP_TREE" #stageCreator></app-stage-creator>
   </div>
-
-  <!-- Portal outlet for rendering content below build template tab. -->
-  <div class="tc-responsive-page" [@verticalSlide]="getAnimationState()">
-    <ng-template [cdkPortalOutlet]="selectedPortal"></ng-template>
-  </div>
-
-  <ng-template #depTreePortalContent>
+  <div *ngSwitchCase="CreateStageComponent.DEP_TREE">
     <app-dependency-tree-editor
-      (swapPages)="showStageCreation(); stageCreator.detectChanges()"
+      (navigate)="currentComponent = $event"
       [depTreeRef]="depTreeRef"
+      [navigationButtons]="depTreeNavigationBtns"
       [nodeName]="'step'"
     ></app-dependency-tree-editor>
-  </ng-template>
+  </div>
+  <div *ngSwitchDefault></div>
 </main>

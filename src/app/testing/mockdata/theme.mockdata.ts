@@ -1,4 +1,4 @@
-import { tcDarkTheme } from 'src/app/modules/template-creator/models/styles/themes/template-creator-dark.theme';
+import { tcDarkTheme } from 'src/app/modules/template-creator/styles/themes/template-creator-dark.theme';
 
 export const mockTheme = {
   primary: '#000',

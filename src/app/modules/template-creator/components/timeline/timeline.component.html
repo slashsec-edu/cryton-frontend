@@ -1,27 +1,30 @@
-<div class="header">
+<header>
   <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
 
   <div class="buttons">
-    <app-cryton-button value="Help" icon="info" (clicked)="openHelp()"></app-cryton-button>
-
-    <app-cryton-button
-      color="primary"
-      value="Go back"
-      icon="arrow_upward"
-      (clicked)="emitSwapPagesEvent()"
-    ></app-cryton-button>
+    <button
+      mat-button
+      *ngFor="let button of navigationButtons"
+      (click)="navigateTo(button.componentName)"
+      type="button"
+    >
+      <mat-icon color="primary">{{ button.icon }}</mat-icon
+      >{{ ' ' + button.name }}
+    </button>
+    <!-- <button mat-button (click)="openHelp()"><mat-icon color="primary">info</mat-icon> Help</button> -->
+    <!-- <button mat-button (click)="emitSwapPagesEvent()"><mat-icon color="primary">arrow_upward</mat-icon> Go back</button> -->
   </div>
-</div>
+</header>
 
 <!-- TIMELINE -->
-<div class="timeline-wrapper">
+<div class="timeline-wrapper tc-responsive-container">
   <div class="timeline--menu">
-    <button mat-icon-button title="Move vertically">
+    <button mat-icon-button title="Move vertically" type="button">
       <mat-icon (click)="timeline.toolState.flipVerticalMove()" [class.timeline--active]="isVerticalMoveEnabled"
         >swap_vert</mat-icon
       >
     </button>
-    <button mat-icon-button title="Move subtree">
+    <button mat-icon-button title="Move subtree" type="button">
       <mat-icon
         style="font-size: 18px"
         (click)="timeline.toolState.flipTreeMove()"
@@ -29,7 +32,7 @@
         >share</mat-icon
       >
     </button>
-    <button mat-icon-button title="Sort timeline">
+    <button mat-icon-button title="Sort timeline" type="button">
       <mat-icon class="white" style="font-size: 18px" (click)="timeline.organizeNodes()">auto_awesome</mat-icon>
     </button>
   </div>

@@ -16,6 +16,10 @@ export class StageEdge extends TreeEdge {
    * Destroys the edge and all timeline edges that get disconnected by this destruction.
    */
   destroy(): void {
+    if (!this.childNode) {
+      return super.destroy();
+    }
+
     const timeline = this.parentNode.timeline;
     let childDeltas: StageNode[];
 

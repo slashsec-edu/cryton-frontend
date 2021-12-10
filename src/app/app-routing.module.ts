@@ -17,6 +17,7 @@ import { UploadTemplateComponent } from './pages/templates/upload-template/uploa
 import { ReportComponent } from './modules/report/components/report/report.component';
 import { TimelineComponent } from './modules/report/components/timeline/timeline.component';
 import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
+import { TemplateCreatorPageComponent } from './modules/template-creator/pages/template-creator-page/template-creator-page.component';
 
 const routes: Routes = [
   {
@@ -63,8 +64,7 @@ const routes: Routes = [
         component: OutletComponent,
         children: [
           { path: 'list', component: ListTemplatesComponent },
-          { path: 'create', component: CreateTemplateComponent },
-          { path: 'create/:id', component: CreateTemplateComponent },
+          { path: 'create', component: TemplateCreatorPageComponent },
           { path: 'upload', component: UploadTemplateComponent },
           { path: '', redirectTo: '/app/templates/list', pathMatch: 'full' }
         ]

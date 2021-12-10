@@ -424,10 +424,10 @@ describe('DependencyTree', () => {
         expect(depTree.isValid()).toBeTrue();
       });
 
-      it('multiple root nodes (should be invalid)', () => {
+      it('multiple root nodes (should be valid)', () => {
         createNodeAtPos(createStep, 'one', { x: 0, y: 0 });
         createNodeAtPos(createStep, 'two', { x: 0, y: 0 });
-        expect(depTree.isValid()).toBeFalse();
+        expect(depTree.isValid()).toBeTrue();
       });
 
       it('multiple steps && signle root node (should be valid)', () => {
@@ -439,13 +439,6 @@ describe('DependencyTree', () => {
 
         expect(depTree.isValid()).toBeTrue();
       });
-    });
-
-    it('should return error saying that there are multiple root nodes in the tree', () => {
-      createNodeAtPos(createStep, 'one', { x: 0, y: 0 });
-      createNodeAtPos(createStep, 'two', { x: 0, y: 0 });
-
-      expect(depTree.errors()).toEqual(['Multiple root nodes in dependency tree.']);
     });
 
     runTests();
