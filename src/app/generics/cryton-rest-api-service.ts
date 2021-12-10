@@ -61,10 +61,10 @@ export abstract class CrytonRESTApiService<T> {
     let params: HttpParams = new HttpParams();
 
     if (offset) {
-      params.set('offset', offset.toString());
+      params = params.set('offset', offset.toString());
     }
     if (limit) {
-      params.set('limit', limit.toString());
+      params = params.set('limit', limit.toString());
     }
     if (orderBy && orderBy !== '') {
       params = params.append('order_by', orderBy);
