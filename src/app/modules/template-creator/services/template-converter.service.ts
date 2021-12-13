@@ -68,7 +68,7 @@ export class TemplateConverterService {
 
     template.plan.stages.forEach(stageDescription => {
       const stage = this._createStage(stageDescription, parentDepTree);
-      stage.parentDepTree.treeNodeManager.moveToPlan(stage);
+      stage.parentDepTree.treeNodeManager.addNode(stage);
       stagesWithParents[stageDescription.name] = {
         stage,
         parents: stageDescription.depends_on
@@ -94,12 +94,12 @@ export class TemplateConverterService {
 
     const template: TemplateDescription = { plan: { name, owner, stages: [] } };
 
-    templateDepTree.treeNodeManager.canvasNodes.forEach((node: StageNode) => {
+    templateDepTree.treeNodeManager.nodes.forEach((node: StageNode) => {
       const stage: StageDescription = {
         name: node.name,
         trigger_type: node.trigger.getType(),
         trigger_args: node.trigger.getArgs(),
-        steps: this._createStepsYaml(node.childDepTree.treeNodeManager.canvasNodes as StepNode[])
+        steps: this._createStepsYaml(node.childDepTree.treeNodeManager.nodes as StepNode[])
       };
 
       if (node.parentEdges.length > 0) {
@@ -173,7 +173,7 @@ export class TemplateConverterService {
 
     stageDescription.steps.forEach(stepDescription => {
       const step = this._createStep(stepDescription, childDepTree);
-      childDepTree.treeNodeManager.moveToPlan(step);
+      childDepTree.treeNodeManager.addNode(step);
       stepsWithEdges[stepDescription.name] = { step, next: stepDescription.next };
     });
     this._createStepEdges(stepsWithEdges);

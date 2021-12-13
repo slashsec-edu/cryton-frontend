@@ -73,9 +73,9 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   handleCreateStep(): void {
     if (this.stepForm.valid) {
       const step: StepNode = this._createStep();
-      this._stepManager.moveToDispenser(step);
       this.stepForm.reset();
       this._alertService.showSuccess('Step created successfully');
+      this._treeManager.addDispenserNode(DepTreeRef.STAGE_CREATION, step);
     } else {
       this._alertService.showError('Step form is invalid.');
     }

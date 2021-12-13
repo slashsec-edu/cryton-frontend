@@ -202,15 +202,12 @@ describe('TreeNode', () => {
 
     it('delete enabled click', () => {
       dependencyTree.toolState.flipDeleteTool();
-      spyOn(dependencyTree.treeNodeManager, 'removeCanvasNode');
+      spyOn(dependencyTree.treeNodeManager, 'removeNode');
       spyOn(treeNode, 'destroy');
       spyOn(dependencyTree.cursorState, 'resetCursor');
 
       const rect = getNodeRect();
       rect.fire('click');
-
-      // Should remove the node from canvas.
-      expect(dependencyTree.treeNodeManager.removeCanvasNode).toHaveBeenCalledWith(treeNode);
 
       // Cryton node should be destroyed because it won't be used again.
       expect(treeNode.destroy).toHaveBeenCalled();

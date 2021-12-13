@@ -25,6 +25,7 @@ import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
 import { MatDialog } from '@angular/material/dialog';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 
 describe('StageCreatorComponent', () => {
   let component: StageCreatorComponent;
@@ -67,7 +68,8 @@ describe('StageCreatorComponent', () => {
     'getCurrentTree',
     'resetCurrentTree',
     'editTree',
-    'restoreTree'
+    'restoreTree',
+    'addDispenserNode'
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.callFake((treeRef: DepTreeRef) => {
     if (treeRef === DepTreeRef.TEMPLATE_CREATION) {
@@ -147,8 +149,9 @@ describe('StageCreatorComponent', () => {
 
     // Correctly created dependency tree for testing valid stages.
     correctChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+    correctChildDepTree.theme = mockTheme;
     const testingStep = new StepNode('testStep', 'module', 'args', correctChildDepTree);
-    correctChildDepTree.treeNodeManager.moveToPlan(testingStep);
+    correctChildDepTree.treeNodeManager.addNode(testingStep);
 
     // Initializing subjects
     childDepTree$.next(emptyChildDepTree);
@@ -171,7 +174,7 @@ describe('StageCreatorComponent', () => {
       fillWithCorrectStage();
       await getCreateBtn().then(btn => btn.click());
 
-      expect(nodeManagerSpy.moveToDispenser).toHaveBeenCalled();
+      expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
     });
 
     it('should correctly load edited delta stage into editor', () => {

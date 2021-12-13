@@ -71,8 +71,8 @@ const deltaStageStep = new StepNode(
   `cmd: curl http://localhost:8082/index?a=1`,
   deltaStageChildDepTree
 );
-deltaStageChildDepTree.treeNodeManager.moveToPlan(deltaStageStep);
-httpTemplateDepTree.treeNodeManager.moveToPlan(deltaStage);
+deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStep);
+httpTemplateDepTree.treeNodeManager.addNode(deltaStage);
 
 // Create HTTP listener stage
 const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
@@ -88,8 +88,8 @@ const httpStage = new StageNode({
   trigger: httpTrigger
 });
 const httpStageStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1', httpStageChildDepTree);
-httpStageChildDepTree.treeNodeManager.moveToPlan(httpStageStep);
-httpTemplateDepTree.treeNodeManager.moveToPlan(httpStage);
+httpStageChildDepTree.treeNodeManager.addNode(httpStageStep);
+httpTemplateDepTree.treeNodeManager.addNode(httpStage);
 
 httpTemplateDepTree.createDraggedEdge(deltaStage);
 httpTemplateDepTree.connectDraggedEdge(httpStage);

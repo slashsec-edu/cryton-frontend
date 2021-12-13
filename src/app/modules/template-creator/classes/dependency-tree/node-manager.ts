@@ -1,4 +1,5 @@
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { DependencyTree } from './dependency-tree';
 import { StageNode } from './node/stage-node';
 import { TreeNode } from './node/tree-node';
 
@@ -7,16 +8,18 @@ export class NodeManager {
    * Triggers when a node is edited moved to editor.
    */
   editNode$: Observable<TreeNode>;
-  dispenserNodes$: Observable<TreeNode[]>;
-  canvasNodes: TreeNode[] = [];
+  moveToDispenser$: Observable<TreeNode>;
+  nodes: TreeNode[] = [];
 
   private _editNode$ = new ReplaySubject<TreeNode>(1);
-  private _dispenserNodes$ = new BehaviorSubject<TreeNode[]>([]);
+  private _moveToDispenser$ = new Subject<TreeNode>();
+  private _depTree: DependencyTree;
 
-  constructor() {
+  constructor(depTree: DependencyTree) {
     this._editNode$.next(null);
+    this._depTree = depTree;
     this.editNode$ = this._editNode$.asObservable();
-    this.dispenserNodes$ = this._dispenserNodes$.asObservable();
+    this.moveToDispenser$ = this._moveToDispenser$.asObservable();
   }
 
   /**
@@ -27,39 +30,13 @@ export class NodeManager {
   }
 
   /**
-   * Returns an array of all nodes which manager remembers.
-   *
-   * @returns Array of nodes.
-   */
-  getAllNodes(): TreeNode[] {
-    const allNodes = [...this.canvasNodes];
-    allNodes.push(...this._dispenserNodes$.value);
-    return allNodes;
-  }
-
-  /**
    * Moves a node from the canvas to the dispenser.
    *
    * @param node Node to move.
    */
   moveToDispenser(node: TreeNode): void {
-    this.removeCanvasNode(node);
-    this._dispenserNodes$.next(this._dispenserNodes$.value.concat(node));
-  }
-
-  /**
-   * Moves a node from the dispenser to the canvas.
-   *
-   * @param node Node to move.
-   */
-  moveToPlan(node: TreeNode): void {
-    this.removeDispenserNode(node);
-    this.canvasNodes.push(node);
-    node.parentDepTree.addNode(node);
-
-    if (node instanceof StageNode && node.timelineNode) {
-      node.timeline.addNode(node.timelineNode);
-    }
+    this.removeNode(node);
+    this._moveToDispenser$.next(node);
   }
 
   /**
@@ -72,22 +49,26 @@ export class NodeManager {
   }
 
   /**
-   * Removes node from the dispenser.
+   * Removes node from the dependency tree.
    *
    * @param node Node to remove.
    */
-  removeDispenserNode(node: TreeNode): void {
-    const withoutNode = this._dispenserNodes$.value.filter(s => s !== node);
-    this._dispenserNodes$.next(withoutNode);
+  removeNode(node: TreeNode): void {
+    this.nodes = this.nodes.filter(s => s !== node);
   }
 
   /**
-   * Removes node from the canvas.
+   * Adds node to the dependency tree.
    *
-   * @param node Node to remove.
+   * @param node Node to add.
    */
-  removeCanvasNode(node: TreeNode): void {
-    this.canvasNodes = this.canvasNodes.filter(s => s !== node);
+  addNode(node: TreeNode): void {
+    this.nodes.push(node);
+    this._depTree.addNode(node);
+
+    if (node instanceof StageNode && node.timelineNode) {
+      node.timeline.addNode(node.timelineNode);
+    }
   }
 
   /**
@@ -98,7 +79,7 @@ export class NodeManager {
    * @returns True if node name is unique.
    */
   isNodeNameUnique(name: string, editedNodeName?: string): boolean {
-    for (const node of this.getAllNodes()) {
+    for (const node of this.nodes) {
       if (node.name !== editedNodeName && node.name === name) {
         return false;
       }

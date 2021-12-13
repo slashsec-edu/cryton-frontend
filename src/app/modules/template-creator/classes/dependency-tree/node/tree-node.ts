@@ -240,7 +240,7 @@ export class TreeNode {
         this.unattach();
         this.parentDepTree.cursorState.resetCursor();
       } else if (this.parentDepTree.toolState.isDeleteEnabled) {
-        this.parentDepTree.treeNodeManager.removeCanvasNode(this);
+        this.parentDepTree.treeNodeManager.removeNode(this);
         this.parentDepTree.treeNodeManager.clearEditNode();
         this.destroy();
         this.parentDepTree.cursorState.resetCursor();

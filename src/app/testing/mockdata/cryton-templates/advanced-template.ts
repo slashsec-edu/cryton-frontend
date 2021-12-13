@@ -104,14 +104,14 @@ const deltaStageStepTwo = new StepNode(
   `target: "{{ target }}"\ncredentials:\n  username: "{{ username }}"`,
   deltaStageChildDepTree
 );
-deltaStageChildDepTree.treeNodeManager.moveToPlan(deltaStageStepOne);
-deltaStageChildDepTree.treeNodeManager.moveToPlan(deltaStageStepTwo);
+deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepOne);
+deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepTwo);
 
 const edgeOne = deltaStageChildDepTree.createDraggedEdge(deltaStageStepOne);
 deltaStageChildDepTree.connectDraggedEdge(deltaStageStepTwo);
 (edgeOne as StepEdge).conditions.push({ type: 'result', value: 'OK' });
 
-advancedTemplateDepTree.treeNodeManager.moveToPlan(deltaStage);
+advancedTemplateDepTree.treeNodeManager.addNode(deltaStage);
 
 // Create HTTP listener stage
 const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
@@ -139,9 +139,9 @@ const httpStageStepTwo = new StepNode(
   `use_named_session: session_to_target_1\ncmd: "{{ commands.passwd }}"`,
   httpStageChildDepTree
 );
-httpStageChildDepTree.treeNodeManager.moveToPlan(httpStageStepOne);
-httpStageChildDepTree.treeNodeManager.moveToPlan(httpStageStepTwo);
-advancedTemplateDepTree.treeNodeManager.moveToPlan(httpStage);
+httpStageChildDepTree.treeNodeManager.addNode(httpStageStepOne);
+httpStageChildDepTree.treeNodeManager.addNode(httpStageStepTwo);
+advancedTemplateDepTree.treeNodeManager.addNode(httpStage);
 
 const edgeTwo = httpStageChildDepTree.createDraggedEdge(httpStageStepOne);
 httpStageChildDepTree.connectDraggedEdge(httpStageStepTwo);

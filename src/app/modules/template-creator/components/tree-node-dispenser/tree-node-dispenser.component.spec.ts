@@ -3,52 +3,40 @@ import { TreeNodeDispenserComponent } from './tree-node-dispenser.component';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { DependencyTreeManagerService } from '../../services/dependency-tree-manager.service';
 import { Spied } from 'src/app/testing/utility/utility-types';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
-
-/**
- * Fake implementation of node manager for testing.
- */
-class NodeManagerFake {
-  dispenserNodes$: Observable<TreeNode[]>;
-
-  private _dispenserNodes$ = new BehaviorSubject<TreeNode[]>([]);
-
-  constructor() {
-    this.dispenserNodes$ = this._dispenserNodes$.asObservable();
-  }
-
-  emitNodes(nodes: TreeNode[]): void {
-    this._dispenserNodes$.next(nodes);
-  }
-
-  moveToPlan(): void {}
-}
-
-/**
- * Fake implementation of DependencyTree, only needed to contain the fake node manager.
- */
-class DepTreeFake {
-  treeNodeManager = new NodeManagerFake();
-}
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 
 describe('TreeNodeDispenserComponent', () => {
   let component: TreeNodeDispenserComponent;
   let fixture: ComponentFixture<TreeNodeDispenserComponent>;
   let loader: HarnessLoader;
 
-  const depTreeFake = new DepTreeFake();
+  const moveToDispenser$ = new Subject<TreeNode>();
+  const depTreeStub = {
+    theme: mockTheme,
+    treeNodeManager: {
+      addNode: () => {},
+      moveToDispenser$: moveToDispenser$.asObservable()
+    }
+  };
 
   // Mocks the tree manager and always returns an observable of fake dep. tree.
   const treeManagerStub = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree'
+    'getCurrentTree',
+    'observeDispenser',
+    'removeDispenserNode',
+    'addDispenserNode'
   ]) as Spied<DependencyTreeManagerService>;
 
-  treeManagerStub.getCurrentTree.and.returnValue(of(depTreeFake));
+  treeManagerStub.getCurrentTree.and.returnValue(of(depTreeStub));
+
+  const dispenser$ = new BehaviorSubject<TreeNode[]>([]);
+  treeManagerStub.observeDispenser.and.returnValue(dispenser$.asObservable());
 
   // Mocks the TreeNode, we only need name attribute in dispenser.
   const fakeNode = jasmine.createSpyObj('TreeNode', [], { name: 'testing step' }) as TreeNode;
@@ -82,7 +70,7 @@ describe('TreeNodeDispenserComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
-    depTreeFake.treeNodeManager.emitNodes([]);
+    dispenser$.next([]);
     fixture.detectChanges();
   });
 
@@ -100,20 +88,20 @@ describe('TreeNodeDispenserComponent', () => {
   it('should show nodes if there are some', () => {
     for (let i = 1; i < 4; i++) {
       const nodeArray = Array(i).fill(fakeNode);
-      depTreeFake.treeNodeManager.emitNodes(nodeArray);
+      dispenser$.next(nodeArray);
       fixture.detectChanges();
       expectNodeCount(i);
     }
   });
 
   it('should swap node to the tree on swap click', async () => {
-    depTreeFake.treeNodeManager.emitNodes([fakeNode]);
+    dispenser$.next([fakeNode]);
     fixture.detectChanges();
 
-    spyOn(depTreeFake.treeNodeManager, 'moveToPlan');
+    spyOn(depTreeStub.treeNodeManager, 'addNode');
     const swapButton = await loader.getHarness(MatButtonHarness);
     await swapButton.click();
 
-    expect(depTreeFake.treeNodeManager.moveToPlan).toHaveBeenCalled();
+    expect(depTreeStub.treeNodeManager.addNode).toHaveBeenCalled();
   });
 });

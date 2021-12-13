@@ -15,8 +15,7 @@ import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 })
 export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   @Input() depTreeRef: DepTreeRef = DepTreeRef.STAGE_CREATION;
-
-  nodeSubject$: Observable<TreeNode[]>;
+  dispenser$: Observable<TreeNode[]>;
 
   private _destroy$ = new Subject<void>();
   private _nodeManager: NodeManager;
@@ -28,8 +27,9 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
       .getCurrentTree(this.depTreeRef)
       .pipe(takeUntil(this._destroy$))
       .subscribe((depTree: DependencyTree) => {
+        this._createNodeManagerSub(depTree);
         this._nodeManager = depTree.treeNodeManager;
-        this.nodeSubject$ = depTree.treeNodeManager.dispenserNodes$;
+        this.dispenser$ = this._treeManager.observeDispenser(this.depTreeRef);
       });
   }
 
@@ -44,6 +44,13 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
    * @param node Node to swap.
    */
   swapNode(node: TreeNode): void {
-    this._nodeManager.moveToPlan(node);
+    this._nodeManager.addNode(node);
+    this._treeManager.removeDispenserNode(this.depTreeRef, node);
+  }
+
+  private _createNodeManagerSub(depTree: DependencyTree): void {
+    depTree.treeNodeManager.moveToDispenser$.pipe(takeUntil(this._destroy$)).subscribe(node => {
+      this._treeManager.addDispenserNode(this.depTreeRef, node);
+    });
   }
 }

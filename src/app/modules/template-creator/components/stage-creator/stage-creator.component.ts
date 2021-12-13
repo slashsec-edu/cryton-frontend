@@ -83,6 +83,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this._createUpdatePreviewSubscription();
+    this._cd.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -119,7 +120,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const stage = this._createStage();
-    this._stageManager.moveToDispenser(stage);
+    this._treeManager.addDispenserNode(DepTreeRef.TEMPLATE_CREATION, stage);
     this._resetStageCreator();
   }
 

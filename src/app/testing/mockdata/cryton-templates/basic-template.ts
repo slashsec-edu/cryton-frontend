@@ -60,7 +60,7 @@ const basicStage = new StageNode({
 });
 
 // Create steps
-const firsStep = new StepNode(
+const firstStep = new StepNode(
   'scan-localhost',
   'mod_nmap',
   'target: 127.0.0.1\nports:\n  - 22',
@@ -72,13 +72,13 @@ const secondStep = new StepNode(
   'target: 127.0.0.1\ncredentials:\n  username: vagrant',
   basicStageChildDepTree
 );
-basicStageChildDepTree.treeNodeManager.moveToPlan(firsStep);
-basicStageChildDepTree.treeNodeManager.moveToPlan(secondStep);
+basicStageChildDepTree.treeNodeManager.addNode(firstStep);
+basicStageChildDepTree.treeNodeManager.addNode(secondStep);
 
 // Create edge between steps with a condition
-const stepEdge = basicStageChildDepTree.createDraggedEdge(firsStep) as StepEdge;
+const stepEdge = basicStageChildDepTree.createDraggedEdge(firstStep) as StepEdge;
 basicStageChildDepTree.connectDraggedEdge(secondStep);
 stepEdge.conditions.push({ type: 'result', value: 'OK' });
 
 // Add stage to dependency tree
-basicTemplateDepTree.treeNodeManager.moveToPlan(basicStage);
+basicTemplateDepTree.treeNodeManager.addNode(basicStage);

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StageCreatorComponent } from '../../components/stage-creator/stage-creator.component';
@@ -30,8 +38,6 @@ export class CreateStagePageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
       if (route.stepIndex === 2) {
-        console.log('routing to ', route.componentName);
-
         this.currentComponent = route.componentName;
         this._cd.detectChanges();
       }

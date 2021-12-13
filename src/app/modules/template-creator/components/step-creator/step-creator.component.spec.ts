@@ -49,7 +49,7 @@ describe('StepCreatorComponent', () => {
   /**
    * Spy node manager, needed to return the fake edit node subject.
    */
-  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', ['isNodeNameUnique', 'clearEditNode', 'moveToDispenser'], {
+  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', ['isNodeNameUnique', 'clearEditNode'], {
     editNode$: fakeEditNode$.asObservable()
   }) as Spied<NodeManager>;
   nodeManagerSpy.clearEditNode.and.callFake(() => {
@@ -64,7 +64,8 @@ describe('StepCreatorComponent', () => {
    * Spy dependency tree manager, needed to return the spy dependency tree.
    */
   const treeManagerSpy = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree'
+    'getCurrentTree',
+    'addDispenserNode'
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.returnValue(of(depTreeSpy));
 
@@ -145,7 +146,7 @@ describe('StepCreatorComponent', () => {
     component.stepForm.setValue(TESTING_ARGS1);
     await getCreateBtn().then(btn => btn.click());
 
-    expect(nodeManagerSpy.moveToDispenser).toHaveBeenCalled();
+    expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
   });
 
   it('should not load step into editor if the same step is currently being edited', () => {

@@ -29,7 +29,7 @@ export class TreeComparator {
         ? this._compareStages(a as StageNode, b as StageNode)
         : this._compareSteps(a as StepNode, b as StepNode);
 
-    return compareArrays(treeOne.treeNodeManager.canvasNodes, treeTwo.treeNodeManager.canvasNodes, compareNodesFn);
+    return compareArrays(treeOne.treeNodeManager.nodes, treeTwo.treeNodeManager.nodes, compareNodesFn);
   }
 
   private static _compareStages(stageOne: StageNode, stageTwo: StageNode): boolean {

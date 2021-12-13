@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
+import { TreeNode } from '../classes/dependency-tree/node/tree-node';
 import { NodeType } from '../models/enums/node-type';
 
 export enum DepTreeRef {
@@ -14,9 +15,10 @@ export enum DepTreeRef {
 export class DependencyTreeManagerService {
   private _currentTrees: Record<string, BehaviorSubject<DependencyTree>> = {};
   private _treesBackup: Record<string, DependencyTree> = {};
+  private _dispensers: Record<string, BehaviorSubject<TreeNode[]>> = {};
 
   constructor() {
-    this._initializeTrees();
+    this._initialize();
   }
 
   /**
@@ -92,15 +94,43 @@ export class DependencyTreeManagerService {
    * Resets dependency tree manager to default state.
    */
   reset(): void {
-    this._initializeTrees();
+    this._initialize();
     this._treesBackup = {};
+  }
+
+  addDispenserNode(key: DepTreeRef, node: TreeNode): void {
+    const nodes = this._dispensers[key].value;
+    nodes.push(node);
+    this._dispensers[key].next(nodes);
+  }
+
+  removeDispenserNode(key: DepTreeRef, node: TreeNode): void {
+    const nodes = this._dispensers[key].value;
+    const index = nodes.indexOf(node);
+
+    if (index !== -1) {
+      nodes.splice(index, 1);
+    }
+    this._dispensers[key].next(nodes);
+  }
+
+  observeDispenser(key: DepTreeRef): Observable<TreeNode[]> {
+    return this._dispensers[key].asObservable();
   }
 
   /**
    * Initializes tree behavior subjects with empty trees.
    */
-  private _initializeTrees(): void {
+  private _initialize(): void {
     this.setCurrentTree(DepTreeRef.STAGE_CREATION, new DependencyTree(NodeType.CRYTON_STEP));
     this.setCurrentTree(DepTreeRef.TEMPLATE_CREATION, new DependencyTree(NodeType.CRYTON_STAGE));
+
+    Object.keys(DepTreeRef).forEach(key => {
+      const dispenser = this._dispensers[key];
+
+      if (!dispenser) {
+        this._dispensers[key] = new BehaviorSubject<TreeNode[]>([]);
+      }
+    });
   }
 }

@@ -13,7 +13,8 @@ describe('DependencyTreeManagerService', () => {
     jasmine.createSpyObj(nodeType === NodeType.CRYTON_STAGE ? 'StageNode' : 'StepNode', [], {
       name: 'test',
       parentDepTree,
-      konvaObject: new Konva.Group()
+      konvaObject: new Konva.Group(),
+      changeTheme: () => {}
     }) as TreeNode;
 
   /**
@@ -28,7 +29,7 @@ describe('DependencyTreeManagerService', () => {
       const testingTree = new DependencyTree(nodeType);
       const testingStage = createTestingNode(testingTree, NodeType.CRYTON_STAGE);
 
-      testingTree.treeNodeManager.moveToPlan(testingStage);
+      testingTree.treeNodeManager.addNode(testingStage);
 
       service.setCurrentTree(treeRef, testingTree);
 
@@ -38,7 +39,7 @@ describe('DependencyTreeManagerService', () => {
 
       const emptyTree = service.getCurrentTree(treeRef).value;
       expect(emptyTree.nodeType).toEqual(nodeType);
-      expect(emptyTree.treeNodeManager.canvasNodes).toEqual([]);
+      expect(emptyTree.treeNodeManager.nodes).toEqual([]);
     });
 
     it('should backup current tree when calling editTree', () => {
@@ -92,8 +93,8 @@ describe('DependencyTreeManagerService', () => {
     });
 
     it('should restore tree manager to defaul state on reset', () => {
-      expect(service.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value.treeNodeManager.canvasNodes).toEqual([]);
-      expect(service.getCurrentTree(DepTreeRef.STAGE_CREATION).value.treeNodeManager.canvasNodes).toEqual([]);
+      expect(service.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value.treeNodeManager.nodes).toEqual([]);
+      expect(service.getCurrentTree(DepTreeRef.STAGE_CREATION).value.treeNodeManager.nodes).toEqual([]);
     });
   });
 

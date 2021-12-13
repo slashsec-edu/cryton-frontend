@@ -58,7 +58,9 @@ describe('TemplateConverterService', () => {
 
   const treeManagerStub = jasmine.createSpyObj('DependencyTreeManagerService', [
     'getCurrentTree',
-    'resetCurrentTree'
+    'resetCurrentTree',
+    'removeDispenserNode',
+    'addDispenserNode'
   ]) as Spied<DependencyTreeManagerService>;
 
   const stateServiceFake = new StateServiceFake();

@@ -2,12 +2,13 @@ import { DebugElement } from '@angular/core';
 import Konva from 'konva';
 import { Observable, Subscription } from 'rxjs';
 import { Theme } from '../../models/interfaces/theme';
+import { tcLightTheme } from '../../styles/themes/template-creator-light.theme';
 import { CursorState } from '../dependency-tree/cursor-state';
 
 export abstract class KonvaWrapper {
   cursorState = new CursorState();
   stage: Konva.Stage;
-  theme: Theme;
+  theme: Theme = { primary: '', accent: '', warn: '', isDark: false, templateCreator: tcLightTheme };
 
   protected _container: HTMLDivElement;
   protected _stageX = 0;

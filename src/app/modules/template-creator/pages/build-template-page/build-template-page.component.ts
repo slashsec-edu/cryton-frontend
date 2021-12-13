@@ -1,14 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
 import { TemplateConverterService } from '../../services/template-converter.service';
 import { TemplateService } from 'src/app/services/template.service';
 import { AlertService } from 'src/app/services/alert.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplateCreatorHelpComponent } from '../../components/template-creator-help/template-creator-help.component';
 import { NavigationButton } from '../../models/interfaces/navigation-button';
+import { TCRoute, TcRoutingService } from '../../services/tc-routing.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-build-template-page',
@@ -16,7 +18,7 @@ import { NavigationButton } from '../../models/interfaces/navigation-button';
   styleUrls: ['./build-template-page.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuildTemplatePageComponent {
+export class BuildTemplatePageComponent implements OnInit, OnDestroy {
   templateDepTreeRef = DepTreeRef.TEMPLATE_CREATION;
   creating$ = new BehaviorSubject(false);
 
@@ -33,6 +35,8 @@ export class BuildTemplatePageComponent {
     { icon: 'account_tree', name: 'Show dependency tree', componentName: 'dep_tree' }
   ];
 
+  private _destroy$ = new Subject<void>();
+
   get templateForm(): FormGroup {
     return this._state.templateForm;
   }
@@ -43,8 +47,24 @@ export class BuildTemplatePageComponent {
     private _templateConverter: TemplateConverterService,
     private _templateService: TemplateService,
     private _alertService: AlertService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tcRouter: TcRoutingService,
+    private _cd: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
+      if (route.stepIndex === 3) {
+        this.currentComponent = route.componentName;
+        this._cd.detectChanges();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
 
   /**
    * Handles create button click.

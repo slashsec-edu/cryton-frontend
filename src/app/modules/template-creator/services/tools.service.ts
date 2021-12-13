@@ -16,7 +16,7 @@ export class ToolsService {
   }
 
   enableNodeMove(depTree: DependencyTree): void {
-    depTree.toolState.flipMoveNodeTool(depTree.treeNodeManager.canvasNodes);
+    depTree.toolState.flipMoveNodeTool(depTree.treeNodeManager.nodes);
   }
 
   rescale(depTree: DependencyTree, increment: number): void {

@@ -1,7 +1,6 @@
 import { Trigger } from '../../triggers/trigger';
 import { TemplateTimeline } from '../../timeline/template-timeline';
 import { TimelineNode } from '../../timeline/timeline-node';
-import { Tabs, TabsRouter } from '../../utils/tabs-router';
 import { DependencyTree } from '../dependency-tree';
 import { TreeNode } from './tree-node';
 import { TriggerType } from '../../../models/enums/trigger-type';
@@ -56,6 +55,11 @@ export class StageNode extends TreeNode {
   editName(name: string): void {
     super.changeName(name);
     this.timelineNode?.changeName(name);
+
+    // Only draw if the node is attached to stage
+    if (this.konvaObject.getStage()) {
+      this.draw();
+    }
   }
 
   /**

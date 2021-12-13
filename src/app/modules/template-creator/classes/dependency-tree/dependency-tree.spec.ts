@@ -69,7 +69,7 @@ describe('DependencyTree', () => {
 
   const createNodeAtPos = (createFn: (name: string) => TreeNode, name: string, pos: Vector2d): TreeNode => {
     const node = createFn(name);
-    node.parentDepTree.treeNodeManager.moveToPlan(node);
+    node.parentDepTree.treeNodeManager.addNode(node);
     node.x = pos.x;
     node.y = pos.y;
 

@@ -21,13 +21,12 @@ export const MIN_SCALE = 0.1;
 export const MAX_SCALE = 1.5;
 
 export class DependencyTree extends KonvaWrapper {
-  id = Math.round(Math.random() * 50);
   alert$ = new Subject<Alert>();
   treeLayerUpdate$ = new Subject<Konva.Layer>();
 
   // STATE
   toolState = new ToolState();
-  treeNodeManager = new NodeManager();
+  treeNodeManager: NodeManager;
 
   // EDGE DATA
   draggedEdge: TreeEdge; // Reference to the dragged edge.
@@ -39,6 +38,7 @@ export class DependencyTree extends KonvaWrapper {
   constructor(nodeType: NodeType) {
     super();
     this.nodeType = nodeType;
+    this.treeNodeManager = new NodeManager(this);
   }
 
   /**
@@ -108,7 +108,7 @@ export class DependencyTree extends KonvaWrapper {
     if (this.toolState.isMoveNodeEnabled) {
       node.konvaObject.draggable(true);
     }
-
+    node.changeTheme(this.theme);
     this.treeLayer.add(node.konvaObject);
     this.treeLayer.draw();
   }
@@ -171,6 +171,7 @@ export class DependencyTree extends KonvaWrapper {
     const rootNode = this.findRootNode();
     const treeCopy = new DependencyTree(this.nodeType);
     const nodeType = treeCopy.nodeType;
+    treeCopy.theme = this.theme;
 
     [treeCopy.scale, treeCopy.stageX, treeCopy.stageY] = [this.scale, this.stageX, this.stageY];
 
@@ -215,7 +216,7 @@ export class DependencyTree extends KonvaWrapper {
    * @returns True if dependency tree is valid.
    */
   isValid(): boolean {
-    const nodeCount = this.treeNodeManager.canvasNodes.length;
+    const nodeCount = this.treeNodeManager.nodes.length;
 
     if (nodeCount === 0) {
       return false;
@@ -228,7 +229,7 @@ export class DependencyTree extends KonvaWrapper {
    * Updates every edge inside the dependency tree.
    */
   updateAllEdges(): void {
-    const nodes = this.treeNodeManager.canvasNodes;
+    const nodes = this.treeNodeManager.nodes;
     nodes.forEach((node: TreeNode) => node.updateEdges());
   }
 
@@ -239,7 +240,7 @@ export class DependencyTree extends KonvaWrapper {
    */
   errors(): string[] {
     const errors: string[] = [];
-    const nodeCount = this.treeNodeManager.canvasNodes.length;
+    const nodeCount = this.treeNodeManager.nodes.length;
 
     if (nodeCount === 0) {
       errors.push('Dependency tree is empty.');
@@ -254,7 +255,7 @@ export class DependencyTree extends KonvaWrapper {
    * @param theme New color theme.
    */
   updateTheme(theme: Theme): void {
-    this.treeNodeManager.getAllNodes().forEach(node => {
+    this.treeNodeManager.nodes.forEach(node => {
       node.changeTheme(theme);
     });
     this._getAllEdges().forEach(edge => {
@@ -270,7 +271,7 @@ export class DependencyTree extends KonvaWrapper {
   findRootNode(): TreeNode {
     let rootNode: TreeNode;
 
-    this.treeNodeManager.canvasNodes.forEach((node: TreeNode) => {
+    this.treeNodeManager.nodes.forEach((node: TreeNode) => {
       if (node.parentEdges.length === 0) {
         if (!rootNode) {
           rootNode = node;
@@ -358,7 +359,7 @@ export class DependencyTree extends KonvaWrapper {
    */
   private _getAllEdges(): TreeEdge[] {
     const edges: TreeEdge[] = [];
-    const nodes = this.treeNodeManager.canvasNodes;
+    const nodes = this.treeNodeManager.nodes;
 
     nodes.forEach(node => edges.push(...node.childEdges));
     return edges;
@@ -382,7 +383,7 @@ export class DependencyTree extends KonvaWrapper {
     }
 
     copyMap[node.name] = nodeCopy;
-    treeCopy.treeNodeManager.moveToPlan(nodeCopy);
+    treeCopy.treeNodeManager.addNode(nodeCopy);
     nodeCopy.x = node.x;
     nodeCopy.y = node.y;
 

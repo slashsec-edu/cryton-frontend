@@ -10,12 +10,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
+import { NodeType } from '../../models/enums/node-type';
 
 describe('StageParametersComponent', () => {
   let component: StageParametersComponent;
   let fixture: ComponentFixture<StageParametersComponent>;
 
-  const testNodeManager = new NodeManager();
+  const depTree = new DependencyTree(NodeType.CRYTON_STEP);
+  const testNodeManager = new NodeManager(depTree);
   const testStageForm = new StageForm(testNodeManager);
 
   beforeEach(async () => {
