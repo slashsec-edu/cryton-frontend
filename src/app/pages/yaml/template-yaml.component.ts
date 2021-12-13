@@ -11,7 +11,7 @@ import { YamlPreview } from './yaml-preview';
 })
 export class TemplateYamlComponent extends YamlPreview implements OnInit {
   itemName = 'template';
-  pluckArgs = ['detail', 'template'];
+  pluckArgs = ['detail', 'template', 'plan'];
 
   constructor(
     protected _route: ActivatedRoute,
