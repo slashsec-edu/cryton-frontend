@@ -6,6 +6,7 @@ import { DependencyTreeManagerService, DepTreeRef } from '../../services/depende
 import { ThemeService } from 'src/app/services/theme.service';
 import { takeUntil } from 'rxjs/operators';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { TcRoutingService } from '../../services/tc-routing.service';
 
 @Component({
   selector: 'app-tree-node-dispenser',
@@ -20,7 +21,11 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject<void>();
   private _nodeManager: NodeManager;
 
-  constructor(private _treeManager: DependencyTreeManagerService, public themeService: ThemeService) {}
+  constructor(
+    private _treeManager: DependencyTreeManagerService,
+    public themeService: ThemeService,
+    private _tcRouter: TcRoutingService
+  ) {}
 
   ngOnInit(): void {
     this._treeManager
@@ -46,6 +51,13 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   swapNode(node: TreeNode): void {
     this._nodeManager.addNode(node);
     this._treeManager.removeDispenserNode(this.depTreeRef, node);
+  }
+
+  editNode(node: TreeNode): void {
+    this._treeManager.editNode(this.depTreeRef, node);
+
+    const creationStepIndex = this.depTreeRef === DepTreeRef.TEMPLATE_CREATION ? 2 : 1;
+    this._tcRouter.navigateTo(creationStepIndex);
   }
 
   private _createNodeManagerSub(depTree: DependencyTree): void {

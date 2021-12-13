@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
 import { TreeNode } from '../classes/dependency-tree/node/tree-node';
 import { NodeType } from '../models/enums/node-type';
@@ -12,13 +13,20 @@ export enum DepTreeRef {
 @Injectable({
   providedIn: 'root'
 })
-export class DependencyTreeManagerService {
+export class DependencyTreeManagerService implements OnDestroy {
   private _currentTrees: Record<string, BehaviorSubject<DependencyTree>> = {};
   private _treesBackup: Record<string, DependencyTree> = {};
   private _dispensers: Record<string, BehaviorSubject<TreeNode[]>> = {};
+  private _editNodeSubjects: Record<string, ReplaySubject<TreeNode>> = {};
+  private _destroy$ = new Subject<void>();
 
   constructor() {
     this._initialize();
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   /**
@@ -118,19 +126,51 @@ export class DependencyTreeManagerService {
     return this._dispensers[key].asObservable();
   }
 
+  observeNodeEdit(key: DepTreeRef): Observable<TreeNode> {
+    return this._editNodeSubjects[key].asObservable();
+  }
+
+  editNode(key: DepTreeRef, node: TreeNode | null): void {
+    this._editNodeSubjects[key].next(node);
+  }
+
+  getDispenserNodes(key: DepTreeRef): TreeNode[] {
+    return this._dispensers[key].value;
+  }
+
+  refreshDispenser(key: DepTreeRef): void {
+    this._dispensers[key].next(this.getDispenserNodes(key));
+  }
+
   /**
    * Initializes tree behavior subjects with empty trees.
    */
   private _initialize(): void {
-    this.setCurrentTree(DepTreeRef.STAGE_CREATION, new DependencyTree(NodeType.CRYTON_STEP));
-    this.setCurrentTree(DepTreeRef.TEMPLATE_CREATION, new DependencyTree(NodeType.CRYTON_STAGE));
-
     Object.keys(DepTreeRef).forEach(key => {
       const dispenser = this._dispensers[key];
 
       if (!dispenser) {
         this._dispensers[key] = new BehaviorSubject<TreeNode[]>([]);
       }
+      this._editNodeSubjects[key] = new ReplaySubject<TreeNode>(1);
+    });
+
+    this._createTree(DepTreeRef.STAGE_CREATION);
+    this._createTree(DepTreeRef.TEMPLATE_CREATION);
+  }
+
+  private _createTree(key: DepTreeRef): void {
+    const depTree = new DependencyTree(
+      key === DepTreeRef.STAGE_CREATION ? NodeType.CRYTON_STEP : NodeType.CRYTON_STAGE
+    );
+    this.setCurrentTree(key, depTree);
+    this._observeTreeNodeEdit(depTree.treeNodeManager.editNode$, key);
+  }
+
+  private _observeTreeNodeEdit(treeEditNode$: Observable<TreeNode>, key: DepTreeRef): void {
+    const editNode$ = this._editNodeSubjects[key];
+    treeEditNode$.pipe(takeUntil(this._destroy$)).subscribe(node => {
+      editNode$.next(node);
     });
   }
 }

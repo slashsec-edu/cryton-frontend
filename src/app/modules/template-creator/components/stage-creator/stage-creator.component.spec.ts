@@ -50,13 +50,13 @@ describe('StageCreatorComponent', () => {
   /**
    * Spy node manager, needed to return the fake edit node subject.
    */
-  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', ['isNodeNameUnique', 'clearEditNode', 'moveToDispenser'], {
-    editNode$: fakeEditNode$.asObservable()
-  }) as Spied<NodeManager>;
-  nodeManagerSpy.clearEditNode.and.callFake(() => {
-    fakeEditNode$.next();
-  });
+  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', [
+    'isNodeNameUnique',
+    'clearEditNode',
+    'moveToDispenser'
+  ]) as Spied<NodeManager>;
   nodeManagerSpy.isNodeNameUnique.and.returnValue(true);
+  nodeManagerSpy.clearEditNode.and.callFake(() => fakeEditNode$.next(null));
 
   const parentDepTreeSpy = jasmine.createSpyObj('DependencyTree', [], {
     treeNodeManager: nodeManagerSpy
@@ -69,7 +69,9 @@ describe('StageCreatorComponent', () => {
     'resetCurrentTree',
     'editTree',
     'restoreTree',
-    'addDispenserNode'
+    'addDispenserNode',
+    'observeNodeEdit',
+    'refreshDispenser'
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.callFake((treeRef: DepTreeRef) => {
     if (treeRef === DepTreeRef.TEMPLATE_CREATION) {
@@ -78,6 +80,7 @@ describe('StageCreatorComponent', () => {
       return childDepTree$;
     }
   });
+  treeManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 

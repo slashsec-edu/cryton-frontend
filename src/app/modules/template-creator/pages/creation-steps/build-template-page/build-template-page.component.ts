@@ -55,7 +55,7 @@ export class BuildTemplatePageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
       if (route.stepIndex === 3) {
-        this.currentComponent = route.componentName;
+        this.currentComponent = route.componentName ?? 'template_params';
         this._cd.detectChanges();
       }
     });

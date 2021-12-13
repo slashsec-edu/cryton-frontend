@@ -12,7 +12,10 @@
       <button mat-icon-button class="swap_button" (click)="swapNode(node)">
         <mat-icon>swap_horizontal_circle</mat-icon>
       </button>
-      <span class="node-name">{{ node.name | shortString: 10 }}</span>
+      <button mat-icon-button (click)="editNode(node)"><mat-icon>settings</mat-icon></button>
+      <div class="node-name-container">
+        <span class="node-name">{{ node.name }}</span>
+      </div>
     </div>
   </ng-container>
 </div>

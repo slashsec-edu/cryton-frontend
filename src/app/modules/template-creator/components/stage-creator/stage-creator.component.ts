@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener
 import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
@@ -15,7 +15,6 @@ import { PreviewDependencyTree } from '../../classes/dependency-tree/preview-dep
 import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
 import { StageNode } from '../../classes/dependency-tree/node/stage-node';
-import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
 import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
@@ -81,6 +80,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.previewDepTree = new PreviewDependencyTree(NodeType.CRYTON_STEP);
     this._createDepTreeSub();
+    this._createEditNodeSub();
 
     if (!this.editedStage) {
       this._state.restoreStageForm();
@@ -141,6 +141,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
     this.editedStage.editChildDepTree(childDepTree);
     this._stageManager.clearEditNode();
+    this._treeManager.refreshDispenser(DepTreeRef.TEMPLATE_CREATION);
   }
 
   /**
@@ -269,12 +270,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _createDepTreeSub(): void {
     this._treeManager
       .getCurrentTree(DepTreeRef.TEMPLATE_CREATION)
-      .pipe(
-        takeUntil(this._destroy$),
-        tap(depTree => {
-          this._createEditNodeSub(depTree.treeNodeManager.editNode$);
-        })
-      )
+      .pipe(takeUntil(this._destroy$))
       .subscribe(depTree => {
         this.parentDepTree = depTree;
         this._stageManager = depTree.treeNodeManager;
@@ -284,16 +280,19 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Subscribes to currently edited node and handles editing initialization and cancelling.
    *
-   * @param editNode$ Edit node observable from tree node manager
+   * @param editNode$ Edit node observable from tree manager.
    */
-  private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
-    editNode$.pipe(takeUntil(this._destroy$)).subscribe((stage: StageNode) => {
-      if (stage) {
-        this._moveToEditor(stage);
-      } else if (this.editedStage) {
-        this.cancelEditing();
-      }
-    });
+  private _createEditNodeSub(): void {
+    this._treeManager
+      .observeNodeEdit(DepTreeRef.TEMPLATE_CREATION)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((stage: StageNode) => {
+        if (stage) {
+          this._moveToEditor(stage);
+        } else if (this.editedStage) {
+          this.cancelEditing();
+        }
+      });
   }
 
   /**

@@ -30,7 +30,7 @@ export class CreateStagePageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
       if (route.stepIndex === 2) {
-        this.currentComponent = route.componentName;
+        this.currentComponent = route.componentName ?? 'stage_params';
         this._cd.detectChanges();
       }
     });

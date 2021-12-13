@@ -49,9 +49,10 @@ describe('StepCreatorComponent', () => {
   /**
    * Spy node manager, needed to return the fake edit node subject.
    */
-  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', ['isNodeNameUnique', 'clearEditNode'], {
-    editNode$: fakeEditNode$.asObservable()
-  }) as Spied<NodeManager>;
+  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', [
+    'isNodeNameUnique',
+    'clearEditNode'
+  ]) as Spied<NodeManager>;
   nodeManagerSpy.clearEditNode.and.callFake(() => {
     fakeEditNode$.next(null);
   });
@@ -65,9 +66,12 @@ describe('StepCreatorComponent', () => {
    */
   const treeManagerSpy = jasmine.createSpyObj('DependencyTreeManagerService', [
     'getCurrentTree',
-    'addDispenserNode'
+    'addDispenserNode',
+    'observeNodeEdit',
+    'refreshDispenser'
   ]) as Spied<DependencyTreeManagerService>;
   treeManagerSpy.getCurrentTree.and.returnValue(of(depTreeSpy));
+  treeManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 

@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
-import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
 import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
 import { TcRoutingService } from '../../services/tc-routing.service';
@@ -46,6 +45,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._createDepTreeSub();
+    this._createEditNodeSub();
 
     if (!this.editedStep) {
       this.restoreStepForm();
@@ -116,6 +116,9 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     const { name, attackModule, attackModuleArgs } = this.stepForm.value as Record<string, string>;
     this.editedStep.edit(name, attackModule, attackModuleArgs);
     this._stepManager.clearEditNode();
+
+    // Needed to update displayed parameters in dispenser.
+    this._treeManager.refreshDispenser(DepTreeRef.STAGE_CREATION);
   }
 
   /**
@@ -213,10 +216,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   private _createDepTreeSub(): void {
     this._treeManager
       .getCurrentTree(DepTreeRef.STAGE_CREATION)
-      .pipe(
-        takeUntil(this._destroy$),
-        tap(depTree => this._createEditNodeSub(depTree.treeNodeManager.editNode$))
-      )
+      .pipe(takeUntil(this._destroy$))
       .subscribe(depTree => {
         this._parentDepTree = depTree;
         this._stepManager = depTree.treeNodeManager;
@@ -224,14 +224,17 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       });
   }
 
-  private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
-    editNode$.pipe(takeUntil(this._destroy$)).subscribe((step: StepNode) => {
-      if (step) {
-        this._startEditing(step);
-      } else if (this.editedStep) {
-        this.cancelEditing();
-      }
-    });
+  private _createEditNodeSub(): void {
+    this._treeManager
+      .observeNodeEdit(DepTreeRef.STAGE_CREATION)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((step: StepNode) => {
+        if (step) {
+          this._startEditing(step);
+        } else if (this.editedStep) {
+          this.cancelEditing();
+        }
+      });
   }
 
   /**
