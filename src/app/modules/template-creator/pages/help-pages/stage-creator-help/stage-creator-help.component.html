@@ -10,19 +10,18 @@
     <ol>
       <li>Fill out stage name <i>(stage name must be unique in the template)</i>.</li>
       <li>Select trigger type, delta trigger is chosen by default.</li>
-      <li>Fill out needed trigger arguments <i>(trigger arguments will change according to the trigger type)</i></li>
-      <li>
-        Create steps in the <b>"Create step"</b> tab. Steps will appear in the <b>"Show dependency tree"</b> section
-        after creation.
-      </li>
+      <li>Fill out needed trigger arguments <i>(trigger arguments will change according to the trigger type)</i>.</li>
       <li>
         Create a dependency tree <i>(more info in <b>Show dependency tree > Help</b>)</i>:
         <ol>
+          <li>
+            If you haven't already, create steps in the <b>"Create step"</b> tab. Steps will appear in the
+            <b>"Show dependency tree"</b> section after creation.
+          </li>
           <li>Click on <b>"Show dependency tree"</b> button to move to dependency tree creation.</li>
           <li>Move steps you want to use from the dispenser into the dependency tree.</li>
           <li>
-            Create all step dependencies you want. There must be exactly one node without a parent dependency
-            <i>(root node)</i>.
+            Create needed step dependencies by clicking on the red circle of the parent step and then on the child step.
           </li>
           <li>
             Dialog for conditions will appear after creating a dependency. A dependency has to have at least one
@@ -32,7 +31,11 @@
         </ol>
       </li>
       <li>Click on <b>"Create stage"</b> button to create the stage.</li>
-      <li>Stage will now appear in <b>Build template > Show dependency tree</b></li>
+      <li>
+        Stage will now appear in <b>Build template > Show dependency tree</b>, inside a stage dispenser. If you don't
+        use a stage, it will stay in the dispenser even after creating a template so you can use it in the next
+        template.
+      </li>
     </ol>
   </section>
 
@@ -42,7 +45,7 @@
     <h3>Tips</h3>
 
     <ul>
-      <li>If the <b>"Create stage"</b> button is disabled hover over it and it will show you an error message</li>
+      <li>If the <b>"Create stage"</b> button is disabled hover over it and it will show you an error message.</li>
       <li>
         You can see the dependency tree creation progress on the right side of the <b>"Create stage"</b> tab.
         <i>(Only visible for screens wider than 1600px)</i>

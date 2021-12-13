@@ -2,6 +2,7 @@
   <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
 
   <div class="buttons">
+    <button mat-button (click)="openHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
     <button
       mat-button
       *ngFor="let button of navigationButtons"
@@ -11,8 +12,6 @@
       <mat-icon color="primary">{{ button.icon }}</mat-icon
       >{{ ' ' + button.name }}
     </button>
-    <!-- <button mat-button (click)="openHelp()"><mat-icon color="primary">info</mat-icon> Help</button> -->
-    <!-- <button mat-button (click)="emitSwapPagesEvent()"><mat-icon color="primary">arrow_upward</mat-icon> Go back</button> -->
   </div>
 </header>
 
