@@ -1,9 +1,9 @@
-<header>
+<header mat-dialog-title>
   <mat-icon>info</mat-icon>
   <h1>Help</h1>
 </header>
 
-<main>
+<mat-dialog-content class="cryton-scrollbar">
   <section>
     <h3>Timeline elements</h3>
 
@@ -71,8 +71,8 @@
       <li><mat-icon>auto_awesome</mat-icon>Automatically organizes the timeline.</li>
     </ul>
   </section>
-</main>
+</mat-dialog-content>
 
-<footer>
-  <button mat-flat-button (click)="close()">Close</button>
-</footer>
+<mat-dialog-actions>
+  <button mat-flat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

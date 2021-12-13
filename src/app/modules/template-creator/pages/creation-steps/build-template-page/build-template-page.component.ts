@@ -10,7 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { TemplateCreatorHelpComponent } from '../../help-pages/template-creator-help/template-creator-help.component';
 import { NavigationButton } from '../../../models/interfaces/navigation-button';
 import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
-import { takeUntil } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
+import { TemplateYamlPreviewComponent } from '../../../components/template-yaml-preview/template-yaml-preview.component';
 
 @Component({
   selector: 'app-build-template-page',
@@ -73,19 +74,26 @@ export class BuildTemplatePageComponent implements OnInit, OnDestroy {
     if (this.isCreationDisabled()) {
       return this._alertService.showError('Template is invalid.');
     }
-    this.createTemplate();
+    const template = this._templateConverter.exportYAMLTemplate();
+    const creationDialog = this._dialog.open(TemplateYamlPreviewComponent, { width: '60%', data: { template } });
+
+    creationDialog
+      .afterClosed()
+      .pipe(first())
+      .subscribe((finalTemplate: string) => {
+        if (finalTemplate) {
+          this.createTemplate(finalTemplate);
+        }
+      });
   }
 
   /**
    * Creates YAML representation of the template and uploads it to the backend.
    */
-  createTemplate(): void {
-    const templateYaml = this._templateConverter.exportYAMLTemplate();
-    const templateName = this._state.templateForm.get('name').value as string;
-
+  createTemplate(templateYAML: string): void {
     this.creating$.next(true);
 
-    this._templateService.uploadYAML(templateYaml, templateName).subscribe({
+    this._templateService.uploadYAML(templateYAML).subscribe({
       next: successMsg => {
         this._state.clear();
         this._treeManager.reset();

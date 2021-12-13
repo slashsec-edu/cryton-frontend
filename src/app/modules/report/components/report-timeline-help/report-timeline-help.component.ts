@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { FILL_MAP } from '../../classes/report-constants';
 
 interface ColorGroup {
@@ -16,15 +15,10 @@ interface ColorGroup {
 export class ReportTimelineHelpComponent implements OnInit {
   colorGroups: ColorGroup[];
 
-  constructor(private _dialogRef: MatDialogRef<ReportTimelineHelpComponent>) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.colorGroups = this._buildColorGroups(FILL_MAP);
-    console.log(this.colorGroups);
-  }
-
-  close(): void {
-    this._dialogRef.close();
   }
 
   private _buildColorGroups(colorMap: Record<string, string>): ColorGroup[] {

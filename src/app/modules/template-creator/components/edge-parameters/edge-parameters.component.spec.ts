@@ -13,6 +13,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
+import { MatDialogModule } from '@angular/material/dialog';
 
 class CrytonNodeFake {
   name: string;
@@ -81,7 +82,7 @@ describe('EdgeParametersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TemplateCreatorModule, BrowserAnimationsModule],
+      imports: [TemplateCreatorModule, BrowserAnimationsModule, MatDialogModule],
       declarations: [EdgeParametersComponent],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },

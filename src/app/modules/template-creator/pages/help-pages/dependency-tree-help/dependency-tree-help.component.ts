@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dependency-tree-help',
@@ -8,9 +7,5 @@ import { MatDialogRef } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DependencyTreeHelpComponent {
-  constructor(private _dialogRef: MatDialogRef<DependencyTreeHelpComponent>) {}
-
-  close(): void {
-    this._dialogRef.close();
-  }
+  constructor() {}
 }

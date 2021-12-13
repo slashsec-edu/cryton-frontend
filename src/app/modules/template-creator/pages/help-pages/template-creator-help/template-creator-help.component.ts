@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-template-creator-help',
@@ -8,9 +7,5 @@ import { MatDialogRef } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TemplateCreatorHelpComponent {
-  constructor(private _dialogRef: MatDialogRef<TemplateCreatorHelpComponent>) {}
-
-  close(): void {
-    this._dialogRef.close();
-  }
+  constructor() {}
 }

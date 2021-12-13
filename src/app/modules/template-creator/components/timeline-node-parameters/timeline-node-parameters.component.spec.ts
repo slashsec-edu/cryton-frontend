@@ -21,6 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('TimelineNodeParametersComponent', () => {
   let component: TimelineNodeParametersComponent;
@@ -52,7 +53,8 @@ describe('TimelineNodeParametersComponent', () => {
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        MatButtonModule
+        MatButtonModule,
+        MatDialogModule
       ],
       declarations: [
         TimelineNodeParametersComponent,

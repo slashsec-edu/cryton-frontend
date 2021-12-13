@@ -8,15 +8,36 @@ export class EnableTabDirective {
 
   @HostListener('keydown', ['$event'])
   onKeyDown(e: KeyboardEvent): void {
-    const element = this._ref.nativeElement as HTMLTextAreaElement;
-
     if (e.key === 'Tab') {
       e.preventDefault();
-      const start = element.selectionStart;
-      const end = element.selectionEnd;
 
-      element.value = element.value.substring(0, start) + '  ' + element.value.substring(end);
-      element.selectionStart = element.selectionEnd = start + 2;
+      if (this._ref.nativeElement instanceof HTMLTextAreaElement) {
+        this._textareaHandler(this._ref.nativeElement);
+      } else {
+        this._contentEditableHandler(this._ref.nativeElement);
+      }
     }
+  }
+
+  private _textareaHandler(element: HTMLTextAreaElement): void {
+    const start = element.selectionStart;
+    const end = element.selectionEnd;
+
+    element.value = element.value.substring(0, start) + '  ' + element.value.substring(end);
+    element.selectionStart = element.selectionEnd = start + 2;
+  }
+
+  private _contentEditableHandler(element: HTMLElement): void {
+    const doc = element.ownerDocument.defaultView;
+    const sel = doc.getSelection();
+    const range = sel.getRangeAt(0);
+
+    const tabNode = document.createTextNode('  ');
+    range.insertNode(tabNode);
+
+    range.setStartAfter(tabNode);
+    range.setEndAfter(tabNode);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 }

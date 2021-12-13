@@ -1,9 +1,9 @@
-<header>
+<header mat-dialog-title>
   <mat-icon>info</mat-icon>
   <h1>Step creation help page</h1>
 </header>
 
-<main>
+<mat-dialog-content class="cryton-scrollbar">
   <section>
     <h3>How to create a step?</h3>
 
@@ -30,8 +30,8 @@
       <li>If you mess up, you can quickly erase the whole form with <b>"Erase parameters"</b> button.</li>
     </ul>
   </section>
-</main>
+</mat-dialog-content>
 
-<footer>
-  <button mat-flat-button (click)="close()">Close</button>
-</footer>
+<mat-dialog-actions>
+  <button mat-flat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { ReportComponent } from './components/report/report.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
@@ -45,7 +46,8 @@ import { ReportTimelineHelpComponent } from './components/report-timeline-help/r
     NoopAnimationsModule,
     MatSelectModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule
   ],
   exports: [ReportComponent, TimelineComponent]
 })

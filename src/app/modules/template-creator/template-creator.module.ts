@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 
 // COMPONENTS
 import { TemplateCreatorComponent } from './components/template-creator/template-creator.component';
@@ -33,14 +34,15 @@ import { StageParametersComponent } from './components/stage-parameters/stage-pa
 import { TreeEditorToolbarComponent } from './components/tree-editor-toolbar/tree-editor-toolbar.component';
 import { DeltaTriggerParametersComponent } from './components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { HttpTriggerParametersComponent } from './components/http-trigger-parameters/http-trigger-parameters.component';
+import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
+import { TemplateCreatorIntroductionComponent } from './pages/creation-steps/introduction-page/introduction-page.component';
+import { CreateStepPageComponent } from './pages/creation-steps/create-step-page/create-step-page.component';
 import { TemplateTimelineHelpComponent } from './pages/help-pages/template-timeline-help/template-timeline-help.component';
 import { StepCreatorHelpComponent } from './pages/help-pages/step-creator-help/step-creator-help.component';
 import { StageCreatorHelpComponent } from './pages/help-pages/stage-creator-help/stage-creator-help.component';
 import { TemplateCreatorHelpComponent } from './pages/help-pages/template-creator-help/template-creator-help.component';
 import { DependencyTreeHelpComponent } from './pages/help-pages/dependency-tree-help/dependency-tree-help.component';
-import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
-import { TemplateCreatorIntroductionComponent } from './pages/creation-steps/introduction-page/introduction-page.component';
-import { CreateStepPageComponent } from './pages/creation-steps/create-step-page/create-step-page.component';
+import { TemplateYamlPreviewComponent } from './components/template-yaml-preview/template-yaml-preview.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +67,8 @@ import { CreateStepPageComponent } from './pages/creation-steps/create-step-page
     TemplateCreatorPageComponent,
     TemplateCreatorIntroductionComponent,
     CreateStagePageComponent,
-    CreateStepPageComponent
+    CreateStepPageComponent,
+    TemplateYamlPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -83,7 +86,8 @@ import { CreateStepPageComponent } from './pages/creation-steps/create-step-page
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatStepperModule,
-    MatCardModule
+    MatCardModule,
+    MatDialogModule
   ],
   exports: [TemplateCreatorComponent]
 })
