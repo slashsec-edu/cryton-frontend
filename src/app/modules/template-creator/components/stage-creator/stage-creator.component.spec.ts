@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { StageCreatorComponent } from './stage-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -170,12 +170,12 @@ describe('StageCreatorComponent', () => {
       expect(await createBtn.isDisabled()).toBeFalse();
     });
 
-    it('should create the stage correctly', async () => {
+    it('should create the stage correctly', fakeAsync(async () => {
       fillWithCorrectStage();
       await getCreateBtn().then(btn => btn.click());
 
       expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
-    });
+    }));
 
     it('should correctly load edited delta stage into editor', () => {
       fakeEditNode$.next(correctStage);
@@ -189,13 +189,13 @@ describe('StageCreatorComponent', () => {
       expect(treeManagerSpy.editTree).toHaveBeenCalledWith(DepTreeRef.STAGE_CREATION, correctChildDepTree, true);
     });
 
-    it('should erase state after creation', async () => {
+    it('should erase state after creation', fakeAsync(async () => {
       fillWithCorrectStage();
       spyOn(component.stageForm, 'erase');
       await getCreateBtn().then(btn => btn.click());
 
       expectCreatorReset();
-    });
+    }));
 
     it('should erase state after click on cancel button', async () => {
       // TODO: Chceck also the form inputs in the DOM.

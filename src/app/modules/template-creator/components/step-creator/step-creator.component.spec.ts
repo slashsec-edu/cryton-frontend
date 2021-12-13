@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { StepCreatorComponent } from './step-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -142,12 +142,12 @@ describe('StepCreatorComponent', () => {
     expect(await createBtn.isDisabled()).toBeTrue();
   });
 
-  it('should create step correctly', async () => {
+  it('should create step correctly', fakeAsync(async () => {
     component.stepForm.setValue(TESTING_ARGS1);
     await getCreateBtn().then(btn => btn.click());
 
     expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
-  });
+  }));
 
   it('should not load step into editor if the same step is currently being edited', () => {
     const step = createStep(TESTING_ARGS1);

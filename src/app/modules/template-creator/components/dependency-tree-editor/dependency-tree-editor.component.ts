@@ -22,7 +22,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TreeEdge } from '../../classes/dependency-tree/edge/tree-edge';
 import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
-import { DependencyTreeHelpComponent } from '../dependency-tree-help/dependency-tree-help.component';
+import { DependencyTreeHelpComponent } from '../../pages/help-pages/dependency-tree-help/dependency-tree-help.component';
 import { NavigationButton } from '../../models/interfaces/navigation-button';
 import { TcRoutingService } from '../../services/tc-routing.service';
 

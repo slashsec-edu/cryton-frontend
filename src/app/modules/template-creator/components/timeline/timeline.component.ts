@@ -21,7 +21,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
 import { NavigationButton } from '../../models/interfaces/navigation-button';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
-import { TemplateTimelineHelpComponent } from '../template-timeline-help/template-timeline-help.component';
+import { TemplateTimelineHelpComponent } from '../../pages/help-pages/template-timeline-help/template-timeline-help.component';
 import { TimelineNodeParametersComponent } from '../timeline-node-parameters/timeline-node-parameters.component';
 
 @Component({

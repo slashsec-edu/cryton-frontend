@@ -2,12 +2,12 @@
   <mat-horizontal-stepper #stepper (selectionChange)="stepChanged(stepper)">
     <mat-step label="Introduction" [editable]="true">
       <div class="step-container">
-        <app-template-creator-introduction></app-template-creator-introduction>
+        <app-introduction-page></app-introduction-page>
       </div>
     </mat-step>
     <mat-step label="Create steps" [editable]="true" [hasError]="false">
       <div class="step-container">
-        <app-step-creator></app-step-creator>
+        <app-create-step-page></app-create-step-page>
       </div>
     </mat-step>
     <mat-step label="Create stages" [editable]="true">

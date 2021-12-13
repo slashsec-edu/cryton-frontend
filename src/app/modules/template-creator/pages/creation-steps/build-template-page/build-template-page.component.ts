@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { DependencyTreeManagerService, DepTreeRef } from '../../../services/dependency-tree-manager.service';
+import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
-import { TemplateConverterService } from '../../services/template-converter.service';
+import { TemplateConverterService } from '../../../services/template-converter.service';
 import { TemplateService } from 'src/app/services/template.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { TemplateCreatorHelpComponent } from '../../components/template-creator-help/template-creator-help.component';
-import { NavigationButton } from '../../models/interfaces/navigation-button';
-import { TCRoute, TcRoutingService } from '../../services/tc-routing.service';
+import { TemplateCreatorHelpComponent } from '../../help-pages/template-creator-help/template-creator-help.component';
+import { NavigationButton } from '../../../models/interfaces/navigation-button';
+import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-build-template-page',
   templateUrl: './build-template-page.component.html',
-  styleUrls: ['./build-template-page.component.scss', '../../styles/template-creator.scss'],
+  styleUrls: ['./build-template-page.component.scss', '../../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildTemplatePageComponent implements OnInit, OnDestroy {

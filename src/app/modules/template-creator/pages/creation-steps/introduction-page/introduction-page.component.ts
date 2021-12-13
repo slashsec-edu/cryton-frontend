@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-template-creator-introduction',
-  templateUrl: './template-creator-introduction.component.html',
-  styleUrls: ['./template-creator-introduction.component.scss'],
+  selector: 'app-introduction-page',
+  templateUrl: './introduction-page.component.html',
+  styleUrls: ['./introduction-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TemplateCreatorIntroductionComponent implements OnInit {

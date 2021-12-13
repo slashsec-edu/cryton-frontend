@@ -34,6 +34,11 @@
       <textarea matInput rows="7" formControlName="attackModuleArgs" cdkTextareaAutosize appEnableTab></textarea>
       <mat-error>{{ getControlError('attackModuleArgs') }}</mat-error>
     </mat-form-field>
+
+    <span id="step-created-alert" *ngIf="showCreationMessage$ | async"
+      >Step created! You can find it in
+      <span (click)="navigateToStagesDepTree()" class="tc-route">stage's dependency tree</span>.</span
+    >
   </form>
 </main>
 

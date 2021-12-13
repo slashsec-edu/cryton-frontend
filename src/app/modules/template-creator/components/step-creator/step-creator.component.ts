@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
@@ -10,7 +10,9 @@ import { AlertService } from 'src/app/services/alert.service';
 import { StepNode } from '../../classes/dependency-tree/node/step-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
-import { StepCreatorHelpComponent } from '../step-creator-help/step-creator-help.component';
+import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
+import { TcRoutingService } from '../../services/tc-routing.service';
+import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
 
 @Component({
   selector: 'app-step-creator',
@@ -25,17 +27,22 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     attackModuleArgs: new FormControl(null, [Validators.required])
   });
   editedStep: StepNode;
+  showCreationMessage$: Observable<boolean>;
 
   private _destroy$ = new Subject<void>();
   private _stepManager: NodeManager;
   private _parentDepTree: DependencyTree;
   private _stepFormValueBackup: Record<string, string>;
+  private _showCreationMessage$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _treeManager: DependencyTreeManagerService,
     private _alertService: AlertService,
-    private _dialog: MatDialog
-  ) {}
+    private _dialog: MatDialog,
+    private _tcRouter: TcRoutingService
+  ) {
+    this.showCreationMessage$ = this._showCreationMessage$.asObservable();
+  }
 
   ngOnInit(): void {
     this._createDepTreeSub();
@@ -76,6 +83,9 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       this.stepForm.reset();
       this._alertService.showSuccess('Step created successfully');
       this._treeManager.addDispenserNode(DepTreeRef.STAGE_CREATION, step);
+
+      this._showCreationMessage$.next(true);
+      setTimeout(() => this._showCreationMessage$.next(false), 5000);
     } else {
       this._alertService.showError('Step form is invalid.');
     }
@@ -137,6 +147,10 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       return true;
     }
     return false;
+  }
+
+  navigateToStagesDepTree(): void {
+    this._tcRouter.navigateTo(2, CreateStageComponent.DEP_TREE);
   }
 
   /**

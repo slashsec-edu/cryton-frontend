@@ -1,24 +1,16 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StageCreatorComponent } from '../../components/stage-creator/stage-creator.component';
-import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
-import { NavigationButton } from '../../models/interfaces/navigation-button';
-import { DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { TCRoute, TcRoutingService } from '../../services/tc-routing.service';
+import { StageCreatorComponent } from '../../../components/stage-creator/stage-creator.component';
+import { CreateStageComponent } from '../../../models/enums/create-stage-component.enum';
+import { NavigationButton } from '../../../models/interfaces/navigation-button';
+import { DepTreeRef } from '../../../services/dependency-tree-manager.service';
+import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
 
 @Component({
   selector: 'app-create-stage-page',
   templateUrl: './create-stage-page.component.html',
-  styleUrls: ['./create-stage-page.component.scss', '../../styles/template-creator.scss'],
+  styleUrls: ['./create-stage-page.component.scss', '../../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateStagePageComponent implements OnInit, OnDestroy {

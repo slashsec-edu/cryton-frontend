@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core';
 import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
@@ -17,8 +17,9 @@ import { AlertService } from 'src/app/services/alert.service';
 import { StageNode } from '../../classes/dependency-tree/node/stage-node';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { MatDialog } from '@angular/material/dialog';
-import { StageCreatorHelpComponent } from '../stage-creator-help/stage-creator-help.component';
+import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { TcRoutingService } from '../../services/tc-routing.service';
 
 @Component({
   selector: 'app-stage-creator',
@@ -34,9 +35,11 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   previewDepTree: PreviewDependencyTree;
   parentDepTree: DependencyTree;
   CreateStageComponent = CreateStageComponent;
+  showCreationMessage$: Observable<boolean>;
 
   private _stageManager: NodeManager;
   private _destroy$ = new Subject<void>();
+  private _showCreationMessage$ = new BehaviorSubject<boolean>(false);
 
   get stageForm(): StageForm {
     return this._state.stageForm;
@@ -58,8 +61,11 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     private _themeService: ThemeService,
     private _alertService: AlertService,
     private _cd: ChangeDetectorRef,
-    private _dialog: MatDialog
-  ) {}
+    private _dialog: MatDialog,
+    private _tcRouter: TcRoutingService
+  ) {
+    this.showCreationMessage$ = this._showCreationMessage$.asObservable();
+  }
 
   /**
    * Resizes canvas on window resize
@@ -122,6 +128,8 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     const stage = this._createStage();
     this._treeManager.addDispenserNode(DepTreeRef.TEMPLATE_CREATION, stage);
     this._resetStageCreator();
+    this._showCreationMessage$.next(true);
+    setTimeout(() => this._showCreationMessage$.next(false), 5000);
   }
 
   /**
@@ -206,6 +214,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   eraseParameters(): void {
     this.stageForm.erase();
+  }
+
+  navigateToTemplatesDepTree(): void {
+    this._tcRouter.navigateTo(3, CreateStageComponent.DEP_TREE);
   }
 
   /**

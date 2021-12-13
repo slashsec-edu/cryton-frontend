@@ -24,22 +24,23 @@ import { StepCreatorComponent } from './components/step-creator/step-creator.com
 import { TreeNodeDispenserComponent } from './components/tree-node-dispenser/tree-node-dispenser.component';
 import { DependencyTreeEditorComponent } from './components/dependency-tree-editor/dependency-tree-editor.component';
 import { StageCreatorComponent } from './components/stage-creator/stage-creator.component';
-import { CreateStagePageComponent } from './pages/create-stage-page/create-stage-page.component';
+import { CreateStagePageComponent } from './pages/creation-steps/create-stage-page/create-stage-page.component';
 import { EdgeParametersComponent } from './components/edge-parameters/edge-parameters.component';
-import { BuildTemplatePageComponent } from './pages/build-template-page/build-template-page.component';
+import { BuildTemplatePageComponent } from './pages/creation-steps/build-template-page/build-template-page.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TimelineNodeParametersComponent } from './components/timeline-node-parameters/timeline-node-parameters.component';
 import { StageParametersComponent } from './components/stage-parameters/stage-parameters.component';
 import { TreeEditorToolbarComponent } from './components/tree-editor-toolbar/tree-editor-toolbar.component';
 import { DeltaTriggerParametersComponent } from './components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { HttpTriggerParametersComponent } from './components/http-trigger-parameters/http-trigger-parameters.component';
-import { TemplateTimelineHelpComponent } from './components/template-timeline-help/template-timeline-help.component';
-import { StepCreatorHelpComponent } from './components/step-creator-help/step-creator-help.component';
-import { StageCreatorHelpComponent } from './components/stage-creator-help/stage-creator-help.component';
-import { TemplateCreatorHelpComponent } from './components/template-creator-help/template-creator-help.component';
-import { DependencyTreeHelpComponent } from './components/dependency-tree-help/dependency-tree-help.component';
+import { TemplateTimelineHelpComponent } from './pages/help-pages/template-timeline-help/template-timeline-help.component';
+import { StepCreatorHelpComponent } from './pages/help-pages/step-creator-help/step-creator-help.component';
+import { StageCreatorHelpComponent } from './pages/help-pages/stage-creator-help/stage-creator-help.component';
+import { TemplateCreatorHelpComponent } from './pages/help-pages/template-creator-help/template-creator-help.component';
+import { DependencyTreeHelpComponent } from './pages/help-pages/dependency-tree-help/dependency-tree-help.component';
 import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
-import { TemplateCreatorIntroductionComponent } from './components/template-creator-introduction/template-creator-introduction.component';
+import { TemplateCreatorIntroductionComponent } from './pages/creation-steps/introduction-page/introduction-page.component';
+import { CreateStepPageComponent } from './pages/creation-steps/create-step-page/create-step-page.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,6 @@ import { TemplateCreatorIntroductionComponent } from './components/template-crea
     TreeNodeDispenserComponent,
     DependencyTreeEditorComponent,
     StageCreatorComponent,
-    CreateStagePageComponent,
     EdgeParametersComponent,
     BuildTemplatePageComponent,
     TimelineComponent,
@@ -63,7 +63,9 @@ import { TemplateCreatorIntroductionComponent } from './components/template-crea
     TemplateCreatorHelpComponent,
     DependencyTreeHelpComponent,
     TemplateCreatorPageComponent,
-    TemplateCreatorIntroductionComponent
+    TemplateCreatorIntroductionComponent,
+    CreateStagePageComponent,
+    CreateStepPageComponent
   ],
   imports: [
     CommonModule,

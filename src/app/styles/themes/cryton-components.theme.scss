@@ -12,6 +12,7 @@
 @use './cryton-scrollbar.theme' as scrollbar;
 @use '../../modules/shared/components/cryton-log/cryton-log.theme' as log;
 @use '../../components/page-unavailable/page-unavailable.theme' as page-unavailable;
+@use '../../modules/template-creator/styles/template-creator.theme' as template-creator;
 
 // CRYTON WORKER THEME
 $worker-primary: mat-palette($mat-blue, A200);
@@ -33,6 +34,7 @@ $worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
   @include tree-editor-toolbar.color($config);
   @include log.color($config);
   @include page-unavailable.color($config);
+  @include template-creator.color($config);
 
   @include worker-table.color($worker-theme);
 }

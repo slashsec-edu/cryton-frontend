@@ -2,6 +2,14 @@
   height: 600px;
 }
 
+.tc-route {
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 section.buttons {
   display: flex;
   justify-content: flex-end;
