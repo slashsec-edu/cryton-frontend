@@ -8,13 +8,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { Observable } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { Endpoint } from '../models/enums/endpoint.enum';
+import { HasYaml } from '../models/services/has-yaml.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TemplateService extends CrytonRESTApiService<Template> {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.TEMPLATES, 'v1');
+export class TemplateService extends CrytonRESTApiService<Template> implements HasYaml {
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.TEMPLATES, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -67,10 +68,8 @@ export class TemplateService extends CrytonRESTApiService<Template> {
     return this.uploadFile(templateFile);
   }
 
-  getTemplateDetail(templateID: number): Observable<TemplateDetail | string> {
-    return this.http
-      .get<TemplateDetail>(`${this.endpoint}${templateID}/get_template/`)
-      .pipe(catchError(err => this.handleItemError(err, `Template detail couldn't be fetched.`)));
+  fetchYaml(templateID: number): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${this.endpoint}${templateID}/get_template/`);
   }
 
   private _getFileName(url: string): string {

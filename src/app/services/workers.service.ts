@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { Worker, WorkerExecution } from '../models/api-responses/worker.interface';
 import { HttpClient } from '@angular/common/http';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 import { Observable } from 'rxjs';
 import { RunService } from './run.service';
 import { concatAll, map, mergeMap, pluck, tap, toArray } from 'rxjs/operators';
 import { PlanExecution } from '../models/api-responses/plan-execution.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
+import { Endpoint } from '../models/enums/endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkersService extends CrytonRESTApiService<Worker> {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.WORKERS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.WORKERS, 'v1');
 
   constructor(protected http: HttpClient, private _runService: RunService) {
     super(http);

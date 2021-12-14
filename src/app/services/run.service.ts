@@ -6,8 +6,9 @@ import { Run } from '../models/api-responses/run.interface';
 import { catchError, concatAll, first, mapTo, mergeMap, pluck, switchMap } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 import { Report } from '../models/api-responses/report/report.interface';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
 import { ExecutionVariableService } from './execution-variable.service';
+import { Endpoint } from '../models/enums/endpoint.enum';
+import { HasYaml } from '../models/services/has-yaml.interface';
 
 export interface RunResponse {
   detail: {
@@ -19,8 +20,8 @@ export interface RunResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class RunService extends CrytonRESTApiService<Run> {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.RUNS, 'v1');
+export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.RUNS, 'v1');
 
   constructor(protected http: HttpClient, private _execVarService: ExecutionVariableService) {
     super(http);
@@ -127,7 +128,7 @@ export class RunService extends CrytonRESTApiService<Run> {
     return this.http.get<Report>(`${this.endpoint}/${runID}/report`);
   }
 
-  fetchPlan(runID: number): Observable<Record<string, unknown>> {
+  fetchYaml(runID: number): Observable<Record<string, unknown>> {
     return this.http.get<Record<string, unknown>>(`${this.endpoint}/${runID}/get_plan`);
   }
 

@@ -15,11 +15,10 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { tap, takeUntil } from 'rxjs/operators';
+import { tap, takeUntil, debounceTime } from 'rxjs/operators';
 import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
 import { Column } from 'src/app/models/cryton-table/interfaces/column.interface';
-import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
-import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
+import { TableButton } from 'src/app/models/cryton-table/interfaces/table-button.interface';
 import { TableFilter } from 'src/app/models/cryton-table/interfaces/table-filter.interface';
 import { Observable, Subject } from 'rxjs';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
@@ -30,13 +29,14 @@ import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { SelectionModel } from '@angular/cdk/collections';
+import { environment } from 'src/environments/environment';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
 
 export interface ErroneousButton<T> {
-  button: Button<T>;
+  button: TableButton;
   row: T;
 }
-
-export const RELOAD_TIMEOUT = 500;
 
 @Component({
   selector: 'app-cryton-table',
@@ -86,14 +86,14 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   @Input() header: string;
 
   /**
-   * Create button data.
+   * Optional action buttons to be displayed at the end of each row.
    */
-  @Input() createButton: LinkButton;
+  @Input() actionButtons?: ActionButton<T>[];
 
   /**
-   * Optional buttons to be displayed at the end of each row.
+   * Optional link buttons to be displayed at the end of each row.
    */
-  @Input() buttons?: Button<T>[];
+  @Input() linkButtons?: LinkButton<T>[];
 
   /**
    * Specifies if table should display radio buttons.
@@ -136,7 +136,8 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   @Output() checkboxChange = new EventEmitter<T[]>();
 
   /* PAGINATOR SETTINGS */
-  pageSize = 5;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 15, 20, 30];
 
   /* TABLE SETTINGS */
   displayedColumns: string[];
@@ -184,10 +185,12 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       column: this.columnControl
     });
 
-    this.filterOptions.valueChanges.pipe(takeUntil(this._destroy$)).subscribe((filter: TableFilter) => {
-      this.filter = filter;
-      this.loadPage();
-    });
+    this.filterOptions.valueChanges
+      .pipe(takeUntil(this._destroy$), debounceTime(500))
+      .subscribe((filter: TableFilter) => {
+        this.filter = filter;
+        this.loadPage(true);
+      });
   }
 
   ngOnDestroy(): void {
@@ -204,7 +207,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       .subscribe();
   }
 
-  loadPage(): void {
+  loadPage(useDelay = false): void {
     this._destroyExpandedRowComponents();
     this._uncheckAll();
 
@@ -212,20 +215,9 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize,
       this.sort,
-      this.filter
+      this.filter,
+      useDelay ? environment.refreshDelay : 0
     );
-  }
-
-  /**
-   * Refreshes table data with a small time-out to simulate loading data even if data gets
-   * loaded almost instantly.
-   */
-  refreshData(): void {
-    this.dataSource.setLoading(true);
-
-    setTimeout(() => {
-      this.loadPage();
-    }, RELOAD_TIMEOUT);
   }
 
   /**
@@ -347,7 +339,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     }
   }
 
-  handleButtonClick(button: Button<T>, row: T): void {
+  handleButtonClick(button: ActionButton<T>, row: T): void {
     const errorTimeout = 10;
 
     button
@@ -367,7 +359,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
       });
   }
 
-  isErroneous(button: Button<T>, row: T): boolean {
+  isErroneous(button: TableButton, row: T): boolean {
     if (!this.erroneousButton) {
       return false;
     }
@@ -418,8 +410,11 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     if (this.showRadioButtons) {
       displayedColumns.push('radio');
     }
-    if (this.buttons && this.buttons.length > 0) {
-      displayedColumns.push(...this.buttons.map(button => button.name));
+    if (this.linkButtons && this.linkButtons.length > 0) {
+      displayedColumns.push(...this.linkButtons.map(button => button.name));
+    }
+    if (this.actionButtons && this.actionButtons.length > 0) {
+      displayedColumns.push(...this.actionButtons.map(button => button.name));
     }
     if (this.expandedComponent) {
       displayedColumns.push('expand');

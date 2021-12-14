@@ -2,8 +2,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { routes, Route, metaRoutes } from './routes';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Subject } from 'rxjs';
-import { first, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { delay, first, switchMapTo, takeUntil } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
@@ -39,6 +39,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
   isSidebarClosed = false;
   isAccountClosed = true;
   shouldShowOver = false;
+
+  loadingStatus$ = new BehaviorSubject<boolean>(false);
   isBackendLive = false;
 
   private _destroy$ = new Subject<void>();
@@ -133,6 +135,10 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   checkBackendStatus(): void {
-    this._backendStatus.checkBackendStatus().pipe(first()).subscribe();
+    this.loadingStatus$.next(true);
+
+    of({})
+      .pipe(first(), delay(200), switchMapTo(this._backendStatus.checkBackendStatus().pipe(first())))
+      .subscribe(() => this.loadingStatus$.next(false));
   }
 }

@@ -1,6 +1,6 @@
-import { Instance } from '../../models/api-responses/instance.interface';
+import { Plan } from '../../models/api-responses/plan.interface';
 
-export const instances: Instance[] = [
+export const plans: Plan[] = [
   {
     url: 'http://localhost:8000/cryton/api/v1/plans/2/',
     id: 2,

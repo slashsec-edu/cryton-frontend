@@ -32,7 +32,10 @@ export class BackendStatusService implements OnDestroy {
       first(),
       map(res => res.ok),
       tap(isLive => this._isLive$.next(isLive)),
-      catchError(() => of(false))
+      catchError(() => {
+        this._isLive$.next(false);
+        return of(false);
+      })
     );
   }
 

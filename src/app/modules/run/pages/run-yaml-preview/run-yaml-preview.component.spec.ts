@@ -14,8 +14,8 @@ describe('RunYamlPreviewComponent', () => {
     params: of({ id: 1 })
   };
 
-  const runServiceStub = jasmine.createSpyObj('RunService', ['fetchPlan']) as Spied<RunService>;
-  runServiceStub.fetchPlan.and.returnValue('detail:\n  plan:\n  - name: plan');
+  const runServiceStub = jasmine.createSpyObj('RunService', ['fetchYaml']) as Spied<RunService>;
+  runServiceStub.fetchYaml.and.returnValue('detail:\n  plan:\n  - name: plan');
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -65,6 +65,8 @@ describe('ListLogsComponent', () => {
     fixture = TestBed.createComponent(ListLogsComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+    component.logs = mockLogs;
+    component.loading$.next(false);
     fixture.detectChanges();
   });
 
@@ -73,14 +75,15 @@ describe('ListLogsComponent', () => {
   });
 
   it('should display fetched logs', async () => {
+    component.loading$.next(false);
     const logs = await loader.getAllHarnesses(CrytonLogHarness);
-
     // Pagination works on backend only, so table will always display all of the items.
     expect(logs.length).toEqual(mockLogs.count);
     compareLogsWithData(logs, mockLogs.results);
   });
 
   it('should apply filter to request', async () => {
+    component.loading$.next(false);
     const filterValue = 'testFilter';
     component.filterForm.get('filter').setValue(filterValue);
 
@@ -90,6 +93,8 @@ describe('ListLogsComponent', () => {
   });
 
   it('should refresh table on refresh button click', async () => {
+    component.loading$.next(false);
+
     let logs = await loader.getAllHarnesses(CrytonLogHarness);
     compareLogsWithData(logs, mockLogs.results);
 

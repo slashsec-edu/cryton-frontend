@@ -3,13 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
-import { Button } from 'src/app/models/cryton-table/interfaces/button.interface';
 import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { Template } from 'src/app/models/api-responses/template.interface';
 import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { TemplateService } from 'src/app/services/template.service';
 import { Router } from '@angular/router';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
 
 @Component({
   selector: 'app-list-templates',
@@ -22,13 +23,17 @@ export class ListTemplatesComponent implements OnInit {
   templatesTable: CrytonTableComponent<Template>;
 
   dataSource: TemplatesTableDataSource;
-  buttons: Button<Template>[];
+  actionButtons: ActionButton<Template>[];
+  linkButtons: LinkButton<Template>[];
 
   constructor(private _templateService: TemplateService, private _dialog: MatDialog, private _router: Router) {}
 
   ngOnInit(): void {
     this.dataSource = new TemplatesTableDataSource(this._templateService);
-    this.buttons = [{ name: 'delete', icon: 'delete', func: this._deleteTemplate }];
+    this.actionButtons = [{ name: 'Delete', icon: 'delete', func: this._deleteTemplate }];
+    this.linkButtons = [
+      { name: 'Show YAML', icon: 'description', constructLink: (row: Template) => `/app/templates/${row.id}/yaml` }
+    ];
   }
 
   /**

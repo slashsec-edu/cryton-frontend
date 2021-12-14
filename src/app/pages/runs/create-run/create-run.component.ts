@@ -13,7 +13,7 @@ import { RunCreationStepsComponent } from 'src/app/models/cryton-editor/steps/ru
 export class CreateRunComponent implements OnInit {
   editorSteps = RunCreationStepsComponent;
   stepOverviewItems: StepOverviewItem[] = [
-    { name: 'Template', type: StepType.SELECTABLE, required: true },
+    { name: 'Plan', type: StepType.SELECTABLE, required: true },
     { name: 'Workers', type: StepType.SELECTABLE, required: true },
     { name: 'Inventories', type: StepType.SELECTABLE, required: false }
   ];

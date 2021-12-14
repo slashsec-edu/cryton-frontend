@@ -21,7 +21,7 @@ export class RunYamlPreviewComponent implements OnInit {
       first(),
       switchMap((params: Params) => {
         this.runID = Number(params['id']);
-        return this._runService.fetchPlan(this.runID);
+        return this._runService.fetchYaml(this.runID);
       }),
       pluck('detail', 'plan'),
       map(yaml => ({ plan: yaml }))

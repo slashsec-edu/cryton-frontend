@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
 import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
 
-import { InstanceService } from 'src/app/services/instance.service';
+import { PlanService } from 'src/app/services/plan.service';
 import { WorkersService } from 'src/app/services/workers.service';
 import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
 import { RunService } from 'src/app/services/run.service';
@@ -12,12 +12,12 @@ import { RunService } from 'src/app/services/run.service';
 import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 
-import { Instance } from '../../../api-responses/instance.interface';
+import { Plan } from '../../../api-responses/plan.interface';
 import { Worker } from '../../../api-responses/worker.interface';
 import { Selectable } from '../../../cryton-editor/interfaces/selectable.interface';
-import { Button } from '../../../cryton-table/interfaces/button.interface';
 import { Column } from '../../../cryton-table/interfaces/column.interface';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
 
 @Component({
   selector: 'app-run-creation-steps',
@@ -27,17 +27,17 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   @ViewChild('inventoryTable', { static: true }) inventoryTable: CrytonTableComponent<Worker>;
   @ViewChildren('fileInput') fileInputs: QueryList<DebugElement>;
 
-  instanceDataSource: InstanceTableDataSource;
+  planDataSource: PlanTableDataSource;
   workerDataSource: WorkerTableDataSource;
   inventoriesDataSource: WorkerInventoriesDataSource;
 
-  inventoriesButtons: Button<Worker>[];
+  inventoriesButtons: ActionButton<Worker>[];
   workers: Worker[];
-  instance: Instance;
+  plan: Plan;
   inventoryFiles: Record<number, File[]> = {};
 
   constructor(
-    private _instanceService: InstanceService,
+    private _planService: PlanService,
     private _workersService: WorkersService,
     private _runService: RunService,
     private _workerInventoriesService: WorkerInventoriesService
@@ -47,7 +47,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.instanceDataSource = new InstanceTableDataSource(this._instanceService);
+    this.planDataSource = new PlanTableDataSource(this._planService);
     this.workerDataSource = new WorkerTableDataSource(this._workersService);
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
 
@@ -63,18 +63,18 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
 
   erase(): void {
     this.workers = null;
-    this.instance = null;
+    this.plan = null;
     this.inventoryFiles = {};
   }
 
   /**
-   * Updates instance selected in the 1. step.
+   * Updates plan selected in the 1. step.
    *
-   * @param instance Selected instance.
+   * @param plan Selected plan.
    */
-  setInstance(instance: Instance): void {
-    this.instance = instance;
-    this.emitSelectables([{ name: instance.name, id: instance.id }]);
+  setPlan(plan: Plan): void {
+    this.plan = plan;
+    this.emitSelectables([{ name: plan.name, id: plan.id }]);
   }
 
   /**
@@ -137,7 +137,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     }
 
     const runPostRequest = {
-      plan_model: this.instance.id,
+      plan_model: this.plan.id,
       workers
     };
 
@@ -192,9 +192,9 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
 }
 
 /**
- * Simplified instance table data source with less columns.
+ * Simplified plan table data source with less columns.
  */
-export class InstanceTableDataSource extends CrytonTableDataSource<Instance> {
+export class PlanTableDataSource extends CrytonTableDataSource<Plan> {
   columns: Column[] = [
     {
       name: 'id',
@@ -221,7 +221,7 @@ export class InstanceTableDataSource extends CrytonTableDataSource<Instance> {
   displayFunctions = null;
   highlightDictionary = {};
 
-  constructor(protected instanceService: InstanceService) {
-    super(instanceService);
+  constructor(protected planService: PlanService) {
+    super(planService);
   }
 }

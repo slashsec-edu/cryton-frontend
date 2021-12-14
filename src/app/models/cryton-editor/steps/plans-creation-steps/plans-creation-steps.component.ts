@@ -4,19 +4,19 @@ import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps
 import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { TemplateService } from 'src/app/services/template.service';
 import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
-import { InstanceService } from 'src/app/services/instance.service';
+import { PlanService } from 'src/app/services/plan.service';
 
 @Component({
-  selector: 'app-instances-creation-steps',
-  templateUrl: './instances-creation-steps.component.html',
-  styleUrls: ['./instances-creation-steps.component.scss']
+  selector: 'app-plans-creation-steps',
+  templateUrl: './plans-creation-steps.component.html',
+  styleUrls: ['./plans-creation-steps.component.scss']
 })
-export class InstancesCreationStepsComponent extends CrytonEditorStepsComponent implements OnInit, OnDestroy {
+export class PlansCreationStepsComponent extends CrytonEditorStepsComponent implements OnInit, OnDestroy {
   templatesDataSource: TemplatesTableDataSource;
   template: Template;
   inventories: File[];
 
-  constructor(private _templateService: TemplateService, private _instanceService: InstanceService) {
+  constructor(private _templateService: TemplateService, private _planService: PlanService) {
     super();
   }
 
@@ -51,6 +51,6 @@ export class InstancesCreationStepsComponent extends CrytonEditorStepsComponent 
   }
 
   protected createPostRequest(): void {
-    this.create.emit(this._instanceService.postInstance(this.template.id, this.inventories));
+    this.create.emit(this._planService.postPlan(this.template.id, this.inventories));
   }
 }

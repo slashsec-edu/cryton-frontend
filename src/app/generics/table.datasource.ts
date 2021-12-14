@@ -1,7 +1,7 @@
 import { DataSource } from '@angular/cdk/collections/data-source';
 import { BehaviorSubject } from 'rxjs';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, first } from 'rxjs/operators';
 import { CrytonRESTApiService } from './cryton-rest-api-service';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
@@ -18,6 +18,7 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
   protected _countSubject$ = new BehaviorSubject<number>(0);
   protected _loadingSubject$ = new BehaviorSubject<boolean>(false);
   protected _currentSub: Subscription;
+  protected _currentTimeout: any;
 
   constructor(private _service?: CrytonRESTApiService<T>) {}
 
@@ -70,25 +71,41 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
    * @param sort Column to order results by.
    * @param filter TableFilter object for filtering results by column and search value.
    */
-  loadItems(offset: number, limit: number, sort: string, filter: TableFilter): void {
+  loadItems(offset: number, limit: number, sort: string, filter: TableFilter, delay: number = 0): void {
     if (this._currentSub) {
       this._currentSub.unsubscribe();
     }
+    if (this._currentTimeout) {
+      clearTimeout(this._currentTimeout);
+    }
     this._loadingSubject$.next(true);
 
-    this._currentSub = this._service
+    if (delay && delay > 0) {
+      this._currentTimeout = setTimeout(() => {
+        this._fetchItems(offset, limit, sort, filter);
+      }, delay);
+    } else {
+      this._fetchItems(offset, limit, sort, filter);
+    }
+  }
+
+  updateRow(row: T): void {
+    const updatedRow = this._dataSubject$.value.find(currentRow => currentRow.id === row.id);
+    Object.assign(updatedRow, row);
+  }
+
+  private _fetchItems(offset: number, limit: number, sort: string, filter: TableFilter): void {
+    this._service
       .fetchItems(offset, limit, sort, filter)
-      .pipe(catchError(() => of({ count: 0, data: [] })))
+      .pipe(
+        first(),
+        catchError(() => of({ count: 0, data: [] }))
+      )
       .subscribe(items => {
         this.data = { count: items.count, items: items.data };
         this._countSubject$.next(items.count);
         this._dataSubject$.next(items.data);
         this._loadingSubject$.next(false);
       });
-  }
-
-  updateRow(row: T): void {
-    const updatedRow = this._dataSubject$.value.find(currentRow => currentRow.id === row.id);
-    Object.assign(updatedRow, row);
   }
 }

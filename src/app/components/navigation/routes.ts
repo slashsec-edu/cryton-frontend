@@ -22,12 +22,12 @@ export const routes: Route[] = [
     ]
   },
   {
-    name: 'Instances',
+    name: 'Plans',
     icon: 'category',
-    href: './instances',
+    href: './plans',
     subroutes: [
-      { name: 'List instances', href: './instances/list' },
-      { name: 'Create instance', href: './instances/create' }
+      { name: 'List plans', href: './plans/list' },
+      { name: 'Create plan', href: './plans/create' }
     ]
   },
   {

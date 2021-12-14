@@ -1,4 +1,5 @@
-export interface LinkButton {
-  value: string;
-  link: string;
+import { TableButton } from './table-button.interface';
+
+export interface LinkButton<T> extends TableButton {
+  constructLink: (row: T) => string;
 }

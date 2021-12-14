@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
+import { Endpoint } from '../models/enums/endpoint.enum';
 
 export type LogsResponse = CrytonResponse<string>;
 
@@ -11,7 +11,7 @@ export type LogsResponse = CrytonResponse<string>;
   providedIn: 'root'
 })
 export class LogService {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.LOGS, 'v1');
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.LOGS, 'v1');
 
   constructor(private _http: HttpClient) {}
 

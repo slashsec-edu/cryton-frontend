@@ -11,9 +11,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject, merge, Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
-import { RELOAD_TIMEOUT } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { LogService, LogsResponse } from 'src/app/services/log.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-list-logs',
@@ -62,41 +62,32 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyFilter();
   }
 
-  loadPage(): void {
+  loadPage(useDelay = false): void {
     const { filter } = this.filterForm.value as Record<string, string>;
     const offset = this.paginator.pageSize * this.paginator.pageIndex;
-    this._fetchLogs(offset, this.paginator.pageSize, filter ?? '');
+
+    this._fetchLogs(offset, this.paginator.pageSize, filter ?? '', useDelay ? environment.refreshDelay : 0);
     this._cd.detectChanges();
   }
 
-  /**
-   * Refreshes table data with a small time-out to simulate loading data even if data gets
-   * loaded almost instantly.
-   */
-  refreshData(): void {
+  private _fetchLogs(offset = 0, limit = 0, filter = '', delay = 0): void {
     this.loading$.next(true);
 
     setTimeout(() => {
-      this.loadPage();
-    }, RELOAD_TIMEOUT);
-  }
-
-  private _fetchLogs(offset = 0, limit = 0, filter = ''): void {
-    this.loading$.next(true);
-
-    this._logService
-      .fetchItems(offset, limit, filter)
-      .pipe(first())
-      .subscribe({
-        next: logs => {
-          this.logs = logs;
-          this.paginator.length = logs.count;
-          this.loading$.next(false);
-        },
-        error: () => {
-          this.loading$.next(false);
-          this._alertService.showError('An error occured during loading logs.');
-        }
-      });
+      this._logService
+        .fetchItems(offset, limit, filter)
+        .pipe(first())
+        .subscribe({
+          next: logs => {
+            this.logs = logs;
+            this.paginator.length = logs.count;
+            this.loading$.next(false);
+          },
+          error: () => {
+            this.loading$.next(false);
+            this._alertService.showError('An error occured during loading logs.');
+          }
+        });
+    }, delay);
   }
 }

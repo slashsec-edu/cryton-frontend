@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { HttpClient } from '@angular/common/http';
-import { CrytonRESTApiEndpoint } from '../models/enums/cryton-rest-api-endpoint.enum';
-import { ExecutionVariable } from '../models/api-responses/execution-variable.interface';
 import { Observable } from 'rxjs';
 import { catchError, mapTo } from 'rxjs/operators';
+import { Endpoint } from '../models/enums/endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExecutionVariableService extends CrytonRESTApiService<ExecutionVariable> {
-  endpoint = CrytonRESTApiService.buildEndpointURL(CrytonRESTApiEndpoint.EXECUTION_VARS, 'v1');
+export class ExecutionVariableService extends CrytonRESTApiService<Record<string, any>> {
+  endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.EXECUTION_VARS, 'v1');
 
   constructor(protected http: HttpClient) {
     super(http);
