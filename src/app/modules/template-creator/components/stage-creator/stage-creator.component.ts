@@ -167,6 +167,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stageForm.cancelEditing();
     }
     this._graphManager.restoreGraph(DepGraphRef.STAGE_CREATION);
+    this._cd.detectChanges();
   }
 
   /**
