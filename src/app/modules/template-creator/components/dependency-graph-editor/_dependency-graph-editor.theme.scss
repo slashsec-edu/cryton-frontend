@@ -4,6 +4,7 @@
   $config: mat-get-color-config($config);
   $primary: map-get($config, primary);
   $background: map-get($config, background);
+  $foreground: map-get($config, foreground);
 
   .dependency-graph--canvas-wrapper {
     background: map-get($background, background);
@@ -11,5 +12,9 @@
 
   .dependency-graph--menu {
     background: map-get($background, app-bar);
+  }
+
+  .execution-graph-editor {
+    border: 1px solid map-get($foreground, divider);
   }
 }

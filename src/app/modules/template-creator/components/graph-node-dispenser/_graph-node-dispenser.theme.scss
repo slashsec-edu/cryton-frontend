@@ -3,8 +3,10 @@
 @mixin color($config) {
   $config: mat-get-color-config($config);
   $background: map-get($config, background);
+  $foreground: map-get($config, foreground);
 
   .graph-node-dispenser--item-dispenser {
     background: map-get($background, background);
+    border: 1px solid map-get($foreground, divider);
   }
 }
