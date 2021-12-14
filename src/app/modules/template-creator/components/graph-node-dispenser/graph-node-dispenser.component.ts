@@ -4,7 +4,7 @@ import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph
 import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { takeUntil } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
 import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
 import { TcRoutingService } from '../../services/tc-routing.service';
 import { NodeNameNotUniqueError } from '../../classes/dependency-graph/errors/node-name-not-unique.error';
@@ -67,6 +67,18 @@ export class GraphNodeDispenserComponent implements OnInit, OnDestroy {
 
     const creationStepIndex = this.depGraphRef === DepGraphRef.TEMPLATE_CREATION ? 2 : 1;
     this._tcRouter.navigateTo(creationStepIndex);
+  }
+
+  deleteNode(node: GraphNode): void {
+    this._graphManager
+      .observeNodeEdit(this.depGraphRef)
+      .pipe(first())
+      .subscribe(editeNode => {
+        if (editeNode && editeNode === node) {
+          this._graphManager.editNode(this.depGraphRef, null);
+        }
+      });
+    this._graphManager.removeDispenserNode(this.depGraphRef, node);
   }
 
   private _createNodeManagerSub(depGraph: DependencyGraph): void {
