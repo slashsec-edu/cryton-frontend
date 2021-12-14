@@ -3,8 +3,8 @@
     <main *ngSwitchCase="'template_params'">
       <section class="buttons">
         <button mat-button (click)="openHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
-        <button mat-button (click)="currentComponent = 'dep_tree'" type="button">
-          <mat-icon color="primary">account_tree</mat-icon> Show dependency tree
+        <button mat-button (click)="currentComponent = 'dep_graph'" type="button">
+          <mat-icon color="primary">account_tree</mat-icon> Show dependency graph
         </button>
         <button mat-button (click)="currentComponent = 'timeline'" type="button">
           <mat-icon color="primary">schedule</mat-icon> Show timeline
@@ -39,13 +39,13 @@
         </form>
       </section>
     </main>
-    <div *ngSwitchCase="'dep_tree'">
-      <app-dependency-tree-editor
+    <div *ngSwitchCase="'dep_graph'">
+      <app-dependency-graph-editor
         (navigate)="currentComponent = $event"
-        [depTreeRef]="templateDepTreeRef"
-        [navigationButtons]="depTreeNavigationBtns"
+        [depGraphRef]="templateDepGraphRef"
+        [navigationButtons]="depGraphNavigationBtns"
         nodeName="stage"
-      ></app-dependency-tree-editor>
+      ></app-dependency-graph-editor>
     </div>
     <div *ngSwitchCase="'timeline'">
       <app-timeline [navigationButtons]="timelineNavigationBtns" (navigate)="currentComponent = $event"></app-timeline>

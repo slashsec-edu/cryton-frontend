@@ -21,8 +21,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 // COMPONENTS
 import { StepCreatorComponent } from './components/step-creator/step-creator.component';
-import { TreeNodeDispenserComponent } from './components/tree-node-dispenser/tree-node-dispenser.component';
-import { DependencyTreeEditorComponent } from './components/dependency-tree-editor/dependency-tree-editor.component';
+import { GraphNodeDispenserComponent } from './components/graph-node-dispenser/graph-node-dispenser.component';
+import { DependencyGraphEditorComponent } from './components/dependency-graph-editor/dependency-graph-editor.component';
 import { StageCreatorComponent } from './components/stage-creator/stage-creator.component';
 import { CreateStagePageComponent } from './pages/creation-steps/create-stage-page/create-stage-page.component';
 import { EdgeParametersComponent } from './components/edge-parameters/edge-parameters.component';
@@ -30,7 +30,7 @@ import { CreateTemplatePageComponent } from './pages/creation-steps/create-templ
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TimelineNodeParametersComponent } from './components/timeline-node-parameters/timeline-node-parameters.component';
 import { StageParametersComponent } from './components/stage-parameters/stage-parameters.component';
-import { TreeEditorToolbarComponent } from './components/tree-editor-toolbar/tree-editor-toolbar.component';
+import { GraphEditorToolbarComponent } from './components/graph-editor-toolbar/graph-editor-toolbar.component';
 import { DeltaTriggerParametersComponent } from './components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { HttpTriggerParametersComponent } from './components/http-trigger-parameters/http-trigger-parameters.component';
 import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
@@ -40,28 +40,28 @@ import { TemplateTimelineHelpComponent } from './pages/help-pages/template-timel
 import { StepCreatorHelpComponent } from './pages/help-pages/step-creator-help/step-creator-help.component';
 import { StageCreatorHelpComponent } from './pages/help-pages/stage-creator-help/stage-creator-help.component';
 import { TemplateCreatorHelpComponent } from './pages/help-pages/template-creator-help/template-creator-help.component';
-import { DependencyTreeHelpComponent } from './pages/help-pages/dependency-tree-help/dependency-tree-help.component';
+import { DependencyGraphHelpComponent } from './pages/help-pages/dependency-graph-help/dependency-graph-help.component';
 import { TemplateYamlPreviewComponent } from './components/template-yaml-preview/template-yaml-preview.component';
 
 @NgModule({
   declarations: [
     StepCreatorComponent,
-    TreeNodeDispenserComponent,
-    DependencyTreeEditorComponent,
+    GraphNodeDispenserComponent,
+    DependencyGraphEditorComponent,
     StageCreatorComponent,
     EdgeParametersComponent,
     CreateTemplatePageComponent,
     TimelineComponent,
     TimelineNodeParametersComponent,
     StageParametersComponent,
-    TreeEditorToolbarComponent,
+    GraphEditorToolbarComponent,
     DeltaTriggerParametersComponent,
     HttpTriggerParametersComponent,
     TemplateTimelineHelpComponent,
     StepCreatorHelpComponent,
     StageCreatorHelpComponent,
     TemplateCreatorHelpComponent,
-    DependencyTreeHelpComponent,
+    DependencyGraphHelpComponent,
     TemplateCreatorPageComponent,
     TemplateCreatorIntroductionComponent,
     CreateStagePageComponent,

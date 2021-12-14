@@ -3,22 +3,22 @@ import { TemplateService } from 'src/app/services/template.service';
 import { Spied } from 'src/app/testing/utility/utility-types';
 import { TemplateConverterService } from './template-converter.service';
 import {
-  basicTemplateDepTree,
+  basicTemplateDepGraph,
   basicTemplateDescription
 } from 'src/app/testing/mockdata/cryton-templates/basic-template';
-import { httpTemplateDepTree, httpTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/http-template';
+import { httpTemplateDepGraph, httpTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/http-template';
 import {
-  advancedTemplateDepTree,
+  advancedTemplateDepGraph,
   advancedTemplateDescription
 } from 'src/app/testing/mockdata/cryton-templates/advanced-template';
-import { DependencyTreeManagerService } from './dependency-tree-manager.service';
+import { DependencyGraphManagerService } from './dependency-graph-manager.service';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { TemplateCreatorStateService } from './template-creator-state.service';
-import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
 import { NodeType } from '../models/enums/node-type';
 import { parse } from 'yaml';
 import { TemplateDescription } from '../models/interfaces/template-description';
-import { TreeComparator } from 'src/app/testing/utility/tree-comparator';
+import { GraphComparator } from 'src/app/testing/utility/graph-comparator';
 
 class StateServiceFake {
   name = {
@@ -56,12 +56,12 @@ describe('TemplateConverterService', () => {
 
   const templateServiceStub = jasmine.createSpyObj('TemplateService', ['getTemplateDetail']) as Spied<TemplateService>;
 
-  const treeManagerStub = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree',
-    'resetCurrentTree',
+  const graphManagerStub = jasmine.createSpyObj('DependencyGraphManagerService', [
+    'getCurrentGraph',
+    'resetCurrentGraph',
     'removeDispenserNode',
     'addDispenserNode'
-  ]) as Spied<DependencyTreeManagerService>;
+  ]) as Spied<DependencyGraphManagerService>;
 
   const stateServiceFake = new StateServiceFake();
 
@@ -70,9 +70,9 @@ describe('TemplateConverterService', () => {
     return { name: templateDescription.plan.name, owner: templateDescription.plan.owner };
   };
 
-  const runTemplateTests = (depTree: DependencyTree, description: string): void => {
+  const runTemplateTests = (depGraph: DependencyGraph, description: string): void => {
     it('should correctly export basic template', () => {
-      treeManagerStub.getCurrentTree.and.returnValue({ value: depTree });
+      graphManagerStub.getCurrentGraph.and.returnValue({ value: depGraph });
 
       const nameAndOnwer = getNameAndOwner(description);
       stateServiceFake.templateForm.setValue({ name: nameAndOnwer.name, owner: nameAndOnwer.owner });
@@ -83,8 +83,8 @@ describe('TemplateConverterService', () => {
     });
 
     it('should correctly import basic template', () => {
-      const testingDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
-      treeManagerStub.getCurrentTree.and.returnValue({ value: testingDepTree });
+      const testingDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
+      graphManagerStub.getCurrentGraph.and.returnValue({ value: testingDepGraph });
 
       service.importYAMLTemplate(description);
 
@@ -93,7 +93,7 @@ describe('TemplateConverterService', () => {
       expect(stateServiceFake.name.value).toEqual(nameAndOnwer.name);
       expect(stateServiceFake.owner.value).toEqual(nameAndOnwer.owner);
 
-      expect(TreeComparator.compareTrees(depTree, testingDepTree)).toBeTrue();
+      expect(GraphComparator.compareGraphs(depGraph, testingDepGraph)).toBeTrue();
     });
   };
 
@@ -101,13 +101,13 @@ describe('TemplateConverterService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: TemplateService, useValue: templateServiceStub },
-        { provide: DependencyTreeManagerService, useValue: treeManagerStub },
+        { provide: DependencyGraphManagerService, useValue: graphManagerStub },
         { provide: TemplateCreatorStateService, useValue: stateServiceFake }
       ]
     });
     service = TestBed.inject(TemplateConverterService);
 
-    treeManagerStub.getCurrentTree.and.returnValue(null);
+    graphManagerStub.getCurrentGraph.and.returnValue(null);
     stateServiceFake.reset();
   });
 
@@ -116,14 +116,14 @@ describe('TemplateConverterService', () => {
   });
 
   describe('Basic template tests', () => {
-    runTemplateTests(basicTemplateDepTree, basicTemplateDescription);
+    runTemplateTests(basicTemplateDepGraph, basicTemplateDescription);
   });
 
   describe('HTTP listener template tests', () => {
-    runTemplateTests(httpTemplateDepTree, httpTemplateDescription);
+    runTemplateTests(httpTemplateDepGraph, httpTemplateDescription);
   });
 
   describe('Advanced template tests', () => {
-    runTemplateTests(advancedTemplateDepTree, advancedTemplateDescription);
+    runTemplateTests(advancedTemplateDepGraph, advancedTemplateDescription);
   });
 });

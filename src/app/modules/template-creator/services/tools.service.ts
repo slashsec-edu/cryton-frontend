@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
 
 @Injectable({
   providedIn: 'root'
@@ -7,23 +7,23 @@ import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
 export class ToolsService {
   constructor() {}
 
-  enableSwap(depTree: DependencyTree): void {
-    depTree.toolState.flipSwapTool();
+  enableSwap(depGraph: DependencyGraph): void {
+    depGraph.toolState.flipSwapTool();
   }
 
-  enableDelete(depTree: DependencyTree): void {
-    depTree.toolState.flipDeleteTool();
+  enableDelete(depGraph: DependencyGraph): void {
+    depGraph.toolState.flipDeleteTool();
   }
 
-  enableNodeMove(depTree: DependencyTree): void {
-    depTree.toolState.flipMoveNodeTool(depTree.treeNodeManager.nodes);
+  enableNodeMove(depGraph: DependencyGraph): void {
+    depGraph.toolState.flipMoveNodeTool(depGraph.graphNodeManager.nodes);
   }
 
-  rescale(depTree: DependencyTree, increment: number): void {
-    depTree.rescale(increment);
+  rescale(depGraph: DependencyGraph, increment: number): void {
+    depGraph.rescale(increment);
   }
 
-  fitInsideScreen(depTree: DependencyTree): void {
-    depTree.fitScreen();
+  fitInsideScreen(depGraph: DependencyGraph): void {
+    depGraph.fitScreen();
   }
 }

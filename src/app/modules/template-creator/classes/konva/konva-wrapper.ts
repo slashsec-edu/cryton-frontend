@@ -3,7 +3,7 @@ import Konva from 'konva';
 import { Observable, Subscription } from 'rxjs';
 import { Theme } from '../../models/interfaces/theme';
 import { tcLightTheme } from '../../styles/themes/template-creator-light.theme';
-import { CursorState } from '../dependency-tree/cursor-state';
+import { CursorState } from '../dependency-graph/cursor-state';
 
 export abstract class KonvaWrapper {
   cursorState = new CursorState();

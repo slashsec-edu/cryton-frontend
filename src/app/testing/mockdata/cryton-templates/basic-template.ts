@@ -1,19 +1,19 @@
 import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
-import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from 'src/app/modules/template-creator/classes/dependency-graph/dependency-graph';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
-import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
-import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
-import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/step-edge';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/step-node';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/step-edge';
 
 /**
- * Main template dependency tree.
+ * Main template dependency graph.
  */
-export const basicTemplateDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
+export const basicTemplateDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
 
 /**
- * Expected description of main template dependency tree.
+ * Expected description of main template dependency graph.
  */
 export const basicTemplateDescription = `plan:
   name: Basic template
@@ -47,13 +47,13 @@ export const basicTemplateDescription = `plan:
 
 // Create parents
 const basicTimeline = new TemplateTimeline();
-const basicStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+const basicStageChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
 
 // Create stage
 const basicDeltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 1, minutes: 20, seconds: 20 });
 const basicStage = new StageNode({
   name: 'stage-one',
-  childDepTree: basicStageChildDepTree,
+  childDepGraph: basicStageChildDepGraph,
   timeline: basicTimeline,
   trigger: basicDeltaTrigger
 });
@@ -61,13 +61,13 @@ const basicStage = new StageNode({
 // Create steps
 const firstStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1\nports:\n  - 22');
 const secondStep = new StepNode('bruteforce', 'mod_medusa', 'target: 127.0.0.1\ncredentials:\n  username: vagrant');
-basicStageChildDepTree.treeNodeManager.addNode(firstStep);
-basicStageChildDepTree.treeNodeManager.addNode(secondStep);
+basicStageChildDepGraph.graphNodeManager.addNode(firstStep);
+basicStageChildDepGraph.graphNodeManager.addNode(secondStep);
 
 // Create edge between steps with a condition
-const stepEdge = basicStageChildDepTree.createDraggedEdge(firstStep) as StepEdge;
-basicStageChildDepTree.connectDraggedEdge(secondStep);
+const stepEdge = basicStageChildDepGraph.createDraggedEdge(firstStep) as StepEdge;
+basicStageChildDepGraph.connectDraggedEdge(secondStep);
 stepEdge.conditions.push({ type: 'result', value: 'OK' });
 
-// Add stage to dependency tree
-basicTemplateDepTree.treeNodeManager.addNode(basicStage);
+// Add stage to dependency graph
+basicTemplateDepGraph.graphNodeManager.addNode(basicStage);

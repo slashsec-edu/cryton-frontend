@@ -1,0 +1,26 @@
+<section class="buttons">
+  <button mat-button (click)="showHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
+  <button mat-button *ngFor="let button of navigationButtons" (click)="navigateTo(button.componentName)" type="button">
+    <mat-icon color="primary">{{ button.icon }}</mat-icon
+    >{{ ' ' + button.name }}
+  </button>
+</section>
+<div class="execution-graph-creation">
+  <aside>
+    <div class="node-dispenser">
+      <app-graph-node-dispenser [depGraphRef]="depGraphRef"></app-graph-node-dispenser>
+    </div>
+  </aside>
+
+  <main>
+    <div class="graph-creation tc-responsive-container">
+      <div class="execution-graph-editor tc-responsive-container">
+        <app-graph-editor-toolbar [depGraph]="depGraph"></app-graph-editor-toolbar>
+
+        <div class="dependency-graph--canvas-wrapper">
+          <div #container id="canvas-container"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

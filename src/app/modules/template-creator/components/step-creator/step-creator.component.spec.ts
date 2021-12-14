@@ -7,15 +7,15 @@ import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spied } from 'src/app/testing/utility/utility-types';
-import { DependencyTreeManagerService } from '../../services/dependency-tree-manager.service';
-import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
+import { DependencyGraphManagerService } from '../../services/dependency-graph-manager.service';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { BehaviorSubject, of } from 'rxjs';
 import { NodeType } from '../../models/enums/node-type';
-import { NodeManager } from '../../classes/dependency-tree/node-manager';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
-import { StepNode } from '../../classes/dependency-tree/node/step-node';
-import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { StepNode } from '../../classes/dependency-graph/node/step-node';
+import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonHarness } from '@angular/material/button/testing';
 
@@ -28,11 +28,11 @@ describe('StepCreatorComponent', () => {
   let fixture: ComponentFixture<StepCreatorComponent>;
   let loader: HarnessLoader;
 
-  const testingDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+  const testingDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
 
   const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): StepNode => {
     const node = new StepNode(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs);
-    node.setParentDepTree(testingDepTree);
+    node.setParentDepGraph(testingDepGraph);
     return node;
   };
 
@@ -47,7 +47,7 @@ describe('StepCreatorComponent', () => {
   /**
    * Fake subject for simulating edit node event.
    */
-  const fakeEditNode$ = new BehaviorSubject<TreeNode>(null);
+  const fakeEditNode$ = new BehaviorSubject<GraphNode>(null);
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
@@ -60,21 +60,21 @@ describe('StepCreatorComponent', () => {
     fakeEditNode$.next(null);
   });
 
-  const depTreeSpy = jasmine.createSpyObj('DependencyTree', [], {
-    treeNodeManager: nodeManagerSpy
-  }) as Spied<DependencyTree>;
+  const depGraphSpy = jasmine.createSpyObj('DependencyGraph', [], {
+    graphNodeManager: nodeManagerSpy
+  }) as Spied<DependencyGraph>;
 
   /**
-   * Spy dependency tree manager, needed to return the spy dependency tree.
+   * Spy dependency graph manager, needed to return the spy dependency graph.
    */
-  const treeManagerSpy = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree',
+  const graphManagerSpy = jasmine.createSpyObj('DependencyGraphManagerService', [
+    'getCurrentGraph',
     'addDispenserNode',
     'observeNodeEdit',
     'refreshDispenser'
-  ]) as Spied<DependencyTreeManagerService>;
-  treeManagerSpy.getCurrentTree.and.returnValue(of(depTreeSpy));
-  treeManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
+  ]) as Spied<DependencyGraphManagerService>;
+  graphManagerSpy.getCurrentGraph.and.returnValue(of(depGraphSpy));
+  graphManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
@@ -84,7 +84,7 @@ describe('StepCreatorComponent', () => {
         declarations: [StepCreatorComponent],
         imports: [TemplateCreatorModule, BrowserAnimationsModule, NoopAnimationsModule],
         providers: [
-          { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
+          { provide: DependencyGraphManagerService, useValue: graphManagerSpy },
           { provide: AlertService, useValue: alertServiceStub },
           { provide: MatDialog, useValue: matDialogStub }
         ]
@@ -154,7 +154,7 @@ describe('StepCreatorComponent', () => {
     await getCreateBtn().then(btn => btn.click());
     tick(CREATION_MSG_TIMEOUT);
 
-    expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
+    expect(graphManagerSpy.addDispenserNode).toHaveBeenCalled();
   }));
 
   it('should not load step into editor if the same step is currently being edited', () => {

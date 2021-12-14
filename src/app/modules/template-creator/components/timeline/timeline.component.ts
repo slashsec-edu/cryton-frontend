@@ -46,8 +46,8 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.timeline.toolState.isVerticalMoveEnabled;
   }
 
-  get isTreeMoveEnabled(): boolean {
-    return this.timeline.toolState.isTreeMoveEnabled;
+  get isGraphMoveEnabled(): boolean {
+    return this.timeline.toolState.isGraphMoveEnabled;
   }
 
   constructor(

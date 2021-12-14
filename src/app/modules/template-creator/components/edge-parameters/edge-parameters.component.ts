@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EdgeCondition } from '../../models/interfaces/edge-condition';
 import { first } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
-import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
+import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
 
 @Component({
   selector: 'app-edge-parameters',
@@ -135,7 +135,7 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         if (this.data.edge.conditions.length === 0) {
           this.data.edge.destroy();
-          this.data.edge.depTree.stage.draw();
+          this.data.edge.depGraph.stage.draw();
         }
       });
   }

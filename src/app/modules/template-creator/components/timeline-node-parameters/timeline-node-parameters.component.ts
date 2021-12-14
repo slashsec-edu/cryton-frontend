@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
 
 @Component({

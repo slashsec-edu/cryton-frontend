@@ -3,14 +3,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { BuildTemplateDisplay } from '../models/enums/build-template-display.enum';
 import { StageForm } from '../classes/stage-creation/forms/stage-form';
-import { StageNode } from '../classes/dependency-tree/node/stage-node';
+import { StageNode } from '../classes/dependency-graph/node/stage-node';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TemplateCreatorStateService {
   // CREATE STAGE TAB
-  isDependencyTreeDisplayed: boolean;
+  isDependencyGraphDisplayed: boolean;
   editedStage: StageNode;
   stageForm: StageForm;
 
@@ -62,7 +62,7 @@ export class TemplateCreatorStateService {
    * Initializes default state values.
    */
   private _initState(): void {
-    this.isDependencyTreeDisplayed = false;
+    this.isDependencyGraphDisplayed = false;
     this.buildTemplateDisplayedComponent = BuildTemplateDisplay.BUILD_TEMPLATE;
     this.templateForm = this._createTemplateForm();
     this.timeline = new TemplateTimeline();

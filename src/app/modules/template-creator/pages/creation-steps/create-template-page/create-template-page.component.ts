@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { DependencyTreeManagerService, DepTreeRef } from '../../../services/dependency-tree-manager.service';
+import { DependencyGraphManagerService, DepGraphRef } from '../../../services/dependency-graph-manager.service';
 import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
 import { TemplateConverterService } from '../../../services/template-converter.service';
@@ -20,20 +20,20 @@ import { TemplateYamlPreviewComponent } from '../../../components/template-yaml-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTemplatePageComponent implements OnInit, OnDestroy {
-  templateDepTreeRef = DepTreeRef.TEMPLATE_CREATION;
+  templateDepGraphRef = DepGraphRef.TEMPLATE_CREATION;
   creating$ = new BehaviorSubject(false);
 
   currentComponent = 'template_params';
 
   // Navigation buttons
-  depTreeNavigationBtns: NavigationButton[] = [
+  depGraphNavigationBtns: NavigationButton[] = [
     { icon: 'description', name: 'Show template parameters', componentName: 'template_params' },
     { icon: 'schedule', name: 'Show timeline', componentName: 'timeline' }
   ];
 
   timelineNavigationBtns: NavigationButton[] = [
     { icon: 'description', name: 'Show template parameters', componentName: 'template_params' },
-    { icon: 'account_tree', name: 'Show dependency tree', componentName: 'dep_tree' }
+    { icon: 'account_tree', name: 'Show dependency graph', componentName: 'dep_graph' }
   ];
 
   private _destroy$ = new Subject<void>();
@@ -43,7 +43,7 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private _treeManager: DependencyTreeManagerService,
+    private _graphManager: DependencyGraphManagerService,
     private _state: TemplateCreatorStateService,
     private _templateConverter: TemplateConverterService,
     private _templateService: TemplateService,
@@ -99,7 +99,7 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: successMsg => {
           this._state.clear();
-          this._treeManager.reset();
+          this._graphManager.reset();
           this.creating$.next(false);
           this._alertService.showSuccess(successMsg);
         },
@@ -116,14 +116,14 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
    * @returns Errors string.
    */
   getCreationErrors(): string {
-    const depTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
+    const depGraph = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value;
     const errors: string[] = [];
 
     if (!this._state.templateForm.valid) {
       errors.push('Invalid template parameters.');
     }
 
-    errors.push(...depTree.errors());
+    errors.push(...depGraph.errors());
 
     return errors.map(err => '- ' + err).join('\n');
   }
@@ -134,8 +134,8 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
    * @returns True if template creation is disabled.
    */
   isCreationDisabled(): boolean {
-    const depTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
-    if (!this._state.templateForm.valid || !depTree.isValid()) {
+    const depGraph = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value;
+    if (!this._state.templateForm.valid || !depGraph.isValid()) {
       return true;
     }
     return false;

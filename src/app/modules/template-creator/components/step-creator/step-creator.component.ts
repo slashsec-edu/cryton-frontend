@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { NodeManager } from '../../classes/dependency-tree/node-manager';
-import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
-import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { StepNode } from '../../classes/dependency-graph/node/step-node';
 import { MatDialog } from '@angular/material/dialog';
 import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
 import { TcRoutingService } from '../../services/tc-routing.service';
@@ -32,12 +32,12 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
 
   private _destroy$ = new Subject<void>();
   private _stepManager: NodeManager;
-  private _parentDepTree: DependencyTree;
+  private _parentDepGraph: DependencyGraph;
   private _stepFormValueBackup: Record<string, string>;
   private _showCreationMessage$ = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private _treeManager: DependencyTreeManagerService,
+    private _graphManager: DependencyGraphManagerService,
     private _alertService: AlertService,
     private _dialog: MatDialog,
     private _tcRouter: TcRoutingService
@@ -46,7 +46,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._createDepTreeSub();
+    this._createDepGraphSub();
     this._createEditNodeSub();
     this._createCreationMsgSub();
 
@@ -85,7 +85,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       const step: StepNode = this._createStep();
       this.stepForm.reset();
       this._alertService.showSuccess('Step created successfully');
-      this._treeManager.addDispenserNode(DepTreeRef.STAGE_CREATION, step);
+      this._graphManager.addDispenserNode(DepGraphRef.STAGE_CREATION, step);
 
       this._showCreationMessage$.next(true);
     } else {
@@ -120,7 +120,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     this._stepManager.clearEditNode();
 
     // Needed to update displayed parameters in dispenser.
-    this._treeManager.refreshDispenser(DepTreeRef.STAGE_CREATION);
+    this._graphManager.refreshDispenser(DepGraphRef.STAGE_CREATION);
   }
 
   /**
@@ -154,8 +154,8 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  navigateToStagesDepTree(): void {
-    this._tcRouter.navigateTo(2, CreateStageComponent.DEP_TREE);
+  navigateToStagesDepGraph(): void {
+    this._tcRouter.navigateTo(2, CreateStageComponent.DEP_GRAPH);
   }
 
   /**
@@ -174,7 +174,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       // Reset unique name validator so that it ignores edited node name.
       const nameControl = this.stepForm.get('name');
 
-      if (this._parentDepTree) {
+      if (this._parentDepGraph) {
         nameControl.clearValidators();
         nameControl.setValidators([Validators.required, this._uniqueNameValidator]);
         nameControl.updateValueAndValidity();
@@ -209,26 +209,26 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Subscribes to stage creation dep. tree subject in manager.
+   * Subscribes to stage creation dep. graph subject in manager.
    *
    * On every next():
-   * - Saves current dep. tree and node manager to a local variable.
+   * - Saves current dep. graph and node manager to a local variable.
    * - Creates edit node subscription.
    */
-  private _createDepTreeSub(): void {
-    this._treeManager
-      .getCurrentTree(DepTreeRef.STAGE_CREATION)
+  private _createDepGraphSub(): void {
+    this._graphManager
+      .getCurrentGraph(DepGraphRef.STAGE_CREATION)
       .pipe(takeUntil(this._destroy$))
-      .subscribe(depTree => {
-        this._parentDepTree = depTree;
-        this._stepManager = depTree.treeNodeManager;
+      .subscribe(depGraph => {
+        this._parentDepGraph = depGraph;
+        this._stepManager = depGraph.graphNodeManager;
         this.stepForm.get('name').setValidators([Validators.required, this._uniqueNameValidator]);
       });
   }
 
   private _createEditNodeSub(): void {
-    this._treeManager
-      .observeNodeEdit(DepTreeRef.STAGE_CREATION)
+    this._graphManager
+      .observeNodeEdit(DepGraphRef.STAGE_CREATION)
       .pipe(takeUntil(this._destroy$))
       .subscribe((step: StepNode) => {
         if (step) {
@@ -256,7 +256,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @returns Validation errors.
    */
   private _uniqueNameValidator = (control: AbstractControl): ValidationErrors | null =>
-    this._parentDepTree.treeNodeManager.isNodeNameUnique(control.value, this.editedStep?.name ?? null)
+    this._parentDepGraph.graphNodeManager.isNodeNameUnique(control.value, this.editedStep?.name ?? null)
       ? null
       : { notUnique: true };
 }

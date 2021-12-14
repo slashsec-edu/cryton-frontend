@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TimelineNodeParametersComponent } from './timeline-node-parameters.component';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
-import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { NodeType } from '../../models/enums/node-type';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
 import { TriggerFactory } from '../../classes/triggers/trigger-factory';
@@ -20,25 +20,25 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 import { MatDialogModule } from '@angular/material/dialog';
 
 describe('TimelineNodeParametersComponent', () => {
   let component: TimelineNodeParametersComponent;
   let fixture: ComponentFixture<TimelineNodeParametersComponent>;
 
-  const testingParentDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
-  const testingChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+  const testingParentDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
+  const testingChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
   const testingTimeline = new TemplateTimeline();
   const testingTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 });
 
   const testingStage = new StageNode({
     name: 'Testing stage',
-    childDepTree: testingChildDepTree,
+    childDepGraph: testingChildDepGraph,
     timeline: testingTimeline,
     trigger: testingTrigger
   });
-  testingStage.setParentDepTree(testingParentDepTree);
+  testingStage.setParentDepGraph(testingParentDepGraph);
   const dialogDataStub = jasmine.createSpyObj('MAT_DIALOG_DATA', [], { stage: testingStage }) as Spied<{
     stage: StageNode;
   }>;

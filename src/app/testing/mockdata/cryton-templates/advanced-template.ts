@@ -1,19 +1,19 @@
 import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
-import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from 'src/app/modules/template-creator/classes/dependency-graph/dependency-graph';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
-import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
-import { StepNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/step-node';
-import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/step-edge';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/stage-node';
+import { StepNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/step-node';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/step-edge';
 
 /**
- * Main template dependency tree.
+ * Main template dependency graph.
  */
-export const advancedTemplateDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
+export const advancedTemplateDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
 
 /**
- * Expected description of main template dependency tree.
+ * Expected description of main template dependency graph.
  */
 export const advancedTemplateDescription = `plan:
   name: Advanced example
@@ -80,14 +80,14 @@ export const advancedTemplateDescription = `plan:
 
 // Create parents
 const timeline = new TemplateTimeline();
-const deltaStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
-const httpStageChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+const deltaStageChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
+const httpStageChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
 
 // Create delta stage
 const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 5 });
 const deltaStage = new StageNode({
   name: 'stage-one',
-  childDepTree: deltaStageChildDepTree,
+  childDepGraph: deltaStageChildDepGraph,
   timeline,
   trigger: deltaTrigger
 });
@@ -97,14 +97,14 @@ const deltaStageStepTwo = new StepNode(
   'mod_medusa',
   `target: "{{ target }}"\ncredentials:\n  username: "{{ username }}"`
 );
-deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepOne);
-deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepTwo);
+deltaStageChildDepGraph.graphNodeManager.addNode(deltaStageStepOne);
+deltaStageChildDepGraph.graphNodeManager.addNode(deltaStageStepTwo);
 
-const edgeOne = deltaStageChildDepTree.createDraggedEdge(deltaStageStepOne);
-deltaStageChildDepTree.connectDraggedEdge(deltaStageStepTwo);
+const edgeOne = deltaStageChildDepGraph.createDraggedEdge(deltaStageStepOne);
+deltaStageChildDepGraph.connectDraggedEdge(deltaStageStepTwo);
 (edgeOne as StepEdge).conditions.push({ type: 'result', value: 'OK' });
 
-advancedTemplateDepTree.treeNodeManager.addNode(deltaStage);
+advancedTemplateDepGraph.graphNodeManager.addNode(deltaStage);
 
 // Create HTTP listener stage
 const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
@@ -114,7 +114,7 @@ const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
 });
 const httpStage = new StageNode({
   name: 'stage-two',
-  childDepTree: httpStageChildDepTree,
+  childDepGraph: httpStageChildDepGraph,
   timeline,
   trigger: httpTrigger
 });
@@ -129,13 +129,13 @@ const httpStageStepTwo = new StepNode(
   'mod_cmd',
   `use_named_session: session_to_target_1\ncmd: "{{ commands.passwd }}"`
 );
-httpStageChildDepTree.treeNodeManager.addNode(httpStageStepOne);
-httpStageChildDepTree.treeNodeManager.addNode(httpStageStepTwo);
-advancedTemplateDepTree.treeNodeManager.addNode(httpStage);
+httpStageChildDepGraph.graphNodeManager.addNode(httpStageStepOne);
+httpStageChildDepGraph.graphNodeManager.addNode(httpStageStepTwo);
+advancedTemplateDepGraph.graphNodeManager.addNode(httpStage);
 
-const edgeTwo = httpStageChildDepTree.createDraggedEdge(httpStageStepOne);
-httpStageChildDepTree.connectDraggedEdge(httpStageStepTwo);
+const edgeTwo = httpStageChildDepGraph.createDraggedEdge(httpStageStepOne);
+httpStageChildDepGraph.connectDraggedEdge(httpStageStepTwo);
 (edgeTwo as StepEdge).conditions.push({ type: 'result', value: 'OK' });
 
-advancedTemplateDepTree.createDraggedEdge(deltaStage);
-advancedTemplateDepTree.connectDraggedEdge(httpStage);
+advancedTemplateDepGraph.createDraggedEdge(deltaStage);
+advancedTemplateDepGraph.connectDraggedEdge(httpStage);

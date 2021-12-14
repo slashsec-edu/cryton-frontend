@@ -1,6 +1,6 @@
 export class ToolState {
   isVerticalMoveEnabled = false;
-  isTreeMoveEnabled = false;
+  isGraphMoveEnabled = false;
 
   constructor() {}
 
@@ -8,7 +8,7 @@ export class ToolState {
     this.isVerticalMoveEnabled = !this.isVerticalMoveEnabled;
   }
 
-  flipTreeMove(): void {
-    this.isTreeMoveEnabled = !this.isTreeMoveEnabled;
+  flipGraphMove(): void {
+    this.isGraphMoveEnabled = !this.isGraphMoveEnabled;
   }
 }

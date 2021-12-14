@@ -3,8 +3,8 @@
   <button mat-button (click)="eraseParameters()" type="button">
     <mat-icon color="primary">delete</mat-icon> Erase parameters
   </button>
-  <button mat-button (click)="navigate.emit(CreateStageComponent.DEP_TREE)" id="build-dep-tree-btn" type="button">
-    <mat-icon color="primary">account_tree</mat-icon> Show dependency tree
+  <button mat-button (click)="navigate.emit(CreateStageComponent.DEP_GRAPH)" id="build-dep-graph-btn" type="button">
+    <mat-icon color="primary">account_tree</mat-icon> Show dependency graph
   </button>
 
   <ng-container *ngIf="!editedStage; else saveChanges">
@@ -47,9 +47,9 @@
       <div class="stage-params cryton-scrollbar">
         <h5>STAGE PARAMETERS</h5>
         <app-stage-parameters
-          *ngIf="parentDepTree?.treeNodeManager"
+          *ngIf="parentDepGraph?.graphNodeManager"
           [stageForm]="stageForm"
-          [nodeManager]="parentDepTree.treeNodeManager"
+          [nodeManager]="parentDepGraph.graphNodeManager"
         ></app-stage-parameters>
       </div>
     </div>
@@ -57,16 +57,16 @@
 
   <mat-divider [vertical]="true" class="hideable"></mat-divider>
 
-  <!-- EXECUTION TREE PREVIEW -->
+  <!-- EXECUTION GRAPH PREVIEW -->
   <div class="flex-section hideable">
-    <div class="tree-preview-wrapper">
-      <h5 id="tree-preview-header">TREE PREVIEW</h5>
-      <div #container id="stage-creator--tree-preview"></div>
+    <div class="graph-preview-wrapper">
+      <h5 id="graph-preview-header">GRAPH PREVIEW</h5>
+      <div #container id="stage-creator--graph-preview"></div>
     </div>
   </div>
 </main>
 
 <span *ngIf="showCreationMessage$ | async"
   >Stage created! You can find it in
-  <span class="tc-route" (click)="navigateToTemplatesDepTree()">template's dependency tree</span>.</span
+  <span class="tc-route" (click)="navigateToTemplatesDepGraph()">template's dependency graph</span>.</span
 >

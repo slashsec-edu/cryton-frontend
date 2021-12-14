@@ -4,11 +4,11 @@ import { NodeType } from '../../models/enums/node-type';
 import { Theme } from '../../models/interfaces/theme';
 import { DeltaTrigger } from '../triggers/delta-trigger';
 import { Trigger } from '../triggers/trigger';
-import { DependencyTree } from '../dependency-tree/dependency-tree';
+import { DependencyGraph } from '../dependency-graph/dependency-graph';
 import { TemplateTimeline } from './template-timeline';
 import { TimelineEdge } from './timeline-edge';
 import { EDGE_ARROW_NAME } from './timeline-edge-constants';
-import { StageNode } from '../dependency-tree/node/stage-node';
+import { StageNode } from '../dependency-graph/node/stage-node';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
@@ -20,32 +20,32 @@ describe('TimelineEdge', () => {
   let timelineEdge: TimelineEdge;
 
   // Environment
-  let parentDepTree: DependencyTree;
+  let parentDepGraph: DependencyGraph;
   let timeline: TemplateTimeline;
   const theme$ = new BehaviorSubject<Theme>(mockTheme);
 
   // Parent and child stage
   let parentStage: StageNode;
-  let parentStageDepTree: DependencyTree;
-  let childStageDepTree: DependencyTree;
+  let parentStageDepGraph: DependencyGraph;
+  let childStageDepGraph: DependencyGraph;
   let childStage: StageNode;
 
   const createEdge = (parentTrigger: Trigger<Record<string, any>>, childTrigger: Trigger<Record<string, any>>) => {
     parentStage = new StageNode({
       name: 'parent',
-      childDepTree: parentStageDepTree,
+      childDepGraph: parentStageDepGraph,
       timeline,
       trigger: parentTrigger
     });
     childStage = new StageNode({
       name: 'child',
-      childDepTree: childStageDepTree,
+      childDepGraph: childStageDepGraph,
       timeline,
       trigger: childTrigger
     });
 
-    parentStage.setParentDepTree(parentDepTree);
-    childStage.setParentDepTree(parentDepTree);
+    parentStage.setParentDepGraph(parentDepGraph);
+    childStage.setParentDepGraph(parentDepGraph);
 
     timeline.addNode(parentStage.timelineNode);
     timeline.addNode(childStage.timelineNode);
@@ -97,9 +97,9 @@ describe('TimelineEdge', () => {
     fixture = TestBed.createComponent(KonvaContainerComponent);
     component = fixture.componentInstance;
 
-    parentDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
-    parentStageDepTree = new DependencyTree(NodeType.CRYTON_STEP);
-    childStageDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+    parentDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
+    parentStageDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
+    childStageDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
     timeline = new TemplateTimeline();
     component.afterInit = () => timeline.initKonva(component.konvaContainer.nativeElement, theme$.asObservable());
     fixture.detectChanges();

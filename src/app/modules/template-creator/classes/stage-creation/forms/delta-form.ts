@@ -1,7 +1,7 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DeltaTriggerParametersComponent } from '../../../components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { DeltaArgs } from '../../../models/interfaces/delta-args';
-import { StageNode } from '../../dependency-tree/node/stage-node';
+import { StageNode } from '../../dependency-graph/node/stage-node';
 import { FormUtils } from './form-utils';
 import { TriggerForm } from './trigger-form.interface';
 

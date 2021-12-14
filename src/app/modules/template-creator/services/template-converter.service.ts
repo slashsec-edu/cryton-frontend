@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { parse, stringify } from 'yaml';
-import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
 import { NodeType } from '../models/enums/node-type';
 import {
   TemplateDescription,
@@ -8,7 +8,7 @@ import {
   StepDescription,
   StepEdgeDescription
 } from '../models/interfaces/template-description';
-import { DependencyTreeManagerService, DepTreeRef } from './dependency-tree-manager.service';
+import { DependencyGraphManagerService, DepGraphRef } from './dependency-graph-manager.service';
 import { TemplateCreatorStateService } from './template-creator-state.service';
 import { NodeOrganizer, OrganizerNodeType } from '../classes/utils/node-organizer';
 import { Observable, of } from 'rxjs';
@@ -17,9 +17,9 @@ import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { TemplateService } from 'src/app/services/template.service';
 import { TemplateDetail } from 'src/app/models/api-responses/template-detail.interface';
 import { TriggerFactory } from '../classes/triggers/trigger-factory';
-import { StageNode } from '../classes/dependency-tree/node/stage-node';
-import { StepNode } from '../classes/dependency-tree/node/step-node';
-import { StepEdge } from '../classes/dependency-tree/edge/step-edge';
+import { StageNode } from '../classes/dependency-graph/node/stage-node';
+import { StepNode } from '../classes/dependency-graph/node/step-node';
+import { StepEdge } from '../classes/dependency-graph/edge/step-edge';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ import { StepEdge } from '../classes/dependency-tree/edge/step-edge';
 export class TemplateConverterService {
   constructor(
     private _state: TemplateCreatorStateService,
-    private _treeManager: DependencyTreeManagerService,
+    private _graphManager: DependencyGraphManagerService,
     private _templateService: TemplateService
   ) {}
 
@@ -56,7 +56,7 @@ export class TemplateConverterService {
    */
   importTemplate(template: TemplateDescription): void {
     this._resetTemplateCreator();
-    const parentDepTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
+    const parentDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value;
     const stageOrganizer = new NodeOrganizer(OrganizerNodeType.STAGE);
 
     this._state.templateForm.setValue({
@@ -67,8 +67,8 @@ export class TemplateConverterService {
     const stagesWithParents: Record<string, { stage: StageNode; parents: string[] }> = {};
 
     template.plan.stages.forEach(stageDescription => {
-      const stage = this._createStage(stageDescription, parentDepTree);
-      stage.parentDepTree.treeNodeManager.addNode(stage);
+      const stage = this._createStage(stageDescription, parentDepGraph);
+      stage.parentDepGraph.graphNodeManager.addNode(stage);
       stagesWithParents[stageDescription.name] = {
         stage,
         parents: stageDescription.depends_on
@@ -78,8 +78,8 @@ export class TemplateConverterService {
     this._createStageEdges(stagesWithParents);
     stageOrganizer.organizeNodes(Object.values(stagesWithParents).map(stageWithParent => stageWithParent.stage));
 
-    parentDepTree.updateAllEdges();
-    parentDepTree.treeLayer.draw();
+    parentDepGraph.updateAllEdges();
+    parentDepGraph.graphLayer.draw();
   }
 
   /**
@@ -88,18 +88,18 @@ export class TemplateConverterService {
    * @returns YAML description of the template.
    */
   exportYAMLTemplate(): string {
-    const templateDepTree = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value;
+    const templateDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value;
     const name = this._state.templateForm.get('name').value as string;
     const owner = this._state.templateForm.get('owner').value as string;
 
     const template: TemplateDescription = { plan: { name, owner, stages: [] } };
 
-    templateDepTree.treeNodeManager.nodes.forEach((node: StageNode) => {
+    templateDepGraph.graphNodeManager.nodes.forEach((node: StageNode) => {
       const stage: StageDescription = {
         name: node.name,
         trigger_type: node.trigger.getType(),
         trigger_args: node.trigger.getArgs(),
-        steps: this._createStepsYaml(node.childDepTree.treeNodeManager.nodes as StepNode[])
+        steps: this._createStepsYaml(node.childDepGraph.graphNodeManager.nodes as StepNode[])
       };
 
       if (node.parentEdges.length > 0) {
@@ -117,8 +117,8 @@ export class TemplateConverterService {
 
   private _resetTemplateCreator(): void {
     this._state.timeline = new TemplateTimeline();
-    this._treeManager.resetCurrentTree(DepTreeRef.TEMPLATE_CREATION);
-    this._treeManager.resetCurrentTree(DepTreeRef.STAGE_CREATION);
+    this._graphManager.resetCurrentGraph(DepGraphRef.TEMPLATE_CREATION);
+    this._graphManager.resetCurrentGraph(DepGraphRef.STAGE_CREATION);
   }
 
   /**
@@ -161,37 +161,37 @@ export class TemplateConverterService {
    * Creates cryton stage from the YAML description.
    *
    * @param stageDescription YAML description of the stage.
-   * @param parentDepTree Stage's parent dependency tree.
+   * @param parentDepGraph Stage's parent dependency graph.
    * @returns Cryton stage.
    */
-  private _createStage(stageDescription: StageDescription, parentDepTree: DependencyTree): StageNode {
-    const childDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+  private _createStage(stageDescription: StageDescription, parentDepGraph: DependencyGraph): StageNode {
+    const childDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
     const parentTimeline = this._state.timeline;
     const stepOrganizer = new NodeOrganizer(OrganizerNodeType.STEP);
 
     const stepsWithEdges: Record<string, { step: StepNode; next: StepEdgeDescription[] }> = {};
 
     stageDescription.steps.forEach(stepDescription => {
-      const step = this._createStep(stepDescription, childDepTree);
-      childDepTree.treeNodeManager.addNode(step);
+      const step = this._createStep(stepDescription, childDepGraph);
+      childDepGraph.graphNodeManager.addNode(step);
       stepsWithEdges[stepDescription.name] = { step, next: stepDescription.next };
     });
     this._createStepEdges(stepsWithEdges);
     const rootNode = Object.values(stepsWithEdges).find(step => step.step.parentEdges.length === 0);
-    stepOrganizer.organizeTree(rootNode.step);
+    stepOrganizer.organizeGraph(rootNode.step);
 
-    childDepTree.updateAllEdges();
-    childDepTree.treeLayer.draw();
+    childDepGraph.updateAllEdges();
+    childDepGraph.graphLayer.draw();
 
     const trigger = TriggerFactory.createTrigger(stageDescription.trigger_type, stageDescription.trigger_args);
 
     const crytonStage = new StageNode({
       name: stageDescription.name,
-      childDepTree,
+      childDepGraph,
       timeline: parentTimeline,
       trigger
     });
-    crytonStage.setParentDepTree(parentDepTree);
+    crytonStage.setParentDepGraph(parentDepGraph);
 
     return crytonStage;
   }
@@ -200,16 +200,16 @@ export class TemplateConverterService {
    * Creates step from the YAML representation.
    *
    * @param stepDescription YAML description of the step.
-   * @param parentDepTree Step's parent dependency tree.
+   * @param parentDepGraph Step's parent dependency graph.
    * @returns Cryton step.
    */
-  private _createStep(stepDescription: StepDescription, parentDepTree: DependencyTree): StepNode {
+  private _createStep(stepDescription: StepDescription, parentDepGraph: DependencyGraph): StepNode {
     const step = new StepNode(
       stepDescription.name,
       stepDescription.attack_module,
       stringify(stepDescription.attack_module_args)
     );
-    step.setParentDepTree(parentDepTree);
+    step.setParentDepGraph(parentDepGraph);
 
     return step;
   }
@@ -256,8 +256,8 @@ export class TemplateConverterService {
    * @returns Cryton step edge.
    */
   private _createStepEdge(parentNode: StepNode, childNode: StepNode): StepEdge {
-    const edge = parentNode.parentDepTree.createDraggedEdge(parentNode) as StepEdge;
-    parentNode.parentDepTree.connectDraggedEdge(childNode);
+    const edge = parentNode.parentDepGraph.createDraggedEdge(parentNode) as StepEdge;
+    parentNode.parentDepGraph.connectDraggedEdge(childNode);
     return edge;
   }
 
@@ -269,8 +269,8 @@ export class TemplateConverterService {
   private _createStageEdges(stages: Record<string, { stage: StageNode; parents: string[] }>) {
     Object.values(stages).forEach(stageWithParent => {
       stageWithParent.parents?.forEach(parent => {
-        stageWithParent.stage.parentDepTree.createDraggedEdge(stages[parent].stage);
-        stageWithParent.stage.parentDepTree.connectDraggedEdge(stageWithParent.stage);
+        stageWithParent.stage.parentDepGraph.createDraggedEdge(stages[parent].stage);
+        stageWithParent.stage.parentDepGraph.connectDraggedEdge(stageWithParent.stage);
       });
     });
   }

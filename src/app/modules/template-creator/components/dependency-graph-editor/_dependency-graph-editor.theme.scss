@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $background: map-get($config, background);
+
+  .dependency-graph--canvas-wrapper {
+    background: map-get($background, background);
+  }
+
+  .dependency-graph--menu {
+    background: map-get($background, app-bar);
+  }
+}

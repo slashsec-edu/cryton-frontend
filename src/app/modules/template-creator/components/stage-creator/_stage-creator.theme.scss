@@ -5,7 +5,7 @@
   $background: map-get($config, background);
   $foreground: map-get($config, foreground);
 
-  #stage-creator--tree-preview {
+  #stage-creator--graph-preview {
     background: map-get($background, background);
     border: 1px solid map-get($foreground, divider);
   }

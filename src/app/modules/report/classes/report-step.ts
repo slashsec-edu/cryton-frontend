@@ -4,7 +4,7 @@ import { StepExecutionReport } from 'src/app/models/api-responses/report/step-ex
 import { TimelineUtils } from '../../shared/classes/timeline-utils';
 import { TimelineParams } from '../../shared/models/interfaces/timeline-params.interface';
 import { TimelineShape } from '../../shared/models/interfaces/timeline-shape.interface';
-import { Cursor, CursorState } from '../../template-creator/classes/dependency-tree/cursor-state';
+import { Cursor, CursorState } from '../../template-creator/classes/dependency-graph/cursor-state';
 import { Theme } from '../../template-creator/models/interfaces/theme';
 import { FILL_MAP } from './report-constants';
 

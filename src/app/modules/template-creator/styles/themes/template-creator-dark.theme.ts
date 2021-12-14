@@ -1,8 +1,8 @@
 import { TCTheme } from '../../models/interfaces/template-creator-theme';
 
 export const tcDarkTheme: TCTheme = {
-  treeNodeRect: '#4d4d4d',
-  treeEdge: '#cbcbcb',
+  graphNodeRect: '#4d4d4d',
+  graphEdge: '#cbcbcb',
   tick: '#5a5959',
   leadingTick: '#9b9b9b',
   timemarkText: '#e1e1e1',

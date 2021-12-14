@@ -10,14 +10,14 @@ main {
   justify-content: center;
   align-items: center;
 }
-.tree-preview-wrapper {
+.graph-preview-wrapper {
   width: 65%;
   max-width: 330px;
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  #tree-preview-header {
+  #graph-preview-header {
     align-self: flex-start;
   }
 }
@@ -47,8 +47,8 @@ main {
   padding-right: $scrollbar-padding;
 }
 
-/* DEPENDENCY TREE PREVIEW */
-#stage-creator--tree-preview {
+/* DEPENDENCY GRAPH PREVIEW */
+#stage-creator--graph-preview {
   position: relative;
   height: 0;
   width: 100%;
@@ -74,7 +74,7 @@ main {
   .params-wrapper {
     width: 50%;
   }
-  #build-dep-tree-btn {
+  #build-dep-graph-btn {
     margin-left: 10px;
   }
 }

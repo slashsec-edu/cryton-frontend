@@ -6,7 +6,7 @@ import { NodeOrganizer } from '../utils/node-organizer';
 import { OrganizerNodeType } from '../utils/node-organizer';
 import { Timeline } from 'src/app/modules/shared/classes/timeline';
 import { NodeMover } from './node-mover';
-import { StageNode } from '../dependency-tree/node/stage-node';
+import { StageNode } from '../dependency-graph/node/stage-node';
 
 export class TemplateTimeline extends Timeline {
   nodeOrganizer = new NodeOrganizer(OrganizerNodeType.TIMELINE);
@@ -158,7 +158,7 @@ export class TemplateTimeline extends Timeline {
     this.mainLayer.add(edge.konvaObject);
     this._edges.push(edge);
     edge.konvaObject.moveToBottom();
-    this.nodeOrganizer.organizeTree(edge.parentNode);
+    this.nodeOrganizer.organizeGraph(edge.parentNode);
     this.mainLayer.draw();
   }
 

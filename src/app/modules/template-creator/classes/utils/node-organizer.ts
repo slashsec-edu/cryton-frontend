@@ -1,6 +1,6 @@
 import { Queue } from 'src/app/modules/shared/utils/queue';
-import { TreeEdge } from '../dependency-tree/edge/tree-edge';
-import { NODE_HEIGHT, NODE_WIDTH, TreeNode } from '../dependency-tree/node/tree-node';
+import { GraphEdge } from '../dependency-graph/edge/graph-edge';
+import { NODE_HEIGHT, NODE_WIDTH, GraphNode } from '../dependency-graph/node/graph-node';
 import { TimelineEdge } from '../timeline/timeline-edge';
 import { TimelineNode } from '../timeline/timeline-node';
 import { NODE_RADIUS } from '../timeline/timeline-node-constants';
@@ -11,8 +11,8 @@ export enum OrganizerNodeType {
   TIMELINE
 }
 
-type Node = TimelineNode | TreeNode;
-type Edge = TimelineEdge | TreeEdge;
+type Node = TimelineNode | GraphNode;
+type Edge = TimelineEdge | GraphEdge;
 type Bounds = { top: number; bottom: number; left: number; right: number };
 export const NODE_PADDING = 40;
 export const NODE_MARGIN = 0.25;
@@ -25,36 +25,36 @@ export class NodeOrganizer {
   }
 
   /**
-   * Moves the entire tree starting from the root node by a given
+   * Moves the entire graph starting from the root node by a given
    * increment on x and y axes.
    *
-   * @param rootNode Root node of the tree.
+   * @param rootNode Root node of the graph.
    * @param xIncrement X increment.
    * @param yIncrement Y increment.
    * @param moveRoot Specifies if root node should be moved as well.
    * @param edgePredicate Predicate function for filtering nodes to be visited.
    */
-  static moveTree(
+  static moveGraph(
     rootNode: Node,
     xIncrement: number,
     yIncrement: number,
     moveRoot = false,
     edgePredicate?: (edge: Edge) => boolean
   ): void {
-    NodeOrganizer._moveTreeHelper(rootNode, xIncrement, yIncrement, moveRoot ? null : rootNode, edgePredicate);
+    NodeOrganizer._moveGraphHelper(rootNode, xIncrement, yIncrement, moveRoot ? null : rootNode, edgePredicate);
   }
 
   /**
-   * Helper method for the moveTree method. Does the actual moving of the tree.
+   * Helper method for the moveGraph method. Does the actual moving of the graph.
    *
-   * @param rootNode Root node of the tree.
+   * @param rootNode Root node of the graph.
    * @param xIncrement X increment.
    * @param yIncrement Y increment.
-   * @param dontMoveNode A node that shouldn't be moved (used for root node of the entire tree).
+   * @param dontMoveNode A node that shouldn't be moved (used for root node of the entire graph).
    * @param edgePredicate Predicate function for filtering nodes to be visited.
    * @param visited Set of visited nodes for cycle detection.
    */
-  private static _moveTreeHelper(
+  private static _moveGraphHelper(
     rootNode: Node,
     xIncrement: number,
     yIncrement: number,
@@ -79,25 +79,25 @@ export class NodeOrganizer {
       const currentNode = edge.childNode;
 
       if (!visited.has(currentNode)) {
-        NodeOrganizer._moveTreeHelper(currentNode, xIncrement, yIncrement, dontMoveNode, edgePredicate, visited);
+        NodeOrganizer._moveGraphHelper(currentNode, xIncrement, yIncrement, dontMoveNode, edgePredicate, visited);
       }
     }
   }
 
   /**
-   * Organizes a tree defined by the root node.
+   * Organizes a graph defined by the root node.
    *
-   * @param rootNode Root node of the tree.
+   * @param rootNode Root node of the graph.
    */
-  organizeTree(rootNode: Node): void {
-    this._organizeTree(rootNode, -Infinity, Infinity);
+  organizeGraph(rootNode: Node): void {
+    this.__organizeGraph(rootNode, -Infinity, Infinity);
   }
 
   /**
-   * Organizes individual trees in the plan.
+   * Organizes individual graphs in the plan.
    *
-   * Algorithm builds the first tree, calculates leftover nodes and builds next trees from them.
-   * For each tree it checks if it intersects with any other tree and moves it accordingly to the big enough
+   * Algorithm builds the first graph, calculates leftover nodes and builds next graphs from them.
+   * For each graph it checks if it intersects with any other graph and moves it accordingly to the big enough
    * space closest to the center of the canvas.
    *
    * @param nodes Array of nodes to be organized.
@@ -121,7 +121,7 @@ export class NodeOrganizer {
 
     while (rootNodes.length > 0) {
       const currentNode = rootNodes.pop();
-      const currentBounds = this._organizeTree(currentNode, -Infinity, Infinity);
+      const currentBounds = this.__organizeGraph(currentNode, -Infinity, Infinity);
 
       if (this._nodeType !== OrganizerNodeType.TIMELINE) {
         currentBounds.left -= NODE_MARGIN * NODE_WIDTH;
@@ -169,11 +169,11 @@ export class NodeOrganizer {
       }
 
       if (this._nodeType === OrganizerNodeType.TIMELINE) {
-        NodeOrganizer.moveTree(currentNode, 0, increment, true);
+        NodeOrganizer.moveGraph(currentNode, 0, increment, true);
         currentBounds.top += increment;
         currentBounds.bottom += increment;
       } else {
-        NodeOrganizer.moveTree(currentNode, increment, 0, true);
+        NodeOrganizer.moveGraph(currentNode, increment, 0, true);
         currentBounds.left += increment;
         currentBounds.right += increment;
       }
@@ -213,11 +213,11 @@ export class NodeOrganizer {
   }
 
   /**
-   * Finds all vertical (Timeline nodes) / horizontal (Stages) spaces between bounds of trees which intersect with
-   * a given tree on X/Y axis. Also appends the space from bounds with the lowest X/Y to -Infinity
+   * Finds all vertical (Timeline nodes) / horizontal (Stages) spaces between bounds of graphs which intersect with
+   * a given graph on X/Y axis. Also appends the space from bounds with the lowest X/Y to -Infinity
    * and the space from bounds with the highest X/Y to Infinity.
    *
-   * @param intersecting Bounds of trees which intersect with a given tree on X/Y axis.
+   * @param intersecting Bounds of graphs which intersect with a given graph on X/Y axis.
    * @param minSize Minimal size of space to be included in the output array.
    * @returns Array of satisfactory spaces between bounds.
    */
@@ -276,14 +276,14 @@ export class NodeOrganizer {
   }
 
   /**
-   * Organizes a tree which starts at the given root node.
+   * Organizes a graph which starts at the given root node.
    *
-   * @param rootNode Root node of the tree.
+   * @param rootNode Root node of the graph.
    * @param minCoord Minimum coordinate where txree bounds can reach.
-   * @param maxCoord Maximum coordinate where tree bounds can reach.
-   * @returns Bounds of organized tree.
+   * @param maxCoord Maximum coordinate where graph bounds can reach.
+   * @returns Bounds of organized graph.
    */
-  private _organizeTree(rootNode: Node, minCoord: number, maxCoord: number): Bounds {
+  private __organizeGraph(rootNode: Node, minCoord: number, maxCoord: number): Bounds {
     this._setRootNodeCoord(rootNode, minCoord, maxCoord);
 
     // Only last parent should calc Y position for better structure
@@ -294,9 +294,9 @@ export class NodeOrganizer {
       rootNode.y = rootNode.parentEdges[0].parentNode.y + NODE_HEIGHT + 2 * NODE_PADDING;
     }
 
-    let centerTreeBounds = this._calcNodeBounds(rootNode);
+    let centerdGraphBounds = this._calcNodeBounds(rootNode);
 
-    const myBounds = Object.assign({}, centerTreeBounds);
+    const myBounds = Object.assign({}, centerdGraphBounds);
     let startIndex = 0;
 
     if (childEdges.length % 2 === 1) {
@@ -307,29 +307,29 @@ export class NodeOrganizer {
       } else {
         childEdges[0].childNode.x = rootNode.x;
       }
-      centerTreeBounds = this._organizeTree(childEdges[0].childNode, -Infinity, Infinity);
+      centerdGraphBounds = this.__organizeGraph(childEdges[0].childNode, -Infinity, Infinity);
 
       // Add padding if there are gonna be more children around the middle node.
       if (childEdges.length > 1) {
         if (this._nodeType === OrganizerNodeType.TIMELINE) {
-          centerTreeBounds.top -= NODE_PADDING;
-          centerTreeBounds.bottom += NODE_PADDING;
+          centerdGraphBounds.top -= NODE_PADDING;
+          centerdGraphBounds.bottom += NODE_PADDING;
         } else {
-          centerTreeBounds.left -= NODE_PADDING;
-          centerTreeBounds.right += NODE_PADDING;
+          centerdGraphBounds.left -= NODE_PADDING;
+          centerdGraphBounds.right += NODE_PADDING;
         }
       }
 
-      this._updateBounds(myBounds, centerTreeBounds);
+      this._updateBounds(myBounds, centerdGraphBounds);
     }
 
     if (childEdges.length > 1) {
       const centerIndex = Math.floor((childEdges.length - startIndex) / 2) + startIndex;
 
-      let lastBounds = Object.assign({}, centerTreeBounds);
+      let lastBounds = Object.assign({}, centerdGraphBounds);
 
       for (let i = startIndex; i < centerIndex; i++) {
-        lastBounds = this._organizeTree(
+        lastBounds = this.__organizeGraph(
           childEdges[i].childNode,
           -Infinity,
           this._nodeType === OrganizerNodeType.TIMELINE ? lastBounds.top : lastBounds.left
@@ -337,10 +337,10 @@ export class NodeOrganizer {
         this._updateBounds(myBounds, lastBounds);
       }
 
-      lastBounds = Object.assign({}, centerTreeBounds);
+      lastBounds = Object.assign({}, centerdGraphBounds);
 
       for (let i = centerIndex; i < childEdges.length; i++) {
-        lastBounds = this._organizeTree(
+        lastBounds = this.__organizeGraph(
           childEdges[i].childNode,
           this._nodeType === OrganizerNodeType.TIMELINE ? lastBounds.bottom : lastBounds.right,
           Infinity
@@ -389,7 +389,7 @@ export class NodeOrganizer {
   /**
    * Sets the root node coordinate based on minimal and maximal coordinate.
    *
-   * @param rootNode Root node of a tree.
+   * @param rootNode Root node of a graph.
    * @param maxCoord Maximal coordinate.
    * @param minCoord Minimal coordinate.
    */
@@ -542,25 +542,25 @@ export class NodeOrganizer {
 
   /**
    * Checks if the bounds exceed the max/min coordinates and if they do,
-   * moves the tree starting at the root node accordingly.
+   * moves the graph starting at the root node accordingly.
    *
-   * @param rootNode Root node of a tree with the given bounds.
-   * @param treeBounds Bounds of a tree with a given root node.
-   * @param minCoord Maximal coordinate of the tree bounds.
-   * @param maxCoord Minimal coordinate of the tree bounds.
+   * @param rootNode Root node of a graph with the given bounds.
+   * @param graphBounds Bounds of a graph with a given root node.
+   * @param minCoord Maximal coordinate of the graph bounds.
+   * @param maxCoord Minimal coordinate of the graph bounds.
    */
-  private _checkBounds(rootNode: Node, treeBounds: Bounds, minCoord: number, maxCoord: number): void {
+  private _checkBounds(rootNode: Node, graphBounds: Bounds, minCoord: number, maxCoord: number): void {
     let increment = 0;
 
     if (this._nodeType === OrganizerNodeType.TIMELINE) {
-      if (treeBounds.bottom > maxCoord) {
-        increment = -(treeBounds.bottom - maxCoord);
-      } else if (treeBounds.top < minCoord) {
-        increment = minCoord - treeBounds.top;
+      if (graphBounds.bottom > maxCoord) {
+        increment = -(graphBounds.bottom - maxCoord);
+      } else if (graphBounds.top < minCoord) {
+        increment = minCoord - graphBounds.top;
       }
     } else {
-      const nodeRight = treeBounds.right + NODE_MARGIN * NODE_WIDTH;
-      const nodeLeft = treeBounds.left - NODE_MARGIN * NODE_WIDTH;
+      const nodeRight = graphBounds.right + NODE_MARGIN * NODE_WIDTH;
+      const nodeLeft = graphBounds.left - NODE_MARGIN * NODE_WIDTH;
       if (nodeRight > maxCoord) {
         increment = -(nodeRight - maxCoord);
       } else if (nodeLeft < minCoord) {
@@ -570,13 +570,13 @@ export class NodeOrganizer {
 
     if (increment !== 0) {
       if (this._nodeType === OrganizerNodeType.TIMELINE) {
-        NodeOrganizer.moveTree(rootNode, 0, increment, true);
-        treeBounds.top += increment;
-        treeBounds.bottom += increment;
+        NodeOrganizer.moveGraph(rootNode, 0, increment, true);
+        graphBounds.top += increment;
+        graphBounds.bottom += increment;
       } else {
-        NodeOrganizer.moveTree(rootNode, increment, 0, true);
-        treeBounds.left += increment;
-        treeBounds.right += increment;
+        NodeOrganizer.moveGraph(rootNode, increment, 0, true);
+        graphBounds.left += increment;
+        graphBounds.right += increment;
       }
     }
   }

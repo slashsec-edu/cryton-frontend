@@ -1,6 +1,6 @@
-import { DependencyTree } from 'src/app/modules/template-creator/classes/dependency-tree/dependency-tree';
-import { StageEdge } from 'src/app/modules/template-creator/classes/dependency-tree/edge/stage-edge';
-import { StageNode } from 'src/app/modules/template-creator/classes/dependency-tree/node/stage-node';
+import { DependencyGraph } from 'src/app/modules/template-creator/classes/dependency-graph/dependency-graph';
+import { StageEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/stage-edge';
+import { StageNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/stage-node';
 import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
 import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
@@ -16,11 +16,11 @@ export const DEFAULT_HTTP_ARGS: HTTPListenerArgs = {
 };
 
 export class StageNodeUtils {
-  parentDepTree: DependencyTree;
+  parentDepGraph: DependencyGraph;
   parentTimeline: TemplateTimeline;
 
-  constructor(parentDepTree: DependencyTree, parentTimeline: TemplateTimeline) {
-    this.parentDepTree = parentDepTree;
+  constructor(parentDepGraph: DependencyGraph, parentTimeline: TemplateTimeline) {
+    this.parentDepGraph = parentDepGraph;
     this.parentTimeline = parentTimeline;
   }
 
@@ -28,11 +28,11 @@ export class StageNodeUtils {
     const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, triggerArgs);
     const node = new StageNode({
       name,
-      childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
+      childDepGraph: new DependencyGraph(NodeType.CRYTON_STEP),
       timeline: this.parentTimeline,
       trigger: deltaTrigger
     });
-    node.setParentDepTree(this.parentDepTree);
+    node.setParentDepGraph(this.parentDepGraph);
     return node;
   };
 
@@ -40,25 +40,25 @@ export class StageNodeUtils {
     const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, triggerArgs);
     const node = new StageNode({
       name,
-      childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
+      childDepGraph: new DependencyGraph(NodeType.CRYTON_STEP),
       timeline: this.parentTimeline,
       trigger: httpTrigger
     });
-    node.setParentDepTree(this.parentDepTree);
+    node.setParentDepGraph(this.parentDepGraph);
     return node;
   };
 
-  createTreeEdge = (parent: StageNode, child: StageNode, ignoreTimeline: boolean = true): StageEdge => {
+  createGraphEdge = (parent: StageNode, child: StageNode, ignoreTimeline: boolean = true): StageEdge => {
     let edge: StageEdge;
 
     if (ignoreTimeline) {
-      edge = new StageEdge(this.parentDepTree, parent);
+      edge = new StageEdge(this.parentDepGraph, parent);
       edge.childNode = child;
       edge.parentNode.addChildEdge(edge);
       edge.childNode.addParentEdge(edge);
     } else {
-      edge = this.parentDepTree.createDraggedEdge(parent) as StageEdge;
-      this.parentDepTree.connectDraggedEdge(child);
+      edge = this.parentDepGraph.createDraggedEdge(parent) as StageEdge;
+      this.parentDepGraph.connectDraggedEdge(child);
     }
 
     return edge;

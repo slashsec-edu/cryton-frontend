@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { StageCreatorComponent } from '../../../components/stage-creator/stage-creator.component';
 import { CreateStageComponent } from '../../../models/enums/create-stage-component.enum';
 import { NavigationButton } from '../../../models/interfaces/navigation-button';
-import { DepTreeRef } from '../../../services/dependency-tree-manager.service';
+import { DepGraphRef } from '../../../services/dependency-graph-manager.service';
 import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
 
 @Component({
@@ -15,11 +15,11 @@ import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service'
 })
 export class CreateStagePageComponent implements OnInit, OnDestroy {
   @ViewChild(StageCreatorComponent) stageCreator: StageCreatorComponent;
-  depTreeRef = DepTreeRef.STAGE_CREATION;
+  depGraphRef = DepGraphRef.STAGE_CREATION;
   currentComponent: string = CreateStageComponent.STAGE_PARAMS;
   CreateStageComponent = CreateStageComponent;
 
-  depTreeNavigationBtns: NavigationButton[] = [
+  depGraphNavigationBtns: NavigationButton[] = [
     { icon: 'description', name: 'Show stage parameters', componentName: CreateStageComponent.STAGE_PARAMS }
   ];
 

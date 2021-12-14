@@ -15,11 +15,11 @@ import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { DependencyTree } from '../../../classes/dependency-tree/dependency-tree';
+import { DependencyGraph } from '../../../classes/dependency-graph/dependency-graph';
 import { NodeType } from '../../../models/enums/node-type';
 import { StageNodeUtils } from 'src/app/testing/utility/stage-node-utils';
 import { TemplateTimeline } from '../../../classes/timeline/template-timeline';
-import { DependencyTreeManagerService } from '../../../services/dependency-tree-manager.service';
+import { DependencyGraphManagerService } from '../../../services/dependency-graph-manager.service';
 import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
 import { TemplateConverterService } from '../../../services/template-converter.service';
 import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
@@ -36,17 +36,18 @@ describe('CreateTemplatePageComponent', () => {
   ]) as Spied<TemplateService>;
   templateServiceStub.uploadYAML.and.returnValue(of('Item created successfully.'));
 
-  const correctTree = new DependencyTree(NodeType.CRYTON_STAGE);
+  const correctGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
   const correctTimeline = new TemplateTimeline();
-  const stageNodeUtils = new StageNodeUtils(correctTree, correctTimeline);
+  const stageNodeUtils = new StageNodeUtils(correctGraph, correctTimeline);
   const correctStage = stageNodeUtils.createDeltaNode('delta', { hours: 0, minutes: 0, seconds: 0 });
-  correctTree.treeNodeManager.addNode(correctStage);
+  correctGraph.graphNodeManager.addNode(correctStage);
 
-  const treeManagerStub = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree'
-  ]) as Spied<DependencyTreeManagerService>;
+  const graphManagerStub = jasmine.createSpyObj('DependencyGraphManagerService', [
+    'getCurrentGraph',
+    'reset'
+  ]) as Spied<DependencyGraphManagerService>;
 
-  treeManagerStub.getCurrentTree.and.returnValue({ value: correctTree });
+  graphManagerStub.getCurrentGraph.and.returnValue({ value: correctGraph });
 
   const tcState = new TemplateCreatorStateService();
 
@@ -77,7 +78,7 @@ describe('CreateTemplatePageComponent', () => {
       providers: [
         { provide: AlertService, useValue: alertServiceStub },
         { provide: TemplateService, useValue: templateServiceStub },
-        { provide: DependencyTreeManagerService, useValue: treeManagerStub },
+        { provide: DependencyGraphManagerService, useValue: graphManagerStub },
         { provide: MatDialog, useValue: matDialogStub },
         { provide: TemplateCreatorStateService, useValue: tcState },
         { provide: TemplateConverterService, useValue: templateConverterStub }

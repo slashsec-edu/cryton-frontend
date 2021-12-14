@@ -1,6 +1,6 @@
 import { Queue } from 'src/app/modules/shared/utils/queue';
 import { TriggerType } from '../../models/enums/trigger-type';
-import { StageNode } from '../dependency-tree/node/stage-node';
+import { StageNode } from '../dependency-graph/node/stage-node';
 
 export type DeltaDependency = { parent: StageNode; child: StageNode };
 

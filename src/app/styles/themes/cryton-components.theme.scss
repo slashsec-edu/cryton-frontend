@@ -8,11 +8,9 @@
 @use '../../modules/shared/components/cryton-file-uploader/cryton-file-uploader.theme' as file-uploader;
 @use '../../modules/report/components/report/report.theme' as report;
 @use '../../modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.theme' as datetime-picker;
-@use '../../modules/template-creator/components/tree-editor-toolbar/tree-editor-toolbar.theme' as tree-editor-toolbar;
 @use './cryton-scrollbar.theme' as scrollbar;
 @use '../../modules/shared/components/cryton-log/cryton-log.theme' as log;
 @use '../../components/page-unavailable/page-unavailable.theme' as page-unavailable;
-@use '../../modules/template-creator/styles/template-creator.theme' as template-creator;
 
 // CRYTON WORKER THEME
 $worker-primary: mat-palette($mat-blue, A200);
@@ -31,10 +29,8 @@ $worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
   @include report.color($config);
   @include scrollbar.color($config);
   @include datetime-picker.color($config);
-  @include tree-editor-toolbar.color($config);
   @include log.color($config);
   @include page-unavailable.color($config);
-  @include template-creator.color($config);
 
   @include worker-table.color($worker-theme);
 }

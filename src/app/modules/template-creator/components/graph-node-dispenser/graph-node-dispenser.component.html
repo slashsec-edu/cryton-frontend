@@ -1,0 +1,27 @@
+<div
+  *ngIf="this.dispenser$ | async as nodes"
+  class="graph-node-dispenser--item-dispenser cryton-scrollbar tc-responsive-container"
+>
+  <!-- NODE BODY -->
+  <ng-container *ngIf="nodes && nodes.length > 0; else empty">
+    <div
+      *ngFor="let node of nodes"
+      class="node-body"
+      [ngStyle]="{ background: (themeService.currentTheme$ | async).templateCreator.graphNodeRect }"
+    >
+      <button mat-icon-button class="swap_button" (click)="swapNode(node)">
+        <mat-icon>swap_horizontal_circle</mat-icon>
+      </button>
+      <button mat-icon-button (click)="editNode(node)"><mat-icon>settings</mat-icon></button>
+      <div class="node-name-container">
+        <span class="node-name">{{ node.name }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #empty>
+  <div class="empty-dispenser">
+    <h2>DISPENSER<br />EMPTY</h2>
+  </div>
+</ng-template>
