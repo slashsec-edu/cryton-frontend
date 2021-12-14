@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
@@ -12,6 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
 import { TcRoutingService } from '../../services/tc-routing.service';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+
+export const CREATION_MSG_TIMEOUT = 7000;
 
 @Component({
   selector: 'app-step-creator',
@@ -46,6 +48,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._createDepTreeSub();
     this._createEditNodeSub();
+    this._createCreationMsgSub();
 
     if (!this.editedStep) {
       this.restoreStepForm();
@@ -85,7 +88,6 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
       this._treeManager.addDispenserNode(DepTreeRef.STAGE_CREATION, step);
 
       this._showCreationMessage$.next(true);
-      setTimeout(() => this._showCreationMessage$.next(false), 5000);
     } else {
       this._alertService.showError('Step form is invalid.');
     }
@@ -235,6 +237,16 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
           this.cancelEditing();
         }
       });
+  }
+
+  private _createCreationMsgSub(): void {
+    this._showCreationMessage$
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(val => val),
+        debounceTime(CREATION_MSG_TIMEOUT)
+      )
+      .subscribe(() => this._showCreationMessage$.next(false));
   }
 
   /**

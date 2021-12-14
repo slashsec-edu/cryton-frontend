@@ -52,10 +52,6 @@
           [nodeManager]="parentDepTree.treeNodeManager"
         ></app-stage-parameters>
       </div>
-      <span *ngIf="showCreationMessage$ | async"
-        >Stage created! You can find it in
-        <span class="tc-route" (click)="navigateToTemplatesDepTree()">template's dependency tree</span>.</span
-      >
     </div>
   </div>
 
@@ -69,3 +65,8 @@
     </div>
   </div>
 </main>
+
+<span *ngIf="showCreationMessage$ | async"
+  >Stage created! You can find it in
+  <span class="tc-route" (click)="navigateToTemplatesDepTree()">template's dependency tree</span>.</span
+>

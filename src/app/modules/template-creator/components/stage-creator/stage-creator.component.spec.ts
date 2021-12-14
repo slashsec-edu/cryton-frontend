@@ -1,6 +1,6 @@
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { TemplateCreatorModule } from '../../template-creator.module';
-import { StageCreatorComponent } from './stage-creator.component';
+import { CREATION_MSG_TIMEOUT, StageCreatorComponent } from './stage-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
@@ -179,6 +179,7 @@ describe('StageCreatorComponent', () => {
     it('should create the stage correctly', fakeAsync(async () => {
       fillWithCorrectStage();
       await getCreateBtn().then(btn => btn.click());
+      tick(CREATION_MSG_TIMEOUT);
 
       expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
     }));
@@ -199,6 +200,7 @@ describe('StageCreatorComponent', () => {
       fillWithCorrectStage();
       spyOn(component.stageForm, 'erase');
       await getCreateBtn().then(btn => btn.click());
+      tick(CREATION_MSG_TIMEOUT);
 
       expectCreatorReset();
     }));

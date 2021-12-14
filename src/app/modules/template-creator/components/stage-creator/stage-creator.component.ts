@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener
 import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
 import { NodeManager } from '../../classes/dependency-tree/node-manager';
 import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
@@ -19,6 +19,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
 import { TcRoutingService } from '../../services/tc-routing.service';
+
+export const CREATION_MSG_TIMEOUT = 7000;
 
 @Component({
   selector: 'app-stage-creator',
@@ -81,6 +83,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.previewDepTree = new PreviewDependencyTree(NodeType.CRYTON_STEP);
     this._createDepTreeSub();
     this._createEditNodeSub();
+    this._createCreationMsgSub();
 
     if (!this.editedStage) {
       this._state.restoreStageForm();
@@ -129,7 +132,6 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this._treeManager.addDispenserNode(DepTreeRef.TEMPLATE_CREATION, stage);
     this._resetStageCreator();
     this._showCreationMessage$.next(true);
-    setTimeout(() => this._showCreationMessage$.next(false), 5000);
   }
 
   /**
@@ -340,5 +342,15 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.previewDepTree.removeChildren();
     this.previewDepTree.treeLayer = new Konva.Layer();
     this.previewDepTree.treeLayer.draw();
+  }
+
+  private _createCreationMsgSub(): void {
+    this._showCreationMessage$
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(val => val),
+        debounceTime(CREATION_MSG_TIMEOUT)
+      )
+      .subscribe(() => this._showCreationMessage$.next(false));
   }
 }

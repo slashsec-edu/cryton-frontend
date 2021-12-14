@@ -93,18 +93,21 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
   createTemplate(templateYAML: string): void {
     this.creating$.next(true);
 
-    this._templateService.uploadYAML(templateYAML).subscribe({
-      next: successMsg => {
-        this._state.clear();
-        this._treeManager.reset();
-        this.creating$.next(false);
-        this._alertService.showSuccess(successMsg);
-      },
-      error: errMsg => {
-        this.creating$.next(false);
-        this._alertService.showError(errMsg);
-      }
-    });
+    this._templateService
+      .uploadYAML(templateYAML)
+      .pipe(first())
+      .subscribe({
+        next: successMsg => {
+          this._state.clear();
+          this._treeManager.reset();
+          this.creating$.next(false);
+          this._alertService.showSuccess(successMsg);
+        },
+        error: errMsg => {
+          this.creating$.next(false);
+          this._alertService.showError(errMsg);
+        }
+      });
   }
 
   /**

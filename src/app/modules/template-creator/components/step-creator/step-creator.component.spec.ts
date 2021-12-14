@@ -1,6 +1,6 @@
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { TemplateCreatorModule } from '../../template-creator.module';
-import { StepCreatorComponent } from './step-creator.component';
+import { CREATION_MSG_TIMEOUT, StepCreatorComponent } from './step-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -152,6 +152,7 @@ describe('StepCreatorComponent', () => {
   it('should create step correctly', fakeAsync(async () => {
     component.stepForm.setValue(TESTING_ARGS1);
     await getCreateBtn().then(btn => btn.click());
+    tick(CREATION_MSG_TIMEOUT);
 
     expect(treeManagerSpy.addDispenserNode).toHaveBeenCalled();
   }));
