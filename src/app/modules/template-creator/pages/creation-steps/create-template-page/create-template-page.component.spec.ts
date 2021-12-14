@@ -49,7 +49,7 @@ describe('CreateTemplatePageComponent', () => {
 
   graphManagerStub.getCurrentGraph.and.returnValue({ value: correctGraph });
 
-  const tcState = new TemplateCreatorStateService();
+  const tcState = new TemplateCreatorStateService((graphManagerStub as unknown) as DependencyGraphManagerService);
 
   const templateConverterStub = jasmine.createSpyObj('TemplateConverterService', [
     'exportYAMLTemplate'

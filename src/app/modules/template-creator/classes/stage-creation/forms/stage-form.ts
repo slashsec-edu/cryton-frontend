@@ -110,6 +110,15 @@ export class StageForm {
     return Boolean(this._stageArgsForm.get('name').value) || this._triggerForm.isNotEmpty();
   }
 
+  changeNodeManager(nodeManager: NodeManager): void {
+    this._nodeManager = nodeManager;
+    const nameControl = this._stageArgsForm.get('name');
+
+    nameControl.clearValidators();
+    nameControl.setValidators([Validators.required, this._uniqueNameValidator]);
+    nameControl.updateValueAndValidity();
+  }
+
   private _changeTriggerForm(type: TriggerType): void {
     const backupForm = this._triggerBackup[type];
 

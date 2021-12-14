@@ -4,6 +4,7 @@ import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { BuildTemplateDisplay } from '../models/enums/build-template-display.enum';
 import { StageForm } from '../classes/stage-creation/forms/stage-form';
 import { StageNode } from '../classes/dependency-graph/node/stage-node';
+import { DependencyGraphManagerService, DepGraphRef } from './dependency-graph-manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class TemplateCreatorStateService {
 
   private _stageFormBackup: StageForm;
 
-  constructor() {
+  constructor(private _graphManager: DependencyGraphManagerService) {
     this._initState();
   }
 
@@ -55,7 +56,14 @@ export class TemplateCreatorStateService {
    * Backs up stage form.
    */
   backupStageForm(): void {
-    this._stageFormBackup = this.stageForm;
+    this._stageFormBackup = this.stageForm.copy();
+  }
+
+  resetStageForm(backup = true): void {
+    if (backup) {
+      this.backupStageForm();
+    }
+    this.stageForm = this._createStageForm();
   }
 
   /**
@@ -64,8 +72,9 @@ export class TemplateCreatorStateService {
   private _initState(): void {
     this.isDependencyGraphDisplayed = false;
     this.buildTemplateDisplayedComponent = BuildTemplateDisplay.BUILD_TEMPLATE;
-    this.templateForm = this._createTemplateForm();
     this.timeline = new TemplateTimeline();
+    this.templateForm = this._createTemplateForm();
+    this.stageForm = this._createStageForm();
   }
 
   private _createTemplateForm(): FormGroup {
@@ -73,5 +82,15 @@ export class TemplateCreatorStateService {
       name: new FormControl('', Validators.required),
       owner: new FormControl('', Validators.required)
     });
+  }
+
+  /**
+   * Creates new stage form with current node manager.
+   *
+   * @returns Stage form.
+   */
+  private _createStageForm(): StageForm {
+    const nodeManager = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value.graphNodeManager;
+    return new StageForm(nodeManager);
   }
 }

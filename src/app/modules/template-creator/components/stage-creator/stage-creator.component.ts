@@ -77,17 +77,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (!this.stageForm) {
-      this.stageForm = this._createStageForm();
-    }
     this.depGraphPreview = new DependencyGraphPreview(NodeType.CRYTON_STEP);
     this._createDepGraphSub();
     this._createEditNodeSub();
     this._createCreationMsgSub();
-
-    if (!this.editedStage) {
-      this._state.restoreStageForm();
-    }
   }
 
   ngAfterViewInit(): void {
@@ -229,16 +222,6 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Creates new stage form with current node manager.
-   *
-   * @returns Stage form.
-   */
-  private _createStageForm(): StageForm {
-    const nodeManager = this._graphManager.getCurrentGraph(DepGraphRef.TEMPLATE_CREATION).value.graphNodeManager;
-    return new StageForm(nodeManager);
-  }
-
-  /**
    * Erases stage form and resets current graph to default settings.
    */
   private _resetStageCreator(): void {
@@ -279,6 +262,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(depGraph => {
         this.parentDepGraph = depGraph;
         this._stageManager = depGraph.graphNodeManager;
+        this.stageForm.changeNodeManager(depGraph.graphNodeManager);
       });
   }
 
@@ -310,7 +294,6 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
       // Don't back up empty form or edited stage.
       if (!this.editedStage) {
         this._state.backupStageForm();
-        this.stageForm = this._createStageForm();
       }
       this.stageForm.fillWithEditedStage(stage);
 

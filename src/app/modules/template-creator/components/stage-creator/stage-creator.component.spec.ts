@@ -62,8 +62,6 @@ describe('StageCreatorComponent', () => {
     graphNodeManager: nodeManagerSpy
   }) as Spied<DependencyGraph>;
 
-  const tcState = new TemplateCreatorStateService();
-
   const graphManagerSpy = jasmine.createSpyObj('DependencyGraphManagerService', [
     'getCurrentGraph',
     'resetCurrentGraph',
@@ -82,6 +80,7 @@ describe('StageCreatorComponent', () => {
   });
   graphManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
+  const tcState = new TemplateCreatorStateService((graphManagerSpy as unknown) as DependencyGraphManagerService);
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
   /**
