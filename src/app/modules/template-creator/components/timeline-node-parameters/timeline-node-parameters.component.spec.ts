@@ -34,11 +34,11 @@ describe('TimelineNodeParametersComponent', () => {
 
   const testingStage = new StageNode({
     name: 'Testing stage',
-    parentDepTree: testingParentDepTree,
     childDepTree: testingChildDepTree,
     timeline: testingTimeline,
     trigger: testingTrigger
   });
+  testingStage.setParentDepTree(testingParentDepTree);
   const dialogDataStub = jasmine.createSpyObj('MAT_DIALOG_DATA', [], { stage: testingStage }) as Spied<{
     stage: StageNode;
   }>;

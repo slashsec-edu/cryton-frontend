@@ -20,14 +20,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 
 // COMPONENTS
-import { TemplateCreatorComponent } from './components/template-creator/template-creator.component';
 import { StepCreatorComponent } from './components/step-creator/step-creator.component';
 import { TreeNodeDispenserComponent } from './components/tree-node-dispenser/tree-node-dispenser.component';
 import { DependencyTreeEditorComponent } from './components/dependency-tree-editor/dependency-tree-editor.component';
 import { StageCreatorComponent } from './components/stage-creator/stage-creator.component';
 import { CreateStagePageComponent } from './pages/creation-steps/create-stage-page/create-stage-page.component';
 import { EdgeParametersComponent } from './components/edge-parameters/edge-parameters.component';
-import { BuildTemplatePageComponent } from './pages/creation-steps/build-template-page/build-template-page.component';
+import { CreateTemplatePageComponent } from './pages/creation-steps/create-template-page/create-template-page.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TimelineNodeParametersComponent } from './components/timeline-node-parameters/timeline-node-parameters.component';
 import { StageParametersComponent } from './components/stage-parameters/stage-parameters.component';
@@ -46,13 +45,12 @@ import { TemplateYamlPreviewComponent } from './components/template-yaml-preview
 
 @NgModule({
   declarations: [
-    TemplateCreatorComponent,
     StepCreatorComponent,
     TreeNodeDispenserComponent,
     DependencyTreeEditorComponent,
     StageCreatorComponent,
     EdgeParametersComponent,
-    BuildTemplatePageComponent,
+    CreateTemplatePageComponent,
     TimelineComponent,
     TimelineNodeParametersComponent,
     StageParametersComponent,
@@ -88,7 +86,6 @@ import { TemplateYamlPreviewComponent } from './components/template-yaml-preview
     MatStepperModule,
     MatCardModule,
     MatDialogModule
-  ],
-  exports: [TemplateCreatorComponent]
+  ]
 })
 export class TemplateCreatorModule {}

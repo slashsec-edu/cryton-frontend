@@ -187,11 +187,11 @@ export class TemplateConverterService {
 
     const crytonStage = new StageNode({
       name: stageDescription.name,
-      parentDepTree,
       childDepTree,
       timeline: parentTimeline,
       trigger
     });
+    crytonStage.setParentDepTree(parentDepTree);
 
     return crytonStage;
   }
@@ -207,9 +207,9 @@ export class TemplateConverterService {
     const step = new StepNode(
       stepDescription.name,
       stepDescription.attack_module,
-      stringify(stepDescription.attack_module_args),
-      parentDepTree
+      stringify(stepDescription.attack_module_args)
     );
+    step.setParentDepTree(parentDepTree);
 
     return step;
   }

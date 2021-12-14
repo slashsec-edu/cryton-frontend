@@ -88,21 +88,14 @@ const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0,
 const deltaStage = new StageNode({
   name: 'stage-one',
   childDepTree: deltaStageChildDepTree,
-  parentDepTree: advancedTemplateDepTree,
   timeline,
   trigger: deltaTrigger
 });
-const deltaStageStepOne = new StepNode(
-  'scan-localhost',
-  'mod_nmap',
-  `target: "{{ target }}"\nports:\n  - 22`,
-  deltaStageChildDepTree
-);
+const deltaStageStepOne = new StepNode('scan-localhost', 'mod_nmap', `target: "{{ target }}"\nports:\n  - 22`);
 const deltaStageStepTwo = new StepNode(
   'bruteforce',
   'mod_medusa',
-  `target: "{{ target }}"\ncredentials:\n  username: "{{ username }}"`,
-  deltaStageChildDepTree
+  `target: "{{ target }}"\ncredentials:\n  username: "{{ username }}"`
 );
 deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepOne);
 deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStepTwo);
@@ -122,7 +115,6 @@ const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
 const httpStage = new StageNode({
   name: 'stage-two',
   childDepTree: httpStageChildDepTree,
-  parentDepTree: advancedTemplateDepTree,
   timeline,
   trigger: httpTrigger
 });
@@ -130,14 +122,12 @@ const httpStageStepOne = new StepNode(
   'ssh-session',
   'mod_msf',
   // eslint-disable-next-line max-len
-  `create_named_session: session_to_target_1\nexploit: auxiliary/scanner/ssh/ssh_login\nexploit_arguments:\n  RHOSTS: "{{ target }}"\n  USERNAME: $bruteforce.username\n  PASSWORD: $bruteforce.password`,
-  httpStageChildDepTree
+  `create_named_session: session_to_target_1\nexploit: auxiliary/scanner/ssh/ssh_login\nexploit_arguments:\n  RHOSTS: "{{ target }}"\n  USERNAME: $bruteforce.username\n  PASSWORD: $bruteforce.password`
 );
 const httpStageStepTwo = new StepNode(
   'session-cmd',
   'mod_cmd',
-  `use_named_session: session_to_target_1\ncmd: "{{ commands.passwd }}"`,
-  httpStageChildDepTree
+  `use_named_session: session_to_target_1\ncmd: "{{ commands.passwd }}"`
 );
 httpStageChildDepTree.treeNodeManager.addNode(httpStageStepOne);
 httpStageChildDepTree.treeNodeManager.addNode(httpStageStepTwo);

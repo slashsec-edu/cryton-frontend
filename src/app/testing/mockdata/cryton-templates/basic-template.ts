@@ -54,24 +54,13 @@ const basicDeltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hour
 const basicStage = new StageNode({
   name: 'stage-one',
   childDepTree: basicStageChildDepTree,
-  parentDepTree: basicTemplateDepTree,
   timeline: basicTimeline,
   trigger: basicDeltaTrigger
 });
 
 // Create steps
-const firstStep = new StepNode(
-  'scan-localhost',
-  'mod_nmap',
-  'target: 127.0.0.1\nports:\n  - 22',
-  basicStageChildDepTree
-);
-const secondStep = new StepNode(
-  'bruteforce',
-  'mod_medusa',
-  'target: 127.0.0.1\ncredentials:\n  username: vagrant',
-  basicStageChildDepTree
-);
+const firstStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1\nports:\n  - 22');
+const secondStep = new StepNode('bruteforce', 'mod_medusa', 'target: 127.0.0.1\ncredentials:\n  username: vagrant');
 basicStageChildDepTree.treeNodeManager.addNode(firstStep);
 basicStageChildDepTree.treeNodeManager.addNode(secondStep);
 

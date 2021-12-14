@@ -10,6 +10,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="primary" (click)="handleCreate()" [disabled]="!templateControl.valid">Create</button>
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+  <button mat-flat-button color="primary" (click)="handleCreate()" type="button" [disabled]="!templateControl.valid">
+    Create
+  </button>
 </mat-dialog-actions>

@@ -1,5 +1,6 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { DependencyTree } from './dependency-tree';
+import { NodeNameNotUniqueError } from './errors/node-name-not-unique.error';
 import { StageNode } from './node/stage-node';
 import { TreeNode } from './node/tree-node';
 
@@ -37,6 +38,7 @@ export class NodeManager {
   moveToDispenser(node: TreeNode): void {
     this.removeNode(node);
     this._moveToDispenser$.next(node);
+    node.setParentDepTree(null);
   }
 
   /**
@@ -49,7 +51,7 @@ export class NodeManager {
   }
 
   /**
-   * Removes node from the dependency tree.
+   * Removes node from the node manager.
    *
    * @param node Node to remove.
    */
@@ -62,12 +64,17 @@ export class NodeManager {
    *
    * @param node Node to add.
    */
-  addNode(node: TreeNode): void {
-    this.nodes.push(node);
-    this._depTree.addNode(node);
+  addNode(nodeToAdd: TreeNode): void {
+    if (this.nodes.map(node => node.name).includes(nodeToAdd.name)) {
+      throw new NodeNameNotUniqueError(nodeToAdd.name);
+    }
 
-    if (node instanceof StageNode && node.timelineNode) {
-      node.timeline.addNode(node.timelineNode);
+    nodeToAdd.setParentDepTree(this._depTree);
+    this.nodes.push(nodeToAdd);
+    this._depTree.addNode(nodeToAdd);
+
+    if (nodeToAdd instanceof StageNode && nodeToAdd.timelineNode) {
+      nodeToAdd.timeline.addNode(nodeToAdd.timelineNode);
     }
   }
 

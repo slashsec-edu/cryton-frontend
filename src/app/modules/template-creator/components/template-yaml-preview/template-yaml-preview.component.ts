@@ -4,6 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
 import { parse } from 'yaml';
 import { TemplateDescription } from '../../models/interfaces/template-description';
+import { InvalidTemplateFormatError } from './errors/invalid-template-format.error';
+import { NotASequenceError } from './errors/not-a-sequence.error';
+import { NotUniqueNameError } from './errors/not-unique-name.error';
+import { UndefinedTemplatePropertyError } from './errors/undefined-template-property.error';
 
 @Component({
   selector: 'app-template-yaml-preview',
@@ -27,7 +31,12 @@ export class TemplateYamlPreviewComponent implements OnInit {
   }
 
   handleCreate(): void {
+    const templateControlVal = this.templateControl.value as string;
+
     try {
+      if (!templateControlVal) {
+        throw new InvalidTemplateFormatError();
+      }
       const template = this._tryParsingTemplate(this.templateControl.value);
       this._checkTemplateValues(template);
       this._checkNameUniqueness(template);
@@ -44,54 +53,54 @@ export class TemplateYamlPreviewComponent implements OnInit {
       return parse(templateYaml) as TemplateDescription;
     } catch (e) {
       console.error(e);
-      throw new Error('Invalid template format.');
+      throw new InvalidTemplateFormatError();
     }
   }
 
   private _checkTemplateValues(template: TemplateDescription): void {
     if (!template || !template.plan) {
-      throw new Error('Template cannot be empty.');
+      throw new InvalidTemplateFormatError();
     } else if (!template.plan.name || template.plan.name === '') {
-      throw new Error('Empty template name.');
+      throw new UndefinedTemplatePropertyError('name');
     } else if (!template.plan.owner || template.plan.owner === '') {
-      throw new Error('Empty template owner.');
+      throw new UndefinedTemplatePropertyError('owner');
     }
   }
 
   private _checkNameUniqueness(template: TemplateDescription): void {
     if (!template.plan.stages) {
-      throw new Error('No stages defined in template.');
+      throw new UndefinedTemplatePropertyError('stages');
     } else if (!Array.isArray(template.plan.stages)) {
-      throw new Error('Stages are not defined as a sequence.');
+      throw new NotASequenceError('stages');
     } else if (template.plan.stages.length === 0) {
-      throw new Error('No stages defined in template.');
+      throw new UndefinedTemplatePropertyError('stages');
     }
     template.plan.stages.forEach((currentStage, i) => {
       const stageNameCount = template.plan.stages.filter(stage => stage.name === currentStage.name).length;
 
       if (!currentStage.name || currentStage.name === '') {
-        throw new Error(`Stage with index: ${i} doesn't have a name.`);
+        throw new UndefinedTemplatePropertyError(`name of stage at index: ${i}`);
       }
       if (stageNameCount > 1) {
-        throw new Error(`Multiple stages with name: ${currentStage.name}`);
+        throw new NotUniqueNameError(currentStage.name);
       }
 
       if (!currentStage.steps) {
-        throw new Error(`No steps defined in stage: ${currentStage.name}`);
+        throw new UndefinedTemplatePropertyError(`steps in stage: ${currentStage.name}`);
       } else if (!Array.isArray(currentStage.steps)) {
-        throw new Error(`Steps of stage: ${currentStage.name} are not defined as a sequence.`);
+        throw new NotASequenceError(`steps of stage: ${currentStage.name}`);
       } else if (currentStage.steps.length === 0) {
-        throw new Error(`No steps defined in stage: ${currentStage.name}`);
+        throw new UndefinedTemplatePropertyError(`steps in stage: ${currentStage.name}`);
       }
       currentStage.steps.forEach((currentStep, j) => {
         if (!currentStep.name || currentStep.name === '') {
-          throw new Error(`Step with index: ${j} inside stage: ${currentStage.name} doesnt have a name.`);
+          throw new UndefinedTemplatePropertyError(`name of step at index: ${j} inside stage: ${currentStage.name}`);
         }
 
         const stepNameCount = currentStage.steps.filter(step => step.name === currentStep.name).length;
 
         if (stepNameCount > 1) {
-          throw new Error(`Multiple steps with name: ${currentStep.name}`);
+          throw new NotUniqueNameError(currentStep.name);
         }
       });
     });

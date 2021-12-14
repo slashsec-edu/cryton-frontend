@@ -108,7 +108,6 @@ export class DependencyTree extends KonvaWrapper {
     if (this.toolState.isMoveNodeEnabled) {
       node.konvaObject.draggable(true);
     }
-    node.changeTheme(this.theme);
     this.treeLayer.add(node.konvaObject);
     this.treeLayer.draw();
   }
@@ -168,44 +167,19 @@ export class DependencyTree extends KonvaWrapper {
    * @returns Copied dependency tree.
    */
   copy(): DependencyTree {
-    const rootNode = this.findRootNode();
+    const initialNodes = this.findInitialNodes();
     const treeCopy = new DependencyTree(this.nodeType);
-    const nodeType = treeCopy.nodeType;
     treeCopy.theme = this.theme;
 
     [treeCopy.scale, treeCopy.stageX, treeCopy.stageY] = [this.scale, this.stageX, this.stageY];
 
-    if (!rootNode) {
+    if (initialNodes.length === 0) {
       return treeCopy;
     }
 
-    const queue = new Queue<TreeNode>();
-    queue.enqueue(rootNode);
-    const copyMap: Record<string, TreeNode> = {};
-
-    this._copyNode(rootNode, treeCopy, copyMap);
-
-    while (queue.length > 0) {
-      const currentNode = queue.dequeue();
-
-      currentNode.childEdges.forEach((edge: TreeEdge) => {
-        const childNode = edge.childNode;
-        let nodeCopy = copyMap[childNode.name];
-
-        if (!nodeCopy) {
-          queue.enqueue(edge.childNode);
-          nodeCopy = this._copyNode(childNode, treeCopy, copyMap);
-        }
-
-        const edgeCopy = treeCopy.createDraggedEdge(copyMap[edge.parentNode.name]);
-
-        if (nodeType === NodeType.CRYTON_STEP) {
-          (edgeCopy as StepEdge).conditions = (edge as StepEdge).conditions;
-        }
-
-        treeCopy.connectDraggedEdge(nodeCopy);
-      });
-    }
+    initialNodes.forEach(initialNode => {
+      this._copyGraphSection(initialNode, treeCopy);
+    });
 
     return treeCopy;
   }
@@ -264,24 +238,12 @@ export class DependencyTree extends KonvaWrapper {
   }
 
   /**
-   * Finds a root node of the dependency tree.
+   * Finds all initial nodes in the dependency tree.
    *
-   * @returns Root node.
+   * @returns Array of initial nodes.
    */
-  findRootNode(): TreeNode {
-    let rootNode: TreeNode;
-
-    this.treeNodeManager.nodes.forEach((node: TreeNode) => {
-      if (node.parentEdges.length === 0) {
-        if (!rootNode) {
-          rootNode = node;
-        } else {
-          throw Error('Multiple root nodes in dependency tree.');
-        }
-      }
-    });
-
-    return rootNode;
+  findInitialNodes(): TreeNode[] {
+    return this.treeNodeManager.nodes.filter(node => node.parentEdges.length === 0);
   }
 
   /**
@@ -312,6 +274,36 @@ export class DependencyTree extends KonvaWrapper {
 
     this.stage.add(this.treeLayer);
     this._initKonvaEvents();
+  }
+
+  private _copyGraphSection(initialNode: TreeNode, treeCopy: DependencyTree): void {
+    const queue = new Queue<TreeNode>();
+    queue.enqueue(initialNode);
+    const copyMap: Record<string, TreeNode> = {};
+
+    this._copyNode(initialNode, treeCopy, copyMap);
+
+    while (queue.length > 0) {
+      const currentNode = queue.dequeue();
+
+      currentNode.childEdges.forEach((edge: TreeEdge) => {
+        const childNode = edge.childNode;
+        let nodeCopy = copyMap[childNode.name];
+
+        if (!nodeCopy) {
+          queue.enqueue(edge.childNode);
+          nodeCopy = this._copyNode(childNode, treeCopy, copyMap);
+        }
+
+        const edgeCopy = treeCopy.createDraggedEdge(copyMap[edge.parentNode.name]);
+
+        if (treeCopy.nodeType === NodeType.CRYTON_STEP) {
+          (edgeCopy as StepEdge).conditions = (edge as StepEdge).conditions;
+        }
+
+        treeCopy.connectDraggedEdge(nodeCopy);
+      });
+    }
   }
 
   private _centerNodes(nodes: Konva.Group[], edges: Konva.Arrow[], centeringVector: Vector2d): void {
@@ -377,7 +369,8 @@ export class DependencyTree extends KonvaWrapper {
     let nodeCopy: TreeNode;
 
     if (node instanceof StepNode) {
-      nodeCopy = new StepNode(node.name, node.attackModule, node.attackModuleArgs, treeCopy);
+      nodeCopy = new StepNode(node.name, node.attackModule, node.attackModuleArgs);
+      nodeCopy.setParentDepTree(treeCopy);
     } else if (node instanceof StageNode) {
       throw new Error('Cannot copy stage node.');
     }

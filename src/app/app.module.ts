@@ -55,7 +55,6 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { InstancesCreationStepsComponent } from './models/cryton-editor/steps/instances-creation-steps/instances-creation-steps.component';
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
-import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
 import { ListInstancesComponent } from './pages/instances/list-instances/list-instances.component';
 import { CreateInstanceComponent } from './pages/instances/create-instance/create-instance.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
@@ -85,7 +84,6 @@ import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
     NavigationComponent,
     ListTemplatesComponent,
     OutletComponent,
-    CreateTemplateComponent,
     ListInstancesComponent,
     CreateInstanceComponent,
     ListWorkersComponent,

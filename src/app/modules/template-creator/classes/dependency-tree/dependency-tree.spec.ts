@@ -55,15 +55,16 @@ describe('DependencyTree', () => {
     const stage = new StageNode({
       name,
       childDepTree,
-      parentDepTree: depTree,
       timeline,
       trigger: deltaTrigger
     });
+    stage.setParentDepTree(depTree);
     return stage;
   };
 
   const createStep = (name: string): StepNode => {
-    const step = new StepNode(name, '', '', depTree);
+    const step = new StepNode(name, '', '');
+    step.setParentDepTree(depTree);
     return step;
   };
 
@@ -126,7 +127,7 @@ describe('DependencyTree', () => {
       expect(node.konvaObject.draggable()).toBeTrue();
     });
 
-    it('should find root node', () => {
+    it('should find one initial node', () => {
       const nodeOne = createNodeAtPos(createFn, '1', { x: 0, y: 0 });
       const nodeTwo = createNodeAtPos(createFn, '2', { x: 0, y: 0 });
       const nodeThree = createNodeAtPos(createFn, '3', { x: 0, y: 0 });
@@ -140,15 +141,16 @@ describe('DependencyTree', () => {
       createEdge(nodeThree, nodeFive);
       createEdge(nodeFive, nodeSix);
 
-      const rootNode = depTree.findRootNode();
-      expect(rootNode).toBe(nodeOne);
+      const initialNodes = depTree.findInitialNodes();
+      expect(initialNodes).toEqual([nodeOne]);
     });
 
-    it('should throw error if there are multiple root nodes', () => {
-      createNodeAtPos(createFn, '1', { x: 0, y: 0 });
-      createNodeAtPos(createFn, '2', { x: 0, y: 0 });
+    it('should find multiple initial nodes', () => {
+      const nodeOne = createNodeAtPos(createFn, '1', { x: 0, y: 0 });
+      const nodeTwo = createNodeAtPos(createFn, '2', { x: 0, y: 0 });
 
-      expect(() => depTree.findRootNode()).toThrow(new Error('Multiple root nodes in dependency tree.'));
+      const initialNodes = depTree.findInitialNodes();
+      expect(initialNodes).toEqual([nodeOne, nodeTwo]);
     });
 
     it('should create dragged edge', () => {
@@ -302,8 +304,8 @@ describe('DependencyTree', () => {
     });
 
     it('should connect dragged edge', () => {
-      const parentNode = createNodeAtPos(createStage, 'test', { x: 0, y: 0 });
-      const childNode = createNodeAtPos(createStage, 'test', { x: 50, y: 50 });
+      const parentNode = createNodeAtPos(createStage, '1', { x: 0, y: 0 });
+      const childNode = createNodeAtPos(createStage, '2', { x: 50, y: 50 });
       const edge = depTree.createDraggedEdge(parentNode);
       depTree.connectDraggedEdge(childNode);
 

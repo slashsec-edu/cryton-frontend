@@ -11,9 +11,6 @@ export const simulateMouseDown = (stage: Konva.Stage, pos: Vector2d): void => {
   simulatePointerDown(stage, pos);
   const top = stage.content.getBoundingClientRect().top;
 
-  console.log('Simulating mouse down:');
-  console.log(`Top: ${top}, x: ${pos.x}, y: ${pos.y + top}`);
-
   stage._pointerdown({
     clientX: pos.x,
     clientY: pos.y + top,
@@ -24,9 +21,6 @@ export const simulateMouseDown = (stage: Konva.Stage, pos: Vector2d): void => {
 export const simulateMouseMove = (stage: Konva.Stage, pos: Vector2d): void => {
   simulatePointerMove(stage, pos);
   const top = stage.content.getBoundingClientRect().top;
-
-  console.log('Simulating mouse move:');
-  console.log(`Top: ${top}, x: ${pos.x}, y: ${pos.y + top}`);
 
   const evt = {
     clientX: pos.x,
@@ -43,9 +37,6 @@ export const simulateMouseUp = (stage: Konva.Stage, pos: Vector2d): void => {
   simulatePointerUp(stage, pos);
 
   const top = stage.content.getBoundingClientRect().top;
-
-  console.log('Simulating mouse move:');
-  console.log(`Top: ${top}, x: ${pos.x}, y: ${pos.y + top}`);
 
   const evt = {
     clientX: pos.x,

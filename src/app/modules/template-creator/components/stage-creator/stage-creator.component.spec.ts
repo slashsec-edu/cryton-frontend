@@ -116,13 +116,14 @@ describe('StageCreatorComponent', () => {
     childDepTree$.next(correctChildDepTree);
     triggerConfig = { hours: 1, minutes: 2, seconds: 3 };
     trigger = TriggerFactory.createTrigger(TriggerType.DELTA, triggerConfig);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree,
       childDepTree: correctChildDepTree,
       timeline: parentTimeline,
       trigger
     });
+    node.setParentDepTree(parentDepTree);
+    return node;
   };
 
   const createHttpStage = (name: string): StageNode => {
@@ -133,13 +134,14 @@ describe('StageCreatorComponent', () => {
       routes: [{ path: 'api', method: 'GET', parameters: [{ name: 'value', value: 'test' }] }]
     };
     trigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, triggerConfig);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree,
       childDepTree: correctChildDepTree,
       timeline: parentTimeline,
       trigger
     });
+    node.setParentDepTree(parentDepTree);
+    return node;
   };
 
   const createState = (): void => {
@@ -153,7 +155,8 @@ describe('StageCreatorComponent', () => {
     // Correctly created dependency tree for testing valid stages.
     correctChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
     correctChildDepTree.theme = mockTheme;
-    const testingStep = new StepNode('testStep', 'module', 'args', correctChildDepTree);
+    const testingStep = new StepNode('testStep', 'module', 'args');
+    testingStep.setParentDepTree(correctChildDepTree);
     correctChildDepTree.treeNodeManager.addNode(testingStep);
 
     // Initializing subjects

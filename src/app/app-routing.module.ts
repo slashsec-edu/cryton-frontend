@@ -6,7 +6,6 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
-import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
 import { ListInstancesComponent } from './pages/instances/list-instances/list-instances.component';
 import { CreateInstanceComponent } from './pages/instances/create-instance/create-instance.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';

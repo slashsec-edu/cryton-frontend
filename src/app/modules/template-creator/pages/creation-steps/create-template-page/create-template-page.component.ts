@@ -14,12 +14,12 @@ import { first, takeUntil } from 'rxjs/operators';
 import { TemplateYamlPreviewComponent } from '../../../components/template-yaml-preview/template-yaml-preview.component';
 
 @Component({
-  selector: 'app-build-template-page',
-  templateUrl: './build-template-page.component.html',
-  styleUrls: ['./build-template-page.component.scss', '../../../styles/template-creator.scss'],
+  selector: 'app-create-template-page',
+  templateUrl: './create-template-page.component.html',
+  styleUrls: ['./create-template-page.component.scss', '../../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuildTemplatePageComponent implements OnInit, OnDestroy {
+export class CreateTemplatePageComponent implements OnInit, OnDestroy {
   templateDepTreeRef = DepTreeRef.TEMPLATE_CREATION;
   creating$ = new BehaviorSubject(false);
 

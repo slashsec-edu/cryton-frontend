@@ -11,7 +11,6 @@ export type TriggerArgs = Record<string, unknown>;
 export interface CrytonStageConfig {
   name: string;
   childDepTree: DependencyTree;
-  parentDepTree: DependencyTree;
   timeline: TemplateTimeline;
   trigger: Trigger<TriggerArgs>;
 }
@@ -23,7 +22,7 @@ export class StageNode extends TreeNode {
   trigger: Trigger<TriggerArgs>;
 
   constructor(config: CrytonStageConfig) {
-    super(config.parentDepTree, config.name);
+    super(config.name);
 
     this.trigger = config.trigger;
     this.childDepTree = config.childDepTree;
@@ -57,7 +56,7 @@ export class StageNode extends TreeNode {
     this.timelineNode?.changeName(name);
 
     // Only draw if the node is attached to stage
-    if (this.konvaObject.getStage()) {
+    if (this.konvaObject && this.konvaObject.getStage()) {
       this.draw();
     }
   }

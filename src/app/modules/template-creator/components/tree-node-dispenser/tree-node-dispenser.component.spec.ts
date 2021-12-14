@@ -10,6 +10,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 
 describe('TreeNodeDispenserComponent', () => {
   let component: TreeNodeDispenserComponent;
@@ -58,7 +60,10 @@ describe('TreeNodeDispenserComponent', () => {
       TestBed.configureTestingModule({
         declarations: [TreeNodeDispenserComponent],
         imports: [TemplateCreatorModule],
-        providers: [{ provide: DependencyTreeManagerService, useValue: treeManagerStub }]
+        providers: [
+          { provide: DependencyTreeManagerService, useValue: treeManagerStub },
+          { provide: AlertService, useValue: alertServiceStub }
+        ]
       })
         .overrideComponent(TreeNodeDispenserComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
         .compileComponents();

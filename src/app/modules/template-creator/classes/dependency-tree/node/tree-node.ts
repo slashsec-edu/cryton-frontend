@@ -49,10 +49,8 @@ export class TreeNode {
     this.konvaObject.draggable(value);
   }
 
-  constructor(parentDepTree: DependencyTree, name: string) {
-    this.parentDepTree = parentDepTree;
+  constructor(name: string) {
     this.name = name;
-    this._initKonvaObject();
   }
 
   /**
@@ -126,6 +124,14 @@ export class TreeNode {
     this.konvaObject.remove();
   }
 
+  setParentDepTree(depTree: DependencyTree): void {
+    this.parentDepTree = depTree;
+
+    if (depTree) {
+      this._initKonvaObject();
+    }
+  }
+
   protected _onSettingsClick(): void {
     this.parentDepTree.treeNodeManager.editNode(this);
   }
@@ -178,7 +184,7 @@ export class TreeNode {
    */
   private _initNodeEvents(settingsButton: Konva.Group) {
     this.konvaObject.on('click', () => {
-      if (this.parentDepTree.draggedEdge) {
+      if (this.parentDepTree && this.parentDepTree.draggedEdge) {
         try {
           this.parentDepTree.connectDraggedEdge(this);
         } catch (err) {
@@ -229,21 +235,21 @@ export class TreeNode {
       name: TREE_NODE_RECT_NAME
     });
 
-    if (this.parentDepTree.theme) {
+    if (this.parentDepTree && this.parentDepTree.theme) {
       rect.fill(this.parentDepTree.theme.templateCreator.treeNodeRect);
     }
 
     rect.on('click', () => {
       if (this.parentDepTree.toolState.isSwapEnabled) {
         this.strokeAnimation.deactivate();
-        this.parentDepTree.treeNodeManager.moveToDispenser(this);
+        this.parentDepTree.cursorState.resetCursor();
         this.unattach();
-        this.parentDepTree.cursorState.resetCursor();
+        this.parentDepTree.treeNodeManager.moveToDispenser(this);
       } else if (this.parentDepTree.toolState.isDeleteEnabled) {
-        this.parentDepTree.treeNodeManager.removeNode(this);
         this.parentDepTree.treeNodeManager.clearEditNode();
-        this.destroy();
         this.parentDepTree.cursorState.resetCursor();
+        this.destroy();
+        this.parentDepTree.treeNodeManager.removeNode(this);
       }
     });
 
@@ -255,6 +261,10 @@ export class TreeNode {
    */
   private _createNodeConnector(): Konva.Group {
     this._connector = new NodeConnector(NODE_WIDTH, NODE_HEIGHT, this);
+
+    if (this.parentDepTree && this.parentDepTree.theme) {
+      this._connector.changeTheme(this.parentDepTree.theme);
+    }
     return this._connector.konvaObject;
   }
 

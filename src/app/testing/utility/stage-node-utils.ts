@@ -26,24 +26,26 @@ export class StageNodeUtils {
 
   createDeltaNode = (name: string, triggerArgs = DEFAULT_DELTA_ARGS): StageNode => {
     const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, triggerArgs);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree: this.parentDepTree,
       childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
       timeline: this.parentTimeline,
       trigger: deltaTrigger
     });
+    node.setParentDepTree(this.parentDepTree);
+    return node;
   };
 
   createHttpNode = (name: string, triggerArgs = DEFAULT_HTTP_ARGS): StageNode => {
     const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, triggerArgs);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree: this.parentDepTree,
       childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
       timeline: this.parentTimeline,
       trigger: httpTrigger
     });
+    node.setParentDepTree(this.parentDepTree);
+    return node;
   };
 
   createTreeEdge = (parent: StageNode, child: StageNode, ignoreTimeline: boolean = true): StageEdge => {

@@ -61,16 +61,10 @@ const deltaTrigger = TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0,
 const deltaStage = new StageNode({
   name: 'stage-one',
   childDepTree: deltaStageChildDepTree,
-  parentDepTree: httpTemplateDepTree,
   timeline,
   trigger: deltaTrigger
 });
-const deltaStageStep = new StepNode(
-  'get-request',
-  'mod_cmd',
-  `cmd: curl http://localhost:8082/index?a=1`,
-  deltaStageChildDepTree
-);
+const deltaStageStep = new StepNode('get-request', 'mod_cmd', `cmd: curl http://localhost:8082/index?a=1`);
 deltaStageChildDepTree.treeNodeManager.addNode(deltaStageStep);
 httpTemplateDepTree.treeNodeManager.addNode(deltaStage);
 
@@ -83,11 +77,10 @@ const httpTrigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, {
 const httpStage = new StageNode({
   name: 'stage-two',
   childDepTree: httpStageChildDepTree,
-  parentDepTree: httpTemplateDepTree,
   timeline,
   trigger: httpTrigger
 });
-const httpStageStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1', httpStageChildDepTree);
+const httpStageStep = new StepNode('scan-localhost', 'mod_nmap', 'target: 127.0.0.1');
 httpStageChildDepTree.treeNodeManager.addNode(httpStageStep);
 httpTemplateDepTree.treeNodeManager.addNode(httpStage);
 

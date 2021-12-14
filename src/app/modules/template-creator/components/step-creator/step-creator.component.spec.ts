@@ -30,8 +30,11 @@ describe('StepCreatorComponent', () => {
 
   const testingDepTree = new DependencyTree(NodeType.CRYTON_STEP);
 
-  const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): StepNode =>
-    new StepNode(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs, testingDepTree);
+  const createStep = (stepArgs: { name: string; attackModule: string; attackModuleArgs: string }): StepNode => {
+    const node = new StepNode(stepArgs.name, stepArgs.attackModule, stepArgs.attackModuleArgs);
+    node.setParentDepTree(testingDepTree);
+    return node;
+  };
 
   const getCreateBtn = (): Promise<MatButtonHarness> =>
     loader.getHarness(MatButtonHarness.with({ text: /.*Create step/ }));

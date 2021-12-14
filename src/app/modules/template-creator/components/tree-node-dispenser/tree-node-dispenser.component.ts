@@ -7,6 +7,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { takeUntil } from 'rxjs/operators';
 import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
 import { TcRoutingService } from '../../services/tc-routing.service';
+import { NodeNameNotUniqueError } from '../../classes/dependency-tree/errors/node-name-not-unique.error';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-tree-node-dispenser',
@@ -22,9 +24,10 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
   private _nodeManager: NodeManager;
 
   constructor(
-    private _treeManager: DependencyTreeManagerService,
     public themeService: ThemeService,
-    private _tcRouter: TcRoutingService
+    private _treeManager: DependencyTreeManagerService,
+    private _tcRouter: TcRoutingService,
+    private _alert: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -49,8 +52,14 @@ export class TreeNodeDispenserComponent implements OnInit, OnDestroy {
    * @param node Node to swap.
    */
   swapNode(node: TreeNode): void {
-    this._nodeManager.addNode(node);
-    this._treeManager.removeDispenserNode(this.depTreeRef, node);
+    try {
+      this._nodeManager.addNode(node);
+      this._treeManager.removeDispenserNode(this.depTreeRef, node);
+    } catch (e) {
+      if (e instanceof NodeNameNotUniqueError) {
+        this._alert.showError(e.message);
+      }
+    }
   }
 
   editNode(node: TreeNode): void {

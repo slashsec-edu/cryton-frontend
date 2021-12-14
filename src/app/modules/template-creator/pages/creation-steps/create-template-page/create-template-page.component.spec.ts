@@ -4,7 +4,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { TemplateService } from 'src/app/services/template.service';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { Spied } from 'src/app/testing/utility/utility-types';
-import { BuildTemplatePageComponent } from './build-template-page.component';
+import { CreateTemplatePageComponent } from './create-template-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,9 +25,9 @@ import { TemplateConverterService } from '../../../services/template-converter.s
 import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
 import { of } from 'rxjs';
 
-describe('BuildTemplatePageComponent', () => {
-  let component: BuildTemplatePageComponent;
-  let fixture: ComponentFixture<BuildTemplatePageComponent>;
+describe('CreateTemplatePageComponent', () => {
+  let component: CreateTemplatePageComponent;
+  let fixture: ComponentFixture<CreateTemplatePageComponent>;
 
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
   const templateServiceStub = jasmine.createSpyObj('TemplateService', [
@@ -72,7 +72,7 @@ describe('BuildTemplatePageComponent', () => {
         MatIconModule,
         MatButtonModule
       ],
-      declarations: [BuildTemplatePageComponent, CrytonButtonComponent],
+      declarations: [CreateTemplatePageComponent, CrytonButtonComponent],
       providers: [
         { provide: AlertService, useValue: alertServiceStub },
         { provide: TemplateService, useValue: templateServiceStub },
@@ -82,12 +82,12 @@ describe('BuildTemplatePageComponent', () => {
         { provide: TemplateConverterService, useValue: templateConverterStub }
       ]
     })
-      .overrideComponent(BuildTemplatePageComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
+      .overrideComponent(CreateTemplatePageComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
       .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BuildTemplatePageComponent);
+    fixture = TestBed.createComponent(CreateTemplatePageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

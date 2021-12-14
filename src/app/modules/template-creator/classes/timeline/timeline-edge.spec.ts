@@ -33,18 +33,19 @@ describe('TimelineEdge', () => {
   const createEdge = (parentTrigger: Trigger<Record<string, any>>, childTrigger: Trigger<Record<string, any>>) => {
     parentStage = new StageNode({
       name: 'parent',
-      parentDepTree,
       childDepTree: parentStageDepTree,
       timeline,
       trigger: parentTrigger
     });
     childStage = new StageNode({
       name: 'child',
-      parentDepTree,
       childDepTree: childStageDepTree,
       timeline,
       trigger: childTrigger
     });
+
+    parentStage.setParentDepTree(parentDepTree);
+    childStage.setParentDepTree(parentDepTree);
 
     timeline.addNode(parentStage.timelineNode);
     timeline.addNode(childStage.timelineNode);

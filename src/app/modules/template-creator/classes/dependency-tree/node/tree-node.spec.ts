@@ -30,17 +30,18 @@ describe('TreeNode', () => {
   const stepEdgeStub = jasmine.createSpyObj('StepEdge', ['moveToParentNode', 'moveToChildNode']) as StepEdge;
 
   const createStep = (name: string) => {
-    treeNode = new StepNode(name, '', '', dependencyTree);
+    treeNode = new StepNode(name, '', '');
+    treeNode.setParentDepTree(dependencyTree);
   };
 
   const createStage = (name: string) => {
     treeNode = new StageNode({
       name,
-      parentDepTree: dependencyTree,
       childDepTree: new DependencyTree(NodeType.CRYTON_STEP),
       timeline: new TemplateTimeline(),
       trigger: TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 })
     });
+    treeNode.setParentDepTree(dependencyTree);
   };
 
   const getNameText = (): Konva.Text => treeNode.konvaObject.findOne(`.${TREE_NODE_TEXT_NAME}`);

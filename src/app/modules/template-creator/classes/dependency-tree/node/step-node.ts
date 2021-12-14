@@ -1,12 +1,11 @@
-import { DependencyTree } from '../dependency-tree';
 import { TreeNode } from './tree-node';
 
 export class StepNode extends TreeNode {
   attackModule: string;
   attackModuleArgs: string;
 
-  constructor(name: string, attackModule: string, attackModuleArgs: string, parentDepTree: DependencyTree) {
-    super(parentDepTree, name);
+  constructor(name: string, attackModule: string, attackModuleArgs: string) {
+    super(name);
     this.attackModule = attackModule;
     this.attackModuleArgs = attackModuleArgs;
   }
@@ -26,7 +25,7 @@ export class StepNode extends TreeNode {
     this.changeName(name);
 
     // Only draw if the node is attached to stage
-    if (this.konvaObject.getStage()) {
+    if (this.konvaObject && this.konvaObject.getStage()) {
       this.draw();
     }
   }

@@ -203,7 +203,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     const formValue = this.stepForm.value as Record<string, string>;
     const { name, attackModule, attackModuleArgs } = formValue;
 
-    return new StepNode(name, attackModule, attackModuleArgs, this._parentDepTree);
+    return new StepNode(name, attackModule, attackModuleArgs);
   }
 
   /**

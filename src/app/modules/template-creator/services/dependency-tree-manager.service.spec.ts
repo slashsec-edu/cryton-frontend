@@ -14,7 +14,8 @@ describe('DependencyTreeManagerService', () => {
       name: 'test',
       parentDepTree,
       konvaObject: new Konva.Group(),
-      changeTheme: () => {}
+      changeTheme: () => {},
+      setParentDepTree: () => {}
     }) as TreeNode;
 
   /**

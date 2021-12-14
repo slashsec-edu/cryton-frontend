@@ -10,10 +10,16 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
+import { InvalidTemplateFormatError } from './errors/invalid-template-format.error';
+import { UndefinedTemplatePropertyError } from './errors/undefined-template-property.error';
+import { NotASequenceError } from './errors/not-a-sequence.error';
+import { NotUniqueNameError } from './errors/not-unique-name.error';
 
 describe('TemplateYamlPreviewComponent', () => {
   let component: TemplateYamlPreviewComponent;
   let fixture: ComponentFixture<TemplateYamlPreviewComponent>;
+
+  const invalidFormatMsg = new InvalidTemplateFormatError().message;
 
   const dialogRefStub = jasmine.createSpyObj('MatDiaogRef', ['close']) as Spied<
     MatDialogRef<TemplateYamlPreviewComponent>
@@ -61,53 +67,58 @@ describe('TemplateYamlPreviewComponent', () => {
     component.templateControl.setValue(null);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Invalid template format.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(invalidFormatMsg);
   });
 
   it('should show an error if the template is empty', () => {
     component.templateControl.setValue('');
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Template cannot be empty.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(invalidFormatMsg);
   });
 
   it('should show an error if the template name is undefined', () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('name').message;
     component.templateControl.setValue(`plan:
       name:`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Empty template name.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it('should show an error if the template owner is undefined', () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('owner').message;
     component.templateControl.setValue(`plan:
       name: a
       owner:`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Empty template owner.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it('should show an error if there are no stages in the template', () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('stages').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('No stages defined in template.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it('should show an error if the stages are not defined as a sequence', () => {
+    const notASequenceMsg = new NotASequenceError('stages').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
       stages: a`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Stages are not defined as a sequence.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(notASequenceMsg);
   });
 
   it(`should show an error if a stage doesn't have a name`, () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('name of stage at index: 0').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -119,10 +130,11 @@ describe('TemplateYamlPreviewComponent', () => {
             seconds: 20`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith(`Stage with index: 0 doesn't have a name.`);
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it('should show an error if there are multiple stages with the same name', () => {
+    const notUniqueNameMsg = new NotUniqueNameError('a').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -141,10 +153,11 @@ describe('TemplateYamlPreviewComponent', () => {
             seconds: 20`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Multiple stages with name: a');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(notUniqueNameMsg);
   });
 
   it('should show an error if there are no steps in the stage', () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('steps in stage: b').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -157,10 +170,11 @@ describe('TemplateYamlPreviewComponent', () => {
             seconds: 20`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('No steps defined in stage: b');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it(`should show an error if the steps aren't defined as a sequence`, () => {
+    const notASequenceMsg = new NotASequenceError('steps of stage: b').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -174,10 +188,11 @@ describe('TemplateYamlPreviewComponent', () => {
           steps: a`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Steps of stage: b are not defined as a sequence.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(notASequenceMsg);
   });
 
   it(`should show an error if a step doesn't have a name`, () => {
+    const undefinedPropertyMsg = new UndefinedTemplatePropertyError('name of step at index: 0 inside stage: b').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -193,10 +208,11 @@ describe('TemplateYamlPreviewComponent', () => {
               attack_module_args: a`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Step with index: 0 inside stage: b doesnt have a name.');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(undefinedPropertyMsg);
   });
 
   it(`should show an error if there are multiple steps with the same name`, () => {
+    const notUniqueNameMsg = new NotUniqueNameError('a').message;
     component.templateControl.setValue(`plan:
       name: a
       owner: a
@@ -216,7 +232,7 @@ describe('TemplateYamlPreviewComponent', () => {
               attack_module_args: b`);
 
     component.handleCreate();
-    expect(alertServiceStub.showError).toHaveBeenCalledWith('Multiple steps with name: a');
+    expect(alertServiceStub.showError).toHaveBeenCalledWith(notUniqueNameMsg);
   });
 
   it('should close with edited template value on create', () => {

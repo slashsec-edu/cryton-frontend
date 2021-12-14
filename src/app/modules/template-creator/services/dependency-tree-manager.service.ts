@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DependencyTree } from '../classes/dependency-tree/dependency-tree';
 import { TreeNode } from '../classes/dependency-tree/node/tree-node';
@@ -18,6 +18,7 @@ export class DependencyTreeManagerService implements OnDestroy {
   private _treesBackup: Record<string, DependencyTree> = {};
   private _dispensers: Record<string, BehaviorSubject<TreeNode[]>> = {};
   private _editNodeSubjects: Record<string, ReplaySubject<TreeNode>> = {};
+  private _editNodeSubscriptions: Record<string, Subscription> = {};
   private _destroy$ = new Subject<void>();
 
   constructor() {
@@ -45,6 +46,7 @@ export class DependencyTreeManagerService implements OnDestroy {
     } else {
       this._currentTrees[key] = new BehaviorSubject(depTree);
     }
+    this._observeTreeNodeEdit(depTree.treeNodeManager.editNode$, key);
   }
 
   /**
@@ -64,10 +66,7 @@ export class DependencyTreeManagerService implements OnDestroy {
    */
   resetCurrentTree(key: DepTreeRef): void {
     const currentTree$ = this.getCurrentTree(key);
-
-    if (currentTree$) {
-      currentTree$.next(new DependencyTree(currentTree$.value.nodeType));
-    }
+    this.setCurrentTree(key, new DependencyTree(currentTree$.value.nodeType));
   }
 
   /**
@@ -102,8 +101,10 @@ export class DependencyTreeManagerService implements OnDestroy {
    * Resets dependency tree manager to default state.
    */
   reset(): void {
-    this._initialize();
     this._treesBackup = {};
+    Object.values(this._editNodeSubscriptions).forEach(sub => sub.unsubscribe());
+    Object.values(this._editNodeSubjects).forEach(subject => subject.next(null));
+    this._forEachKey((key: DepTreeRef) => this.resetCurrentTree(key));
   }
 
   addDispenserNode(key: DepTreeRef, node: TreeNode): void {
@@ -146,15 +147,14 @@ export class DependencyTreeManagerService implements OnDestroy {
    * Initializes tree behavior subjects with empty trees.
    */
   private _initialize(): void {
-    Object.keys(DepTreeRef).forEach(key => {
-      const dispenser = this._dispensers[key];
-
-      if (!dispenser) {
-        this._dispensers[key] = new BehaviorSubject<TreeNode[]>([]);
-      }
+    this._forEachKey(key => {
+      this._dispensers[key] = new BehaviorSubject<TreeNode[]>([]);
       this._editNodeSubjects[key] = new ReplaySubject<TreeNode>(1);
     });
+    this._initializeTrees();
+  }
 
+  private _initializeTrees(): void {
     this._createTree(DepTreeRef.STAGE_CREATION);
     this._createTree(DepTreeRef.TEMPLATE_CREATION);
   }
@@ -164,13 +164,25 @@ export class DependencyTreeManagerService implements OnDestroy {
       key === DepTreeRef.STAGE_CREATION ? NodeType.CRYTON_STEP : NodeType.CRYTON_STAGE
     );
     this.setCurrentTree(key, depTree);
-    this._observeTreeNodeEdit(depTree.treeNodeManager.editNode$, key);
   }
 
   private _observeTreeNodeEdit(treeEditNode$: Observable<TreeNode>, key: DepTreeRef): void {
     const editNode$ = this._editNodeSubjects[key];
-    treeEditNode$.pipe(takeUntil(this._destroy$)).subscribe(node => {
+    const currentSubscription = this._editNodeSubscriptions[key];
+
+    if (currentSubscription) {
+      currentSubscription.unsubscribe();
+    }
+
+    editNode$.next(null);
+    this._editNodeSubscriptions[key] = treeEditNode$.pipe(takeUntil(this._destroy$)).subscribe(node => {
       editNode$.next(node);
     });
+  }
+
+  private _forEachKey(func: (key: DepTreeRef) => void): void {
+    Object.keys(DepTreeRef)
+      .filter(val => !isNaN(Number(val)))
+      .forEach(key => func((key as unknown) as DepTreeRef));
   }
 }

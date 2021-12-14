@@ -248,11 +248,9 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _createStage(): StageNode {
     const { name, triggerType } = this._state.stageForm.getStageArgs();
     const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
-
     const trigger = TriggerFactory.createTrigger(triggerType, this._state.stageForm.getTriggerArgs());
 
     return new StageNode({
-      parentDepTree: this.parentDepTree,
       timeline: this._state.timeline,
       childDepTree,
       trigger,
