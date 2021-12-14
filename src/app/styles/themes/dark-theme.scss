@@ -2,7 +2,7 @@
 @import './template-creator-theme.scss';
 @import './cryton-components.theme.scss';
 
-$cryton-primary: mat-palette($mat-blue, A200);
+$cryton-primary: mat-palette($mat-blue, A400);
 $cryton-accent: mat-palette($mat-grey, 50);
 $cryton-warn: mat-palette($mat-red, A400);
 $dark-theme: mat-dark-theme($cryton-primary, $cryton-accent, $cryton-warn);

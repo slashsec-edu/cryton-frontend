@@ -34,6 +34,7 @@ describe('CreateTemplatePageComponent', () => {
     'getTemplateDetail',
     'uploadYAML'
   ]) as Spied<TemplateService>;
+  templateServiceStub.uploadYAML.and.returnValue(of('Item created successfully.'));
 
   const correctTree = new DependencyTree(NodeType.CRYTON_STAGE);
   const correctTimeline = new TemplateTimeline();
