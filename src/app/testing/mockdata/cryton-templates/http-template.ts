@@ -26,9 +26,11 @@ export const httpTemplateDescription = `plan:
         seconds: 5
       steps:
         - name: get-request
-          attack_module: mod_cmd
-          attack_module_args:
-            cmd: curl http://localhost:8082/index?a=1
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_cmd
+            attack_module_args:
+              cmd: curl http://localhost:8082/index?a=1
           is_init: true
     - name: stage-two
       trigger_type: HTTPListener
@@ -43,9 +45,11 @@ export const httpTemplateDescription = `plan:
                 value: "1"
       steps:
         - name: scan-localhost
-          attack_module: mod_nmap
-          attack_module_args:
-            target: 127.0.0.1
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_nmap
+            attack_module_args:
+              target: 127.0.0.1
           is_init: true
       depends_on:
         - stage-one

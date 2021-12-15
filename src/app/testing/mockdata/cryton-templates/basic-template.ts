@@ -27,22 +27,26 @@ export const basicTemplateDescription = `plan:
         seconds: 20
       steps:
         - name: scan-localhost
-          attack_module: mod_nmap
-          attack_module_args:
-            target: 127.0.0.1
-            ports:
-              - 22
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_nmap
+            attack_module_args:
+              target: 127.0.0.1
+              ports:
+                - 22
           is_init: true
           next:
             - step: bruteforce
               type: result
               value: OK
         - name: bruteforce
-          attack_module: mod_medusa
-          attack_module_args:
-            target: 127.0.0.1
-            credentials:
-              username: vagrant
+          step_type: cryton/execute-on-worker
+          arguments:
+            attack_module: mod_medusa
+            attack_module_args:
+              target: 127.0.0.1
+              credentials:
+                username: vagrant
 `;
 
 // Create parents

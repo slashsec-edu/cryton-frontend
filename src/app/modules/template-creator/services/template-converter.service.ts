@@ -133,8 +133,11 @@ export class TemplateConverterService {
     steps.forEach(step => {
       const stepDescription: StepDescription = {
         name: step.name,
-        attack_module: step.attackModule,
-        attack_module_args: parse(step.attackModuleArgs) as Record<string, any>
+        step_type: 'cryton/execute-on-worker',
+        arguments: {
+          attack_module: step.attackModule,
+          attack_module_args: parse(step.attackModuleArgs) as Record<string, any>
+        }
       };
       const next: StepEdgeDescription[] = [];
 
@@ -206,8 +209,8 @@ export class TemplateConverterService {
   private _createStep(stepDescription: StepDescription, parentDepGraph: DependencyGraph): StepNode {
     const step = new StepNode(
       stepDescription.name,
-      stepDescription.attack_module,
-      stringify(stepDescription.attack_module_args)
+      stepDescription.arguments.attack_module,
+      stringify(stepDescription.arguments.attack_module_args)
     );
     step.setParentDepGraph(parentDepGraph);
 
