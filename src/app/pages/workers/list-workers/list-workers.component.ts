@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
-import { mergeMap, tap } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
 import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
-import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { WorkersService } from 'src/app/services/workers.service';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
-import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { ActionButton } from 'src/app/modules/shared/components/cryton-table/buttons/action-button';
+import { HealthCheckButton } from 'src/app/modules/shared/components/cryton-table/buttons/healthcheck-button';
+import { DeleteButton } from 'src/app/modules/shared/components/cryton-table/buttons/delete-button';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-list-workers',
@@ -26,25 +25,6 @@ export class ListWorkersComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new WorkerTableDataSource(this._workersService);
-    this.buttons = [{ name: 'Delete', icon: 'delete', func: this.deleteWorker }];
+    this.buttons = [new HealthCheckButton(this._workersService), new DeleteButton(this._workersService, this._dialog)];
   }
-
-  /**
-   * Checks if you really want to delete the item, deletes it and updates
-   * the table paginator.
-   *
-   * @param worker Worker to be deleted.
-   */
-  deleteWorker = (worker: Worker): Observable<string> => {
-    const dialogRef = this._dialog.open(CertainityCheckComponent);
-
-    return dialogRef.afterClosed().pipe(
-      mergeMap(res => (res ? this._workersService.deleteItem(worker.id) : (of(null) as Observable<string>))),
-      tap(res => {
-        if (res) {
-          this.table.updatePaginator();
-        }
-      })
-    );
-  };
 }

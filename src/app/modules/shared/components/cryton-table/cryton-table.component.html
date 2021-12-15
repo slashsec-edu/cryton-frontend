@@ -6,7 +6,7 @@
         <app-cryton-counter name="Total" [count]="data.count"></app-cryton-counter>
 
         <!-- REFRESH BUTTON -->
-        <button mat-icon-button color="accent" (click)="loadPage(true)">
+        <button mat-icon-button color="accent" (click)="loadPage(true)" matTooltip="Refresh">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -106,28 +106,46 @@
       </td>
     </ng-container>
 
-    <!-- ACTION BUTTONS -->
-    <ng-container *ngFor="let button of actionButtons" [matColumnDef]="button.name">
+    <!-- BUTTONS -->
+    <ng-container *ngFor="let button of buttons" [matColumnDef]="button.name">
       <th mat-header-cell *matHeaderCellDef class="button-width"></th>
       <td mat-cell *matCellDef="let row" class="justify-right">
-        <button
-          mat-icon-button
-          onclick="this.blur()"
-          (click)="handleButtonClick(button, row)"
-          [matTooltip]="button.name"
-        >
-          <mat-icon [@error]="isErroneous(button, row) ? 'error' : 'noError'">{{ button.icon }}</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-
-    <!-- LINK BUTTONS -->
-    <ng-container *ngFor="let button of linkButtons" [matColumnDef]="button.name">
-      <th mat-header-cell *matHeaderCellDef class="button-width"></th>
-      <td mat-cell *matCellDef="let row" class="justify-right">
-        <a mat-icon-button onclick="this.blur()" [routerLink]="button.constructLink(row)" [matTooltip]="button.name">
-          <mat-icon>{{ button.icon }}</mat-icon>
-        </a>
+        <div [ngSwitch]="getButtonType(button)">
+          <div *ngSwitchCase="buttonType.ACTION">
+            <button
+              mat-icon-button
+              onclick="this.blur()"
+              (click)="handleButtonClick(button, row)"
+              [matTooltip]="button.name"
+            >
+              <mat-icon>{{ button.icon }}</mat-icon>
+            </button>
+          </div>
+          <div *ngSwitchCase="buttonType.API_ACTION">
+            <button
+              mat-icon-button
+              onclick="this.blur()"
+              (click)="handleButtonClick(button, row)"
+              [matTooltip]="button.name"
+              *ngIf="!(asApiButton(button).loading$ | async).includes(row); else buttonLoading"
+            >
+              <mat-icon>{{ button.icon }}</mat-icon>
+            </button>
+            <ng-template #buttonLoading>
+              <mat-spinner diameter="20" strokeWidth="3" color="accent" class="button-loading"></mat-spinner>
+            </ng-template>
+          </div>
+          <div *ngSwitchCase="buttonType.LINK">
+            <a
+              mat-icon-button
+              onclick="this.blur()"
+              [routerLink]="asLinkButton(button).constructPath(row)"
+              [matTooltip]="button.name"
+            >
+              <mat-icon>{{ button.icon }}</mat-icon>
+            </a>
+          </div>
+        </div>
       </td>
     </ng-container>
 

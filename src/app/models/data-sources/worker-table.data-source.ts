@@ -49,9 +49,9 @@ export class WorkerTableDataSource extends CrytonTableDataSource<Worker> {
     (input: Worker): string => input.q_prefix.toString()
   ];
   highlightDictionary = {
-    ready: 'blue',
-    down: 'black',
-    up: 'green'
+    ready: 'ready',
+    down: 'down',
+    up: 'up'
   };
 
   constructor(protected workersService: WorkersService) {

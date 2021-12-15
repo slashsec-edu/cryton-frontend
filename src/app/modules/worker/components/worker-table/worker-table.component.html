@@ -3,6 +3,17 @@
     <header [ngClass]="['worker-header', getStateColor(data.state)]">
       <!-- HEADER -->
       <div class="worker-header--state">
+        <button
+          mat-icon-button
+          (click)="healthCheck()"
+          *ngIf="!(loading$ | async); else loading"
+          matTooltip="Healthcheck"
+        >
+          <mat-icon>health_and_safety</mat-icon>
+        </button>
+        <ng-template #loading>
+          <mat-spinner diameter="20" strokeWidth="3" color="accent"></mat-spinner>
+        </ng-template>
         <h2>{{ data.state }}</h2>
       </div>
 

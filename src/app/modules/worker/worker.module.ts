@@ -9,6 +9,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [WorkerTableComponent, WorkersListComponent],
@@ -20,7 +21,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatPaginatorModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule
   ],
   exports: [WorkersListComponent]
 })

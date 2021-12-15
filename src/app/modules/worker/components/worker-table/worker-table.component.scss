@@ -17,6 +17,10 @@ h4 {
   margin-left: 15px;
   display: flex;
   align-items: center;
+
+  mat-spinner {
+    margin: 0 10px;
+  }
 }
 .worker-header--state > h2 {
   margin-left: 10px;
