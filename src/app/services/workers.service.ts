@@ -8,6 +8,7 @@ import { concatAll, map, mergeMap, pluck, tap, toArray } from 'rxjs/operators';
 import { PlanExecution } from '../models/api-responses/plan-execution.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
 import { Endpoint } from '../models/enums/endpoint.enum';
+import { WorkerHealth } from '../models/api-responses/worker-health.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,9 @@ export class WorkersService extends CrytonRESTApiService<Worker> {
       toArray(),
       map((workers: WorkerExecution[]) => ({ count, data: workers } as TableData<WorkerExecution>))
     );
+  }
+
+  healthCheck(workerID: number): Observable<WorkerHealth> {
+    return this.http.post<WorkerHealth>(`${this.endpoint}${workerID}/healthcheck/`, {});
   }
 }

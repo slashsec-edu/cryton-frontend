@@ -43,7 +43,8 @@ import { MatRadioButtonHarness } from '@angular/material/radio/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatRowHarness } from '@angular/material/table/testing';
 import { ShortStringPipe } from '../../pipes/short-string.pipe';
-import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { CustomActionButton } from './buttons/custom-action-button';
+import { TableButton } from './buttons/table-button';
 
 describe('CrytonTableComponent', () => {
   let component: CrytonTableComponent<HasID>;
@@ -327,10 +328,10 @@ describe('CrytonTableComponent', () => {
       return of('test');
     };
 
-    const testingButtons: ActionButton<Run>[] = [{ name: 'test', icon: 'test', func: testFunction }];
+    const testingButtons: TableButton[] = [new CustomActionButton('test', 'test', testFunction)];
 
     createComponent();
-    component.actionButtons = testingButtons;
+    component.buttons = testingButtons;
     fixture.detectChanges();
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'test' }));

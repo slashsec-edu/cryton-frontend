@@ -18,10 +18,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { tap, takeUntil, debounceTime } from 'rxjs/operators';
 import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
 import { Column } from 'src/app/models/cryton-table/interfaces/column.interface';
-import { TableButton } from 'src/app/models/cryton-table/interfaces/table-button.interface';
+import { TableButton } from './buttons/table-button';
 import { TableFilter } from 'src/app/models/cryton-table/interfaces/table-filter.interface';
 import { Observable, Subject } from 'rxjs';
-import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { ExpandedRowInterface } from 'src/app/generics/expanded-row.interface';
 import { Sort } from '@angular/material/sort';
@@ -30,13 +30,10 @@ import { AlertService } from 'src/app/services/alert.service';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { SelectionModel } from '@angular/cdk/collections';
 import { environment } from 'src/environments/environment';
-import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
-import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
-
-export interface ErroneousButton<T> {
-  button: TableButton;
-  row: T;
-}
+import { ApiActionButton } from './buttons/api-action-button';
+import { ActionButton } from './buttons/action-button';
+import { TableButtonType } from 'src/app/models/enums/table-button-type';
+import { LinkButton } from './buttons/link-button';
 
 @Component({
   selector: 'app-cryton-table',
@@ -48,20 +45,6 @@ export interface ErroneousButton<T> {
       state('collapsed', style({ height: '0px', minHeight: '0px' })),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
-    ]),
-    trigger('error', [
-      transition('noError => error', [
-        animate(
-          '1s ease-out',
-          keyframes([
-            style({ transform: 'rotate(-3deg)', offset: 0.1 }),
-            style({ transform: 'rotate(3deg)', color: '#ff5543', offset: 0.2 }),
-            style({ transform: 'rotate(-3deg)', offset: 0.3 }),
-            style({ transform: 'rotate(3deg)', offset: 0.4 }),
-            style({ transform: 'rotate(0deg)', color: '*', offset: 1 })
-          ])
-        )
-      ])
     ]),
     trigger('expand', [
       state('collapsed', style({ transform: 'rotate(0deg)' })),
@@ -86,14 +69,9 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   @Input() header: string;
 
   /**
-   * Optional action buttons to be displayed at the end of each row.
+   * Action buttons to be displayed at the end of each row.
    */
-  @Input() actionButtons?: ActionButton<T>[];
-
-  /**
-   * Optional link buttons to be displayed at the end of each row.
-   */
-  @Input() linkButtons?: LinkButton<T>[];
+  @Input() buttons: TableButton[] = [];
 
   /**
    * Specifies if table should display radio buttons.
@@ -152,12 +130,11 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   columnControl: FormControl = new FormControl('');
   filterOptions: FormGroup;
 
-  /* ERROR HANDLING */
-  erroneousButton: ErroneousButton<T>;
-
   /* QUERY SETTINGS */
   filter: TableFilter;
   sort: string;
+
+  buttonType = TableButtonType;
 
   /* EVENTS */
   private _destroy$ = new Subject<void>();
@@ -191,6 +168,8 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
         this.filter = filter;
         this.loadPage(true);
       });
+
+    this._subscribeToButtonEvents();
   }
 
   ngOnDestroy(): void {
@@ -339,31 +318,22 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     }
   }
 
-  handleButtonClick(button: ActionButton<T>, row: T): void {
-    const errorTimeout = 10;
-
-    button
-      .func(row)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe({
-        next: (successMsg: string) => {
-          if (successMsg) {
-            this._alertService.showSuccess(successMsg);
+  handleButtonClick(button: TableButton, row: T): void {
+    if (button instanceof ActionButton) {
+      button
+        .executeAction(row)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (successMsg: string) => {
+            if (successMsg) {
+              this._alertService.showSuccess(successMsg);
+            }
+          },
+          error: (err: string) => {
+            this._alertService.showError(err);
           }
-        },
-        error: (err: string) => {
-          this.erroneousButton = null;
-          this._alertService.showError(err);
-          setTimeout(() => (this.erroneousButton = { button, row }), errorTimeout);
-        }
-      });
-  }
-
-  isErroneous(button: TableButton, row: T): boolean {
-    if (!this.erroneousButton) {
-      return false;
+        });
     }
-    return this.erroneousButton.button === button && this.erroneousButton.row === row;
   }
 
   sortData(sort: Sort): void {
@@ -374,7 +344,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     } else {
       this.sort = `-${sort.active}`;
     }
-    this.loadPage();
+    this.loadPage(true);
   }
 
   getFilterableColumns(): Column[] {
@@ -397,6 +367,23 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     }
   }
 
+  getButtonType(button: TableButton): TableButtonType {
+    if (button instanceof ApiActionButton) {
+      return TableButtonType.API_ACTION;
+    } else if (button instanceof LinkButton) {
+      return TableButtonType.LINK;
+    }
+    return TableButtonType.ACTION;
+  }
+
+  asLinkButton(button: TableButton): LinkButton {
+    return button as LinkButton;
+  }
+
+  asApiButton(button: TableButton): ApiActionButton<T> {
+    return button as ApiActionButton<T>;
+  }
+
   private _destroyExpandedRowComponents(): void {
     this.expandedHosts.forEach(host => host.viewContainerRef.clear());
   }
@@ -410,11 +397,8 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     if (this.showRadioButtons) {
       displayedColumns.push('radio');
     }
-    if (this.linkButtons && this.linkButtons.length > 0) {
-      displayedColumns.push(...this.linkButtons.map(button => button.name));
-    }
-    if (this.actionButtons && this.actionButtons.length > 0) {
-      displayedColumns.push(...this.actionButtons.map(button => button.name));
+    if (this.buttons && this.buttons.length > 0) {
+      displayedColumns.push(...this.buttons.map(button => button.name));
     }
     if (this.expandedComponent) {
       displayedColumns.push('expand');
@@ -431,5 +415,26 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
 
   private _getColumnNames(columns: Column[]): string[] {
     return [...columns.map(item => item.name)];
+  }
+
+  private _subscribeToButtonEvents(): void {
+    if (!this.buttons) {
+      return;
+    }
+
+    const apiButtons: ApiActionButton<T>[] = this.buttons.filter(
+      button => button instanceof ApiActionButton
+    ) as ApiActionButton<T>[];
+
+    apiButtons.forEach(button => {
+      button.rowUpdate$.pipe(takeUntil(this._destroy$)).subscribe(updatedRow => {
+        this.dataSource.updateRow(updatedRow);
+        this._cd.detectChanges();
+      });
+
+      button.deleted$.pipe(takeUntil(this._destroy$)).subscribe(() => {
+        this.loadPage();
+      });
+    });
   }
 }

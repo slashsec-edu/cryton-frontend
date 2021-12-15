@@ -1,23 +1,20 @@
 import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, DebugElement, QueryList } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
 import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
 import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
-
 import { PlanService } from 'src/app/services/plan.service';
 import { WorkersService } from 'src/app/services/workers.service';
 import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
 import { RunService } from 'src/app/services/run.service';
-
 import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
-
 import { Plan } from '../../../api-responses/plan.interface';
 import { Worker } from '../../../api-responses/worker.interface';
 import { Selectable } from '../../../cryton-editor/interfaces/selectable.interface';
 import { Column } from '../../../cryton-table/interfaces/column.interface';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
-import { ActionButton } from 'src/app/models/cryton-table/interfaces/action-button.interface';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { CustomActionButton } from 'src/app/modules/shared/components/cryton-table/buttons/custom-action-button';
 
 @Component({
   selector: 'app-run-creation-steps',
@@ -31,7 +28,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   workerDataSource: WorkerTableDataSource;
   inventoriesDataSource: WorkerInventoriesDataSource;
 
-  inventoriesButtons: ActionButton<Worker>[];
+  buttons: TableButton[];
   workers: Worker[];
   plan: Plan;
   inventoryFiles: Record<number, File[]> = {};
@@ -50,10 +47,9 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     this.planDataSource = new PlanTableDataSource(this._planService);
     this.workerDataSource = new WorkerTableDataSource(this._workersService);
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
-
-    this.inventoriesButtons = [
-      { name: 'clear', icon: 'clear', func: this._clearFileSelection },
-      { name: 'upload', icon: 'backup', func: this._uploadFile }
+    this.buttons = [
+      new CustomActionButton('Clear variables', 'clear', this._clearFileSelection),
+      new CustomActionButton('Upload variables', 'backup', this._uploadFile)
     ];
   }
 

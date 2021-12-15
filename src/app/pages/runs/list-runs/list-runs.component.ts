@@ -6,7 +6,8 @@ import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-t
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { RunService } from 'src/app/services/run.service';
 import { ExpandedRunManipulationComponent } from 'src/app/modules/shared/components/run-manipulation/expanded-run-manipulation.component';
-import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
 
 @Component({
   selector: 'app-list-runs',
@@ -19,13 +20,13 @@ export class ListRunsComponent implements OnInit {
 
   dataSource: RunTableDataSource;
   expandedComponent = ExpandedRunManipulationComponent;
-  buttons: LinkButton<Run>[];
+  buttons: TableButton[];
 
   constructor(private _runService: RunService, private _crytonDatetime: CrytonDatetimePipe) {
     this.buttons = [
-      { name: 'Show run', icon: 'visibility', constructLink: (row: Run) => `/app/runs/${row.id}` },
-      { name: 'Show timeline', icon: 'schedule', constructLink: (row: Run) => `/app/runs/${row.id}/timeline` },
-      { name: 'Show YAML', icon: 'description', constructLink: (row: Run) => `/app/runs/${row.id}/yaml` }
+      new LinkButton('Show run', 'visibility', '/app/runs/:id'),
+      new LinkButton('Show timeline', 'schedule', '/app/runs/:id/timeline'),
+      new LinkButton('Show YAML', 'description', '/app/runs/:id/yaml')
     ];
   }
 

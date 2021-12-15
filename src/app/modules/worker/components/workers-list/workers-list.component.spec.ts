@@ -1,4 +1,4 @@
-import { ComponentFixture, waitForAsync, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { WorkersListComponent } from './workers-list.component';
@@ -18,6 +18,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 
 describe('WorkersListComponent', () => {
   let component: WorkersListComponent;
@@ -59,7 +61,10 @@ describe('WorkersListComponent', () => {
           MatProgressBarModule,
           MatDividerModule
         ],
-        providers: [{ provide: WorkersService, useValue: workersServiceStub }]
+        providers: [
+          { provide: WorkersService, useValue: workersServiceStub },
+          { provide: AlertService, useValue: alertServiceStub }
+        ]
       }).compileComponents();
     })
   );

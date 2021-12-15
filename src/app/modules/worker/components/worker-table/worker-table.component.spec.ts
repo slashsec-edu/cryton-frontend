@@ -3,15 +3,21 @@ import { WorkerTableComponent } from './worker-table.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { WorkersService } from 'src/app/services/workers.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { AlertService } from 'src/app/services/alert.service';
 
 describe('WorkerTableComponent', () => {
   let component: WorkerTableComponent;
   let fixture: ComponentFixture<WorkerTableComponent>;
+
+  const workerServiceStub = jasmine.createSpyObj('WorkerService', ['healthCheck']) as Spied<WorkersService>;
+  workerServiceStub.healthCheck.and.returnValue({ detail: { worker_model_id: 1, worker_state: 'DOWN' } });
 
   const worker: Worker = {
     url: 'http://localhost:8000/cryton/api/v1/workers/1/',
@@ -26,7 +32,11 @@ describe('WorkerTableComponent', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [MatPaginatorModule, MatTooltipModule, MatIconModule, SharedModule, BrowserAnimationsModule],
-        declarations: [WorkerTableComponent]
+        declarations: [WorkerTableComponent],
+        providers: [
+          { provide: WorkersService, useValue: workerServiceStub },
+          { provide: AlertService, useValue: alertServiceStub }
+        ]
       })
         .overrideComponent(WorkerTableComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
         .compileComponents();

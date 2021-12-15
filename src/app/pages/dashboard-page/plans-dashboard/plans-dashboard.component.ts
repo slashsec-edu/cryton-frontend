@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PlanService } from 'src/app/services/plan.service';
 import { PlanTableDataSource } from 'src/app/models/data-sources/plan-table.data-source';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
-import { LinkButton } from 'src/app/models/cryton-table/interfaces/link-button.interface';
-import { Plan } from 'src/app/models/api-responses/plan.interface';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
 
 @Component({
   selector: 'app-plans-dashboard',
@@ -11,15 +11,13 @@ import { Plan } from 'src/app/models/api-responses/plan.interface';
 })
 export class PlansDashboardComponent implements OnInit {
   dataSource: PlanTableDataSource;
-  linkButtons: LinkButton<Plan>[];
+  buttons: TableButton[];
   searchValue = '';
 
   constructor(private _planService: PlanService, private _datePipe: CrytonDatetimePipe) {}
 
   ngOnInit(): void {
     this.dataSource = new PlanTableDataSource(this._planService, this._datePipe);
-    this.linkButtons = [
-      { name: 'Show YAML', icon: 'description', constructLink: (row: Plan) => `/app/plans/${row.id}/yaml` }
-    ];
+    this.buttons = [new LinkButton('Show YAML', 'description', '/app/plans/:id/yaml')];
   }
 }
