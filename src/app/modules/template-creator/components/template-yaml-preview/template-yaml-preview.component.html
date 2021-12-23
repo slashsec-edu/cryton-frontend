@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>TEMPLATE PREVIEW</h2>
+<h4 mat-dialog-title>You can edit the raw template before creating it here.</h4>
+
+<mat-dialog-content>
+  <mat-form-field appearance="fill" id="template-form-field">
+    <mat-label>Template in YAML format....</mat-label>
+    <textarea matInput rows="25" [formControl]="templateControl" class="cryton-scrollbar" appEnableTab></textarea>
+    <mat-error *ngIf="templateControl.hasError('required')">Template can't be empty</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+  <button mat-flat-button color="primary" (click)="handleCreate()" type="button" [disabled]="!templateControl.valid">
+    Create
+  </button>
+</mat-dialog-actions>

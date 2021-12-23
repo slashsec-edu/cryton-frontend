@@ -3,8 +3,8 @@ export interface TCTheme {
   leadingTick: string;
   timemarkText: string;
   timelineEdge: string;
-  treeEdge: string;
-  treeNodeRect: string;
+  graphEdge: string;
+  graphNodeRect: string;
   labelBG: string;
   nodeTimemarkTick: string;
   paddingMaskTop: string;

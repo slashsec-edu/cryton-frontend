@@ -1,40 +1,46 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core';
 import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
-import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
-import { NodeManager } from '../../classes/dependency-tree/node-manager';
-import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { StageForm } from '../../classes/stage-creation/forms/stage-form';
 import { NodeType } from '../../models/enums/node-type';
 import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
 import { ThemeService } from 'src/app/services/theme.service';
-import { PreviewDependencyTree } from '../../classes/dependency-tree/preview-dependency-tree';
+import { DependencyGraphPreview } from '../../classes/dependency-graph/dependency-graph-preview';
 import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
-import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 import { MatDialog } from '@angular/material/dialog';
-import { StageCreatorHelpComponent } from '../stage-creator-help/stage-creator-help.component';
+import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
+import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { TcRoutingService } from '../../services/tc-routing.service';
+
+export const CREATION_MSG_TIMEOUT = 7000;
 
 @Component({
   selector: 'app-stage-creator',
   templateUrl: './stage-creator.component.html',
-  styleUrls: ['./stage-creator.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./stage-creator.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('container') canvasContainer: DebugElement;
   @ViewChild(StageParametersComponent) stageParams: StageParametersComponent;
-  @Output() swapPages = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
 
-  previewDepTree: PreviewDependencyTree;
-  parentDepTree: DependencyTree;
+  depGraphPreview: DependencyGraphPreview;
+  parentDepGraph: DependencyGraph;
+  CreateStageComponent = CreateStageComponent;
+  showCreationMessage$: Observable<boolean>;
 
   private _stageManager: NodeManager;
   private _destroy$ = new Subject<void>();
+  private _showCreationMessage$ = new BehaviorSubject<boolean>(false);
 
   get stageForm(): StageForm {
     return this._state.stageForm;
@@ -51,42 +57,41 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   constructor(
-    private _treeManager: DependencyTreeManagerService,
+    private _graphManager: DependencyGraphManagerService,
     private _state: TemplateCreatorStateService,
     private _themeService: ThemeService,
     private _alertService: AlertService,
     private _cd: ChangeDetectorRef,
-    private _dialog: MatDialog
-  ) {}
+    private _dialog: MatDialog,
+    private _tcRouter: TcRoutingService
+  ) {
+    this.showCreationMessage$ = this._showCreationMessage$.asObservable();
+  }
 
   /**
    * Resizes canvas on window resize
    */
   @HostListener('window:resize') onResize(): void {
-    this.previewDepTree.updateDimensions();
-    this.previewDepTree.fitScreen();
+    this.depGraphPreview.updateDimensions();
+    this.depGraphPreview.fitScreen();
   }
 
   ngOnInit(): void {
-    if (!this.stageForm) {
-      this.stageForm = this._createStageForm();
-    }
-    this.previewDepTree = new PreviewDependencyTree(NodeType.CRYTON_STEP);
-    this._createDepTreeSub();
-
-    if (!this.editedStage) {
-      this._state.restoreStageForm();
-    }
+    this.depGraphPreview = new DependencyGraphPreview(NodeType.CRYTON_STEP);
+    this._createDepGraphSub();
+    this._createEditNodeSub();
+    this._createCreationMsgSub();
   }
 
   ngAfterViewInit(): void {
     this._createUpdatePreviewSubscription();
+    this._cd.detectChanges();
   }
 
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
-    this.previewDepTree.destroy();
+    this.depGraphPreview.destroy();
   }
 
   /**
@@ -96,20 +101,20 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this._dialog.open(StageCreatorHelpComponent, { width: '60%' });
   }
 
-  emitSwapPagesEvent(): void {
-    this.swapPages.emit();
-  }
-
   /**
-   * Creates a preview of stage creation dependency tree inside
-   * a container with ID: 'stage-creator--tree-preview'.
+   * Creates a preview of stage creation dependency graph inside
+   * a container with ID: 'stage-creator--graph-preview'.
    */
-  createTreePreview(): void {
-    const originalTree: DependencyTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
+  createGraphPreview(): void {
+    const originalGraph: DependencyGraph = this._graphManager.getCurrentGraph(DepGraphRef.STAGE_CREATION).value;
 
-    this.previewDepTree.initPreview(originalTree, this.canvasContainer.nativeElement, this._themeService.currentTheme$);
-    this.previewDepTree.fitScreen();
-    this.previewDepTree.stage.listening(false);
+    this.depGraphPreview.initPreview(
+      originalGraph,
+      this.canvasContainer.nativeElement,
+      this._themeService.currentTheme$
+    );
+    this.depGraphPreview.fitScreen();
+    this.depGraphPreview.stage.listening(false);
   }
 
   /**
@@ -121,8 +126,9 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const stage = this._createStage();
-    this._stageManager.moveToDispenser(stage);
+    this._graphManager.addDispenserNode(DepGraphRef.TEMPLATE_CREATION, stage);
     this._resetStageCreator();
+    this._showCreationMessage$.next(true);
   }
 
   /**
@@ -131,9 +137,10 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   handleSaveChanges(): void {
     this.stageParams.editStage(this.editedStage);
 
-    const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
-    this.editedStage.editChildDepTree(childDepTree);
+    const childDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.STAGE_CREATION).value;
+    this.editedStage.editChildDepGraph(childDepGraph);
     this._stageManager.clearEditNode();
+    this._graphManager.refreshDispenser(DepGraphRef.TEMPLATE_CREATION);
   }
 
   /**
@@ -152,21 +159,22 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this._state.restoreStageForm()) {
       this.stageForm.cancelEditing();
     }
-    this._treeManager.restoreTree(DepTreeRef.STAGE_CREATION);
+    this._graphManager.restoreGraph(DepGraphRef.STAGE_CREATION);
+    this._cd.detectChanges();
   }
 
   /**
    * Checks if stage creation should be disabled.
    * Disabled if:
    * - Invalid stage parameters
-   * - Invalid dependency tree
+   * - Invalid dependency graph
    *
    * @returns True if creation is disabled.
    */
   isCreationDisabled(): boolean {
-    const stageCreationDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
+    const stageCreationDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.STAGE_CREATION).value;
 
-    return !this.areParametersValid() || !stageCreationDepTree.isValid();
+    return !this.areParametersValid() || !stageCreationDepGraph.isValid();
   }
 
   /**
@@ -184,8 +192,8 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    * @returns Errors string.
    */
   getCreationErrors(): string {
-    const stageCreationDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
-    const errors = stageCreationDepTree.errors();
+    const stageCreationDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.STAGE_CREATION).value;
+    const errors = stageCreationDepGraph.errors();
 
     if (!this._state.stageForm.isValid()) {
       errors.push('Invalid stage parameters.');
@@ -198,7 +206,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
    * Calls change detector.
    *
    * Used for detecting a change in create button's disabled state
-   * after user makes changes in a dependency tree and slides back to the stage creator.
+   * after user makes changes in a dependency graph and slides back to the stage creator.
    * Without this the button would stay disabled even without errors.
    */
   detectChanges(): void {
@@ -209,80 +217,71 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stageForm.erase();
   }
 
-  /**
-   * Creates new stage form with current node manager.
-   *
-   * @returns Stage form.
-   */
-  private _createStageForm(): StageForm {
-    const nodeManager = this._treeManager.getCurrentTree(DepTreeRef.TEMPLATE_CREATION).value.treeNodeManager;
-    return new StageForm(nodeManager);
+  navigateToTemplatesDepGraph(): void {
+    this._tcRouter.navigateTo(3, CreateStageComponent.DEP_GRAPH);
   }
 
   /**
-   * Erases stage form and resets current tree to default settings.
+   * Erases stage form and resets current graph to default settings.
    */
   private _resetStageCreator(): void {
     this.stageForm.erase();
-    this._treeManager.resetCurrentTree(DepTreeRef.STAGE_CREATION);
+    this._graphManager.resetCurrentGraph(DepGraphRef.STAGE_CREATION);
   }
 
   /**
    * Creates stage with parameters from stage form and stage creation
-   * dependency tree as a child dependency tree.
+   * dependency graph as a child dependency graph.
    *
    * @returns Created cryton stage.
    */
   private _createStage(): StageNode {
     const { name, triggerType } = this._state.stageForm.getStageArgs();
-    const childDepTree = this._treeManager.getCurrentTree(DepTreeRef.STAGE_CREATION).value;
-
+    const childDepGraph = this._graphManager.getCurrentGraph(DepGraphRef.STAGE_CREATION).value;
     const trigger = TriggerFactory.createTrigger(triggerType, this._state.stageForm.getTriggerArgs());
 
     return new StageNode({
-      parentDepTree: this.parentDepTree,
       timeline: this._state.timeline,
-      childDepTree,
+      childDepGraph,
       trigger,
       name
     });
   }
 
   /**
-   * Subscribes to template creation dep. tree subject in manager.
+   * Subscribes to template creation dep. graph subject in manager.
    *
    * On every next():
-   * - Saves current dep. tree and node manager to a local variable.
+   * - Saves current dep. graph and node manager to a local variable.
    * - Creates edit node subscription.
    */
-  private _createDepTreeSub(): void {
-    this._treeManager
-      .getCurrentTree(DepTreeRef.TEMPLATE_CREATION)
-      .pipe(
-        takeUntil(this._destroy$),
-        tap(depTree => {
-          this._createEditNodeSub(depTree.treeNodeManager.editNode$);
-        })
-      )
-      .subscribe(depTree => {
-        this.parentDepTree = depTree;
-        this._stageManager = depTree.treeNodeManager;
+  private _createDepGraphSub(): void {
+    this._graphManager
+      .getCurrentGraph(DepGraphRef.TEMPLATE_CREATION)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(depGraph => {
+        this.parentDepGraph = depGraph;
+        this._stageManager = depGraph.graphNodeManager;
+        this.stageForm.changeNodeManager(depGraph.graphNodeManager);
       });
   }
 
   /**
    * Subscribes to currently edited node and handles editing initialization and cancelling.
    *
-   * @param editNode$ Edit node observable from tree node manager
+   * @param editNode$ Edit node observable from graph manager.
    */
-  private _createEditNodeSub(editNode$: Observable<TreeNode>): void {
-    editNode$.pipe(takeUntil(this._destroy$)).subscribe((stage: StageNode) => {
-      if (stage) {
-        this._moveToEditor(stage);
-      } else if (this.editedStage) {
-        this.cancelEditing();
-      }
-    });
+  private _createEditNodeSub(): void {
+    this._graphManager
+      .observeNodeEdit(DepGraphRef.TEMPLATE_CREATION)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((stage: StageNode) => {
+        if (stage) {
+          this._moveToEditor(stage);
+        } else if (this.editedStage) {
+          this.cancelEditing();
+        }
+      });
   }
 
   /**
@@ -295,41 +294,51 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
       // Don't back up empty form or edited stage.
       if (!this.editedStage) {
         this._state.backupStageForm();
-        this.stageForm = this._createStageForm();
       }
       this.stageForm.fillWithEditedStage(stage);
 
-      this._treeManager.editTree(DepTreeRef.STAGE_CREATION, stage.childDepTree, this.editedStage == null);
+      this._graphManager.editGraph(DepGraphRef.STAGE_CREATION, stage.childDepGraph, this.editedStage == null);
       this.editedStage = stage;
+      this._cd.detectChanges();
     }
   }
 
   /**
-   * Subscribes to stage creation dependency tree subject.
+   * Subscribes to stage creation dependency graph subject.
    *
    * On every next:
-   * - Creates tree preview if tree isn't empty.
-   * - Erases tree preview if tree is empty.
+   * - Creates graph preview if graph isn't empty.
+   * - Erases graph preview if graph is empty.
    */
   private _createUpdatePreviewSubscription(): void {
-    this._treeManager
-      .getCurrentTree(DepTreeRef.STAGE_CREATION)
+    this._graphManager
+      .getCurrentGraph(DepGraphRef.STAGE_CREATION)
       .pipe(takeUntil(this._destroy$))
-      .subscribe(depTree => {
-        if (depTree.treeLayer && depTree.treeLayer.children.length > 0) {
-          this.createTreePreview();
-        } else if (this.previewDepTree.stage) {
-          this._eraseTreePreview();
+      .subscribe(depGraph => {
+        if (depGraph.graphLayer && depGraph.graphLayer.children.length > 0) {
+          this.createGraphPreview();
+        } else if (this.depGraphPreview.stage) {
+          this._eraseGraphPreview();
         }
       });
   }
 
   /**
-   * Erases tree preview's layer.
+   * Erases graph preview's layer.
    */
-  private _eraseTreePreview(): void {
-    this.previewDepTree.removeChildren();
-    this.previewDepTree.treeLayer = new Konva.Layer();
-    this.previewDepTree.treeLayer.draw();
+  private _eraseGraphPreview(): void {
+    this.depGraphPreview.removeChildren();
+    this.depGraphPreview.graphLayer = new Konva.Layer();
+    this.depGraphPreview.graphLayer.draw();
+  }
+
+  private _createCreationMsgSub(): void {
+    this._showCreationMessage$
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(val => val),
+        debounceTime(CREATION_MSG_TIMEOUT)
+      )
+      .subscribe(() => this._showCreationMessage$.next(false));
   }
 }

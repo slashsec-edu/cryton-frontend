@@ -37,8 +37,8 @@ export class NodeMover {
   private _verticalDragFunc = (draggedNode: TimelineNode, pos: Vector2d): Vector2d => {
     const yIncrement = pos.y - draggedNode.konvaObject.absolutePosition().y;
 
-    if (this._timeline.toolState.isTreeMoveEnabled) {
-      NodeOrganizer.moveTree(draggedNode, 0, yIncrement);
+    if (this._timeline.toolState.isGraphMoveEnabled) {
+      NodeOrganizer.moveGraph(draggedNode, 0, yIncrement);
     } else if (this._timeline.selectedNodes.size > 0) {
       this._moveSelectedNodes(draggedNode, 0, yIncrement);
     }
@@ -99,8 +99,8 @@ export class NodeMover {
     if (xIncrement === 0) {
       return;
     }
-    if (this._timeline.toolState.isTreeMoveEnabled) {
-      NodeOrganizer.moveTree(draggedNode, xIncrement, 0);
+    if (this._timeline.toolState.isGraphMoveEnabled) {
+      NodeOrganizer.moveGraph(draggedNode, xIncrement, 0);
     } else if (draggedNode.selected && this._timeline.selectedNodes.size > 0) {
       this._moveSelectedNodes(draggedNode, xIncrement, 0);
     }

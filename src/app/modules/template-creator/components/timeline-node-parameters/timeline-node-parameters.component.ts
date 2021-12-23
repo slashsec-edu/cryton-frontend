@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
 
 @Component({
@@ -38,20 +38,12 @@ export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Closes dialog window.
-   */
-  close(): void {
-    this.stageParams.setEditedNodeName(null);
-    this._dialogRef.close();
-  }
-
-  /**
    * Edits stage parameters and closes dialog window.
    */
   save(): void {
     try {
       this.stageParams.editStage(this.data.stage);
-      this.close();
+      this._dialogRef.close();
     } catch (e) {
       if (e instanceof Error) {
         this._alertService.showError(e.message);

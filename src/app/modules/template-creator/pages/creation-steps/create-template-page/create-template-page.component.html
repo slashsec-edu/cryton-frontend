@@ -1,0 +1,62 @@
+<ng-container *ngIf="!(creating$.asObservable() | async); else spinner">
+  <div [ngSwitch]="currentComponent">
+    <main *ngSwitchCase="'template_params'">
+      <section class="buttons">
+        <button mat-button (click)="openHelp()" type="button"><mat-icon color="primary">info</mat-icon> Help</button>
+        <button mat-button (click)="currentComponent = 'dep_graph'" type="button">
+          <mat-icon color="primary">account_tree</mat-icon> Show dependency graph
+        </button>
+        <button mat-button (click)="currentComponent = 'timeline'" type="button">
+          <mat-icon color="primary">schedule</mat-icon> Show timeline
+        </button>
+        <div [matTooltip]="getCreationErrors()" matTooltipClass="tooltip-error">
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="handleCreate()"
+            [disabled]="isCreationDisabled()"
+          >
+            <mat-icon>add_circle</mat-icon> Create template
+          </button>
+        </div>
+      </section>
+
+      <section class="template-parameters">
+        <h5>TEMPLATE PARAMETERS</h5>
+        <form [formGroup]="templateForm">
+          <mat-form-field appearance="fill">
+            <mat-label>Template name</mat-label>
+            <input matInput type="text" formControlName="name" />
+            <mat-error>Template name is required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Owners name</mat-label>
+            <input matInput type="text" formControlName="owner" />
+            <mat-error>Template owner is required.</mat-error>
+          </mat-form-field>
+        </form>
+      </section>
+    </main>
+    <div *ngSwitchCase="'dep_graph'">
+      <app-dependency-graph-editor
+        (navigate)="currentComponent = $event"
+        [depGraphRef]="templateDepGraphRef"
+        [navigationButtons]="depGraphNavigationBtns"
+        nodeName="stage"
+      ></app-dependency-graph-editor>
+    </div>
+    <div *ngSwitchCase="'timeline'">
+      <app-timeline [navigationButtons]="timelineNavigationBtns" (navigate)="currentComponent = $event"></app-timeline>
+    </div>
+    <div *ngSwitchDefault></div>
+  </div>
+</ng-container>
+
+<ng-template #spinner>
+  <div class="center-both spinner-container">
+    <mat-spinner [diameter]="100"></mat-spinner>
+    <h2>Creating template</h2>
+  </div>
+</ng-template>

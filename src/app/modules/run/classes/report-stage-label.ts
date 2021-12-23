@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { ShapeConfig } from 'konva/types/Shape';
-import { Cursor, CursorState } from '../../template-creator/classes/dependency-tree/cursor-state';
+import { Cursor, CursorState } from '../../template-creator/classes/dependency-graph/cursor-state';
 
 export interface StageLabelConfig extends ShapeConfig {
   text: string;

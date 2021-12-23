@@ -1,0 +1,14 @@
+<main [ngSwitch]="currentComponent">
+  <div *ngSwitchCase="CreateStageComponent.STAGE_PARAMS">
+    <app-stage-creator (navigate)="currentComponent = CreateStageComponent.DEP_GRAPH" #stageCreator></app-stage-creator>
+  </div>
+  <div *ngSwitchCase="CreateStageComponent.DEP_GRAPH">
+    <app-dependency-graph-editor
+      (navigate)="currentComponent = $event"
+      [depGraphRef]="depGraphRef"
+      [navigationButtons]="depGraphNavigationBtns"
+      [nodeName]="'step'"
+    ></app-dependency-graph-editor>
+  </div>
+  <div *ngSwitchDefault></div>
+</main>

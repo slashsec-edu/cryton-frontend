@@ -21,11 +21,11 @@ import { Tick } from 'src/app/modules/shared/classes/tick';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
 import { CIRCLE_RADIUS } from 'src/app/modules/run/classes/report-step';
-import { StageNode, TriggerArgs } from '../dependency-tree/node/stage-node';
+import { StageNode, TriggerArgs } from '../dependency-graph/node/stage-node';
 import { Trigger } from '../triggers/trigger';
 
 export class TimelineNode {
-  treeNode: StageNode;
+  graphNode: StageNode;
   konvaObject: Konva.Group;
   selected = false;
 
@@ -43,11 +43,11 @@ export class TimelineNode {
   private _nameTag: Konva.Tag;
 
   get name(): string {
-    return this.treeNode.name;
+    return this.graphNode.name;
   }
 
   get trigger(): Trigger<TriggerArgs> {
-    return this.treeNode.trigger;
+    return this.graphNode.trigger;
   }
 
   get x(): number {
@@ -69,15 +69,15 @@ export class TimelineNode {
   }
 
   get fullNodeHeight(): number {
-    return 2 * NODE_RADIUS + LABEL_MARGIN_BOTTOM + 2 * LABEL_PADDING[0] + NAME_FONT_SIZE;
+    return 2 * NODE_RADIUS + LABEL_MARGIN_BOTTOM + 2 * LABEL_PADDING + NAME_FONT_SIZE;
   }
 
   get timeline(): TemplateTimeline {
-    return this.treeNode.timeline;
+    return this.graphNode.timeline;
   }
 
-  constructor(treeNode: StageNode) {
-    this.treeNode = treeNode;
+  constructor(graphNode: StageNode) {
+    this.graphNode = graphNode;
     this._initKonvaObject();
   }
 
@@ -257,7 +257,7 @@ export class TimelineNode {
       }
     });
     this.konvaObject.on('dblclick', () => {
-      this.timeline.openNodeParams$.next(this.treeNode);
+      this.timeline.openNodeParams$.next(this.graphNode);
     });
   }
 
@@ -284,7 +284,7 @@ export class TimelineNode {
     const timeMark = new NodeTimemark({
       totalSeconds: TimelineUtils.calcSecondsFromX(this.x, this.timeline.getParams()),
       theme: this.timeline.theme,
-      constantText: this.treeNode.trigger.getStartTime() === null ? 'No start time' : null,
+      constantText: this.graphNode.trigger.getStartTime() === null ? 'No start time' : null,
       useCenterCoords: true,
       timemarkY: 0,
       x: this.konvaObject.x(),
@@ -294,8 +294,8 @@ export class TimelineNode {
     timeMark.centerY(this.timeline.timelinePadding[0]);
 
     const tick = new Tick({
-      topY: this.treeNode.timeline.timelinePadding[0],
-      bottomY: this.timeline.height - this.treeNode.timeline.timelinePadding[2],
+      topY: this.graphNode.timeline.timelinePadding[0],
+      bottomY: this.timeline.height - this.graphNode.timeline.timelinePadding[2],
       x: this.konvaObject.x(),
       theme: this.timeline.theme,
       isLeading: true,
@@ -379,7 +379,7 @@ export class TimelineNode {
    */
   private _createNameText(): Konva.Text {
     const nameText = new Konva.Text({
-      text: new ShortStringPipe().transform(this.treeNode.name, MAX_NAME_LENGTH),
+      text: new ShortStringPipe().transform(this.graphNode.name, MAX_NAME_LENGTH),
       fontFamily: 'roboto',
       fontSize: NAME_FONT_SIZE,
       y: -NODE_RADIUS - NAME_FONT_SIZE - LABEL_MARGIN_BOTTOM,
@@ -402,7 +402,7 @@ export class TimelineNode {
    * @returns X coordinate.
    */
   private _calcX(): number {
-    const triggerStart = this.treeNode.trigger.getStartTime();
+    const triggerStart = this.graphNode.trigger.getStartTime();
 
     return triggerStart != null
       ? TimelineUtils.calcXFromSeconds(triggerStart, this.timeline.getParams())

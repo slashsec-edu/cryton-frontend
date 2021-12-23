@@ -6,7 +6,6 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
-import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
 import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
 import { CreateWorkerComponent } from './pages/workers/create-worker/create-worker.component';
@@ -20,6 +19,7 @@ import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component
 import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
 import { PlanYamlComponent } from './pages/yaml/plan-yaml.component';
 import { TemplateYamlComponent } from './pages/yaml/template-yaml.component';
+import { TemplateCreatorPageComponent } from './modules/template-creator/pages/template-creator-page/template-creator-page.component';
 
 const routes: Routes = [
   {
@@ -82,8 +82,7 @@ const routes: Routes = [
         component: OutletComponent,
         children: [
           { path: 'list', component: ListTemplatesComponent },
-          { path: 'create', component: CreateTemplateComponent },
-          { path: 'create/:id', component: CreateTemplateComponent },
+          { path: 'create', component: TemplateCreatorPageComponent },
           { path: 'upload', component: UploadTemplateComponent },
           { path: '', redirectTo: '/app/templates/list', pathMatch: 'full' }
         ]

@@ -53,7 +53,6 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { PlansCreationStepsComponent } from './models/cryton-editor/steps/plans-creation-steps/plans-creation-steps.component';
 import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
-import { CreateTemplateComponent } from './pages/templates/create-template/create-template.component';
 import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
 import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
@@ -83,7 +82,6 @@ import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component
     NavigationComponent,
     ListTemplatesComponent,
     OutletComponent,
-    CreateTemplateComponent,
     ListPlansComponent,
     CreatePlanComponent,
     ListWorkersComponent,

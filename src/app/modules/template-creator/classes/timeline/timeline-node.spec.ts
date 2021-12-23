@@ -15,8 +15,8 @@ import {
   NODE_LTICK_TIMEMARK_NAME
 } from './timeline-node-constants';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
-import { StageEdge } from '../dependency-tree/edge/stage-edge';
-import { StageNode } from '../dependency-tree/node/stage-node';
+import { StageEdge } from '../dependency-graph/edge/stage-edge';
+import { StageNode } from '../dependency-graph/node/stage-node';
 
 const DEFAULT_STAGE_NAME = 'name';
 const CANVAS_CONTAINER_ID = 'canvasContainer';

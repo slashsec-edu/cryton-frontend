@@ -15,49 +15,58 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 
 // COMPONENTS
-import { TemplateCreatorComponent } from './components/template-creator/template-creator.component';
 import { StepCreatorComponent } from './components/step-creator/step-creator.component';
-import { TreeNodeDispenserComponent } from './components/tree-node-dispenser/tree-node-dispenser.component';
-import { DependencyTreeEditorComponent } from './components/dependency-tree-editor/dependency-tree-editor.component';
+import { GraphNodeDispenserComponent } from './components/graph-node-dispenser/graph-node-dispenser.component';
+import { DependencyGraphEditorComponent } from './components/dependency-graph-editor/dependency-graph-editor.component';
 import { StageCreatorComponent } from './components/stage-creator/stage-creator.component';
-import { CreateStagePageComponent } from './pages/create-stage-page/create-stage-page.component';
+import { CreateStagePageComponent } from './pages/creation-steps/create-stage-page/create-stage-page.component';
 import { EdgeParametersComponent } from './components/edge-parameters/edge-parameters.component';
-import { BuildTemplatePageComponent } from './pages/build-template-page/build-template-page.component';
+import { CreateTemplatePageComponent } from './pages/creation-steps/create-template-page/create-template-page.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TimelineNodeParametersComponent } from './components/timeline-node-parameters/timeline-node-parameters.component';
 import { StageParametersComponent } from './components/stage-parameters/stage-parameters.component';
-import { TreeEditorToolbarComponent } from './components/tree-editor-toolbar/tree-editor-toolbar.component';
+import { GraphEditorToolbarComponent } from './components/graph-editor-toolbar/graph-editor-toolbar.component';
 import { DeltaTriggerParametersComponent } from './components/delta-trigger-parameters/delta-trigger-parameters.component';
 import { HttpTriggerParametersComponent } from './components/http-trigger-parameters/http-trigger-parameters.component';
-import { TemplateTimelineHelpComponent } from './components/template-timeline-help/template-timeline-help.component';
-import { StepCreatorHelpComponent } from './components/step-creator-help/step-creator-help.component';
-import { StageCreatorHelpComponent } from './components/stage-creator-help/stage-creator-help.component';
-import { TemplateCreatorHelpComponent } from './components/template-creator-help/template-creator-help.component';
-import { DependencyTreeHelpComponent } from './components/dependency-tree-help/dependency-tree-help.component';
+import { TemplateCreatorPageComponent } from './pages/template-creator-page/template-creator-page.component';
+import { TemplateCreatorIntroductionComponent } from './pages/creation-steps/introduction-page/introduction-page.component';
+import { CreateStepPageComponent } from './pages/creation-steps/create-step-page/create-step-page.component';
+import { TemplateTimelineHelpComponent } from './pages/help-pages/template-timeline-help/template-timeline-help.component';
+import { StepCreatorHelpComponent } from './pages/help-pages/step-creator-help/step-creator-help.component';
+import { StageCreatorHelpComponent } from './pages/help-pages/stage-creator-help/stage-creator-help.component';
+import { TemplateCreatorHelpComponent } from './pages/help-pages/template-creator-help/template-creator-help.component';
+import { DependencyGraphHelpComponent } from './pages/help-pages/dependency-graph-help/dependency-graph-help.component';
+import { TemplateYamlPreviewComponent } from './components/template-yaml-preview/template-yaml-preview.component';
 
 @NgModule({
   declarations: [
-    TemplateCreatorComponent,
     StepCreatorComponent,
-    TreeNodeDispenserComponent,
-    DependencyTreeEditorComponent,
+    GraphNodeDispenserComponent,
+    DependencyGraphEditorComponent,
     StageCreatorComponent,
-    CreateStagePageComponent,
     EdgeParametersComponent,
-    BuildTemplatePageComponent,
+    CreateTemplatePageComponent,
     TimelineComponent,
     TimelineNodeParametersComponent,
     StageParametersComponent,
-    TreeEditorToolbarComponent,
+    GraphEditorToolbarComponent,
     DeltaTriggerParametersComponent,
     HttpTriggerParametersComponent,
     TemplateTimelineHelpComponent,
     StepCreatorHelpComponent,
     StageCreatorHelpComponent,
     TemplateCreatorHelpComponent,
-    DependencyTreeHelpComponent
+    DependencyGraphHelpComponent,
+    TemplateCreatorPageComponent,
+    TemplateCreatorIntroductionComponent,
+    CreateStagePageComponent,
+    CreateStepPageComponent,
+    TemplateYamlPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -73,8 +82,10 @@ import { DependencyTreeHelpComponent } from './components/dependency-tree-help/d
     MatDividerModule,
     PortalModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
-  ],
-  exports: [TemplateCreatorComponent]
+    MatProgressSpinnerModule,
+    MatStepperModule,
+    MatCardModule,
+    MatDialogModule
+  ]
 })
 export class TemplateCreatorModule {}

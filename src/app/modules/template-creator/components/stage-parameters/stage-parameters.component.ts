@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { NodeManager } from '../../classes/dependency-tree/node-manager';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { getControlError } from './stage-parameters.errors';
 import { TriggerType } from '../../models/enums/trigger-type';
 import { TriggerFactory } from '../../classes/triggers/trigger-factory';
@@ -18,7 +18,7 @@ import { ComponentInputDirective } from 'src/app/modules/shared/directives/compo
 import { StageForm } from '../../classes/stage-creation/forms/stage-form';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 
 @Component({
   selector: 'app-stage-parameters',
@@ -102,7 +102,7 @@ export class StageParametersComponent implements OnInit, AfterViewInit, OnDestro
 
   /**
    * Edits stage passed in an argument with stage form parameters
-   * and current stage creation dependency tree.
+   * and current stage creation dependency graph.
    *
    * @param stage Stage to edit.
    */

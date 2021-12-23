@@ -1,0 +1,55 @@
+/* LAYOUT */
+.execution-graph-creation {
+  display: flex;
+}
+aside {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+}
+main {
+  width: 80%;
+  padding-left: 20px;
+}
+.node-dispenser {
+  width: 100%;
+}
+section.buttons {
+  padding-bottom: 10px !important;
+}
+
+/* GRAPH CREATION */
+.graph-creation {
+  display: flex;
+  flex-direction: column;
+}
+.execution-graph-editor {
+  display: flex;
+}
+
+/* TEXT */
+h2 {
+  margin: 20px 0 0 0;
+  font-size: 12px;
+  color: rgb(62, 62, 62);
+}
+
+/* CANVAS */
+.dependency-graph--canvas-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+#canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ALERT */
+app-cryton-error {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px 10px 0 0;
+  z-index: 999;
+}

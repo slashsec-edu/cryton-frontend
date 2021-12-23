@@ -7,7 +7,6 @@
 @use '../../components/theme-color-getter/_theme-color-getter.theme.scss' as color-getter;
 @use '../../modules/shared/components/cryton-file-uploader/cryton-file-uploader.theme' as file-uploader;
 @use '../../modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.theme' as datetime-picker;
-@use '../../modules/template-creator/components/tree-editor-toolbar/tree-editor-toolbar.theme' as tree-editor-toolbar;
 @use './cryton-scrollbar.theme' as scrollbar;
 @use '../../modules/shared/components/cryton-log/cryton-log.theme' as log;
 @use '../../components/page-unavailable/page-unavailable.theme' as page-unavailable;
@@ -33,7 +32,6 @@ $worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
   @include file-uploader.color($config);
   @include scrollbar.color($config);
   @include datetime-picker.color($config);
-  @include tree-editor-toolbar.color($config);
   @include log.color($config);
   @include page-unavailable.color($config);
   @include flat-card.color($config);

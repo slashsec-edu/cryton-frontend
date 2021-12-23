@@ -1,19 +1,21 @@
-<div class="timeline-node-params">
+<h2 mat-dialog-title>Stage parameters</h2>
+
+<mat-dialog-content class="timeline-node-params cryton-scrollbar">
   <div class="cryton-scrollbar stage-params">
     <app-stage-parameters
       #stageParameters
-      [nodeManager]="data.stage.parentDepTree.treeNodeManager"
+      [nodeManager]="data.stage.parentDepGraph.graphNodeManager"
     ></app-stage-parameters>
   </div>
+</mat-dialog-content>
 
-  <div class="buttons">
-    <app-cryton-button value="Cancel" (clicked)="close()"></app-cryton-button>
-    <app-cryton-button
-      value="Save"
-      icon="save"
-      color="primary"
-      (clicked)="save()"
-      [disabled]="!stageParameters.valid"
-    ></app-cryton-button>
-  </div>
-</div>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <app-cryton-button
+    value="Save"
+    icon="save"
+    color="primary"
+    (clicked)="save()"
+    [disabled]="!stageParameters.valid"
+  ></app-cryton-button>
+</mat-dialog-actions>

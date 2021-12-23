@@ -1,0 +1,21 @@
+/* LAYOUT */
+.template-parameters {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: auto;
+  margin-top: 50px;
+}
+
+/* BODY */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+/* SPINNER */
+.spinner-container {
+  height: 400px;
+  flex-direction: column;
+  gap: 10px;
+}

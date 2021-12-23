@@ -1,57 +1,54 @@
-<div class="tc-responsive-page">
-  <ng-template [ngIf]="!editedStep" [ngIfElse]="editingModeButtons">
-    <div class="buttons">
-      <app-cryton-button icon="info" value="Help" (clicked)="openHelp()"></app-cryton-button>
-      <app-cryton-button (clicked)="stepForm.reset()" icon="delete" value="Erase step"> </app-cryton-button>
-      <app-cryton-button
-        (clicked)="handleCreateStep()"
-        [disabled]="!stepForm.valid"
-        icon="add_circle"
-        value="Create step"
-        color="primary"
-        [matTooltip]="getTooltipErrors()"
-        matTooltipClass="tooltip-error"
-      >
-      </app-cryton-button>
-    </div>
-  </ng-template>
-  <main class="tc-responsive-container">
-    <form [formGroup]="stepForm">
-      <h5>STEP PARAMETERS</h5>
-      <!-- NAME FORM FIELD-->
-      <mat-form-field class="text-input" appearance="fill">
-        <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" formControlName="name" />
-        <mat-error>{{ getControlError('name') }}</mat-error>
-      </mat-form-field>
+<section class="buttons">
+  <button mat-button (click)="openHelp()"><mat-icon color="primary" type="button">info</mat-icon> Help</button>
+  <button mat-button (click)="stepForm.reset()">
+    <mat-icon color="primary" type="button">delete</mat-icon> Erase parameters
+  </button>
 
-      <!-- ATTACK MODULE FORM FIELD-->
-      <mat-form-field class="text-input" appearance="fill">
-        <mat-label>Attack Module</mat-label>
-        <input matInput placeholder="Attack Module" formControlName="attackModule" />
-        <mat-error>{{ getControlError('attackModule') }}</mat-error>
-      </mat-form-field>
+  <div [matTooltip]="getTooltipErrors()" matTooltipClass="tooltip-error" *ngIf="!editedStep; else editingModeButtons">
+    <button mat-flat-button color="primary" type="button" (click)="handleCreateStep()" [disabled]="!stepForm.valid">
+      <mat-icon>add_circle</mat-icon> Create step
+    </button>
+  </div>
+</section>
 
-      <!-- ATTACK MODULE ARGS TEXTAREA -->
-      <mat-form-field appearance="fill">
-        <mat-label>Attack Module Args (in YAML)...</mat-label>
-        <textarea matInput rows="7" formControlName="attackModuleArgs" cdkTextareaAutosize appEnableTab></textarea>
-        <mat-error>{{ getControlError('attackModuleArgs') }}</mat-error>
-      </mat-form-field>
-    </form>
-  </main>
-</div>
+<main>
+  <form [formGroup]="stepForm">
+    <h5>STEP PARAMETERS</h5>
+    <!-- NAME FORM FIELD-->
+    <mat-form-field class="text-input" appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Name" formControlName="name" />
+      <mat-error>{{ getControlError('name') }}</mat-error>
+    </mat-form-field>
+
+    <!-- ATTACK MODULE FORM FIELD-->
+    <mat-form-field class="text-input" appearance="fill">
+      <mat-label>Attack Module</mat-label>
+      <input matInput placeholder="Attack Module" formControlName="attackModule" />
+      <mat-error>{{ getControlError('attackModule') }}</mat-error>
+    </mat-form-field>
+
+    <!-- ATTACK MODULE ARGS TEXTAREA -->
+    <mat-form-field appearance="fill">
+      <mat-label>Attack Module Args (in YAML)...</mat-label>
+      <textarea matInput rows="7" formControlName="attackModuleArgs" cdkTextareaAutosize appEnableTab></textarea>
+      <mat-error>{{ getControlError('attackModuleArgs') }}</mat-error>
+    </mat-form-field>
+
+    <span id="step-created-alert" *ngIf="showCreationMessage$ | async"
+      >Step created! You can find it in
+      <span (click)="navigateToStagesDepGraph()" class="tc-route">stage's dependency graph</span>.</span
+    >
+  </form>
+</main>
 
 <ng-template #editingModeButtons>
-  <div class="buttons">
-    <app-cryton-button (clicked)="handleCancelClick()" value="Cancel"> </app-cryton-button>
-    <app-cryton-button
-      (clicked)="handleSaveChanges()"
-      [disabled]="!stepForm.valid"
-      icon="settings"
-      value="Save changes"
-      color="primary"
-    >
-    </app-cryton-button>
+  <button mat-flat-button (click)="handleCancelClick()" type="button" color="warn">
+    <mat-icon>close</mat-icon> Cancel
+  </button>
+  <div [matTooltip]="getTooltipErrors()" matTooltipClass="tooltip-error">
+    <button mat-flat-button (click)="handleSaveChanges()" [disabled]="!stepForm.valid" color="primary" type="button">
+      <mat-icon>settings</mat-icon>Save changes
+    </button>
   </div>
 </ng-template>

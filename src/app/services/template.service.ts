@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
-import { TemplateDetail } from '../models/api-responses/template-detail.interface';
 import { Template } from '../models/api-responses/template.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -10,6 +9,8 @@ import { Observable } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Endpoint } from '../models/enums/endpoint.enum';
 import { HasYaml } from '../models/services/has-yaml.interface';
+import { TemplateDescription } from '../modules/template-creator/models/interfaces/template-description';
+import { parse } from 'yaml';
 
 @Injectable({
   providedIn: 'root'
@@ -63,8 +64,10 @@ export class TemplateService extends CrytonRESTApiService<Template> implements H
     return this.postItem(formData);
   }
 
-  uploadYAML(templateYaml: string, templateName: string): Observable<string> {
-    const templateFile = new File([templateYaml], templateName, { type: 'text/plain' });
+  uploadYAML(templateYaml: string): Observable<string> {
+    const template = parse(templateYaml) as TemplateDescription;
+
+    const templateFile = new File([templateYaml], template.plan.name, { type: 'text/plain' });
     return this.uploadFile(templateFile);
   }
 
@@ -74,6 +77,6 @@ export class TemplateService extends CrytonRESTApiService<Template> implements H
 
   private _getFileName(url: string): string {
     const lastSlash = url.lastIndexOf('/');
-    return url.substr(lastSlash + 1);
+    return url.substring(lastSlash + 1);
   }
 }

@@ -1,13 +1,13 @@
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TriggerType } from '../../../models/enums/trigger-type';
-import { NodeManager } from '../../dependency-tree/node-manager';
+import { NodeManager } from '../../dependency-graph/node-manager';
 import { DeltaForm } from './delta-form';
 import { HttpForm, HttpTriggerForm } from './http-form';
 import { TriggerForm } from './trigger-form.interface';
 import { TriggerParameters } from '../trigger-parameters';
 import { Type } from '@angular/core';
 import { Observable } from 'rxjs';
-import { StageNode } from '../../dependency-tree/node/stage-node';
+import { StageNode } from '../../dependency-graph/node/stage-node';
 
 const INITIAL_TRIGGER = TriggerType.DELTA;
 
@@ -110,6 +110,15 @@ export class StageForm {
     return Boolean(this._stageArgsForm.get('name').value) || this._triggerForm.isNotEmpty();
   }
 
+  changeNodeManager(nodeManager: NodeManager): void {
+    this._nodeManager = nodeManager;
+    const nameControl = this._stageArgsForm.get('name');
+
+    nameControl.clearValidators();
+    nameControl.setValidators([Validators.required, this._uniqueNameValidator]);
+    nameControl.updateValueAndValidity();
+  }
+
   private _changeTriggerForm(type: TriggerType): void {
     const backupForm = this._triggerBackup[type];
 
@@ -140,7 +149,7 @@ export class StageForm {
 
   /**
    * Validator function for stage name form control.
-   * Checks if stage name is unique inside the parent dependency tree.
+   * Checks if stage name is unique inside the parent dependency graph.
    *
    * @param control Name form control.
    * @returns Validation errors.

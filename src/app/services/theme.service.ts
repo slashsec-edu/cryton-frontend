@@ -4,8 +4,8 @@ import { DebugElement, Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ThemeColorGetterComponent } from '../components/theme-color-getter/theme-color-getter.component';
 import { Theme } from '../modules/template-creator/models/interfaces/theme';
-import { tcLightTheme } from '../modules/template-creator/models/styles/themes/template-creator-light.theme';
-import { tcDarkTheme } from '../modules/template-creator/models/styles/themes/template-creator-dark.theme';
+import { tcLightTheme } from '../modules/template-creator/styles/themes/template-creator-light.theme';
+import { tcDarkTheme } from '../modules/template-creator/styles/themes/template-creator-dark.theme';
 
 interface LocalstorageTheme {
   name: string;

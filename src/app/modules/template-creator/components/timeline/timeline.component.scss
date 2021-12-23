@@ -9,11 +9,13 @@ mat-form-field {
   width: 170px;
 }
 
-.header {
+header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   .buttons {
+    height: fit-content;
     display: flex;
     gap: 10px;
   }

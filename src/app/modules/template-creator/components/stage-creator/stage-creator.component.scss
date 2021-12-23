@@ -10,28 +10,20 @@ main {
   justify-content: center;
   align-items: center;
 }
-.tree-preview-wrapper {
+.graph-preview-wrapper {
   width: 65%;
-  max-width: 350px;
+  max-width: 330px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
   align-items: center;
 
-  #tree-preview-header {
+  #graph-preview-header {
     align-self: flex-start;
   }
 }
 .flex-end-btn {
   align-self: flex-end;
   margin-top: 1.34375em; /* Same as mat-form-field */
-}
-
-/* CONTROLS */
-.controls {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 }
 
 /* STAGE PARAMETERS */
@@ -41,7 +33,6 @@ main {
   width: 100%;
   max-height: 405px;
   padding-right: $scrollbar-padding;
-  margin-bottom: 10px;
   overflow: auto;
 }
 .params-wrapper {
@@ -56,8 +47,8 @@ main {
   padding-right: $scrollbar-padding;
 }
 
-/* DEPENDENCY TREE PREVIEW */
-#stage-creator--tree-preview {
+/* DEPENDENCY GRAPH PREVIEW */
+#stage-creator--graph-preview {
   position: relative;
   height: 0;
   width: 100%;
@@ -83,19 +74,13 @@ main {
   .params-wrapper {
     width: 50%;
   }
-  .stage-params {
-    max-height: 355px;
-  }
-  #build-dep-tree-btn {
+  #build-dep-graph-btn {
     margin-left: 10px;
   }
 }
 @media only screen and (max-width: 1400px) {
   .params-wrapper {
     width: 60%;
-  }
-  .stage-params {
-    max-height: 305px;
   }
 }
 @media only screen and (max-width: 1000px) {

@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { StageNode } from '../../dependency-tree/node/stage-node';
+import { StageNode } from '../../dependency-graph/node/stage-node';
 import { TriggerParameters } from '../trigger-parameters';
 import { HttpTriggerForm } from './http-form';
 

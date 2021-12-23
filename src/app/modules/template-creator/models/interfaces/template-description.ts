@@ -27,12 +27,20 @@ export interface StageDescription {
  */
 export interface StepDescription {
   is_init?: boolean;
+  step_type: string;
+  arguments: StepArguments;
   create_named_session?: string;
   use_named_session?: string;
   next?: StepEdgeDescription[];
   output_prefix?: string;
   output_mapping?: OutputMappingDescription[];
   name: string;
+}
+
+/**
+ * Arguments of a step.
+ */
+export interface StepArguments {
   attack_module: string;
   attack_module_args: Record<string, any>;
 }

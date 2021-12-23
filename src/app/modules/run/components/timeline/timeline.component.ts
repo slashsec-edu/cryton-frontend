@@ -33,7 +33,7 @@ export enum Display {
 @Component({
   selector: 'app-timeline',
   templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.scss', '../../../template-creator/models/styles/responsive-height.scss'],
+  styleUrls: ['./timeline.component.scss', '../../../template-creator/styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {

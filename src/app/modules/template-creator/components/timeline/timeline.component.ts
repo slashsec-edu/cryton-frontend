@@ -6,6 +6,7 @@ import {
   DebugElement,
   EventEmitter,
   HostListener,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -18,20 +19,22 @@ import { TickSizePickerComponent } from 'src/app/modules/shared/components/tick-
 import { ResizeService } from 'src/app/services/resize.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
+import { NavigationButton } from '../../models/interfaces/navigation-button';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
-import { TemplateTimelineHelpComponent } from '../template-timeline-help/template-timeline-help.component';
+import { TemplateTimelineHelpComponent } from '../../pages/help-pages/template-timeline-help/template-timeline-help.component';
 import { TimelineNodeParametersComponent } from '../timeline-node-parameters/timeline-node-parameters.component';
 
 @Component({
   selector: 'app-timeline',
   templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.scss', '../../models/styles/responsive-height.scss'],
+  styleUrls: ['./timeline.component.scss', '../../styles/template-creator.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('container') canvasContainer: DebugElement;
   @ViewChild(TickSizePickerComponent) tickSizePicker: TickSizePickerComponent;
-  @Output() swapPages = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Input() navigationButtons?: NavigationButton[];
 
   private _destroy$ = new Subject<void>();
 
@@ -43,8 +46,8 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.timeline.toolState.isVerticalMoveEnabled;
   }
 
-  get isTreeMoveEnabled(): boolean {
-    return this.timeline.toolState.isTreeMoveEnabled;
+  get isGraphMoveEnabled(): boolean {
+    return this.timeline.toolState.isGraphMoveEnabled;
   }
 
   constructor(
@@ -79,11 +82,8 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  /**
-   * Emits swap pages event for switching tab back to build template tab.
-   */
-  emitSwapPagesEvent(): void {
-    this.swapPages.emit();
+  navigateTo(componentName: string): void {
+    this.navigate.emit(componentName);
   }
 
   openHelp(): void {

@@ -1,0 +1,36 @@
+.tc-responsive-container {
+  height: 600px;
+}
+
+.tc-route {
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+section.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 24px;
+
+  button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* MEDIA QUERIES */
+@media only screen and (max-width: 1600px) {
+  .tc-responsive-container {
+    height: 450px;
+  }
+}
+@media only screen and (max-width: 1400px) {
+  .tc-responsive-container {
+    height: 400px;
+  }
+}

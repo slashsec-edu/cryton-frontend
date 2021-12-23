@@ -12,7 +12,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
-import { StepEdge } from '../../classes/dependency-tree/edge/step-edge';
+import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
+import { MatDialogModule } from '@angular/material/dialog';
 
 class CrytonNodeFake {
   name: string;
@@ -32,7 +33,7 @@ class CrytonEdgeFake {
   childNode: CrytonNodeFake;
   conditions: EdgeCondition[] = [];
 
-  depTree = {
+  depGraph = {
     stage: {
       draw: () => {}
     }
@@ -68,9 +69,9 @@ describe('EdgeParametersComponent', () => {
 
   const mockParentStep = new CrytonNodeFake(PARENT_NAME);
   const mockChildStep = new CrytonNodeFake(CHILD_NAME);
-  const mockTreeEdge = new CrytonEdgeFake(mockParentStep, mockChildStep);
+  const mockGraphEdge = new CrytonEdgeFake(mockParentStep, mockChildStep);
 
-  const dialogDataSpy = jasmine.createSpyObj('MAT_DIALOG_DATA', [], { edge: mockTreeEdge }) as Spied<{
+  const dialogDataSpy = jasmine.createSpyObj('MAT_DIALOG_DATA', [], { edge: mockGraphEdge }) as Spied<{
     edge: StepEdge;
   }>;
 
@@ -81,7 +82,7 @@ describe('EdgeParametersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TemplateCreatorModule, BrowserAnimationsModule],
+      imports: [TemplateCreatorModule, BrowserAnimationsModule, MatDialogModule],
       declarations: [EdgeParametersComponent],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
@@ -98,7 +99,7 @@ describe('EdgeParametersComponent', () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
 
-    mockTreeEdge.reset();
+    mockGraphEdge.reset();
     fixture.detectChanges();
   });
 

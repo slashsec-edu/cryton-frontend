@@ -11,6 +11,8 @@ import { ExecutionVariableUploaderComponent } from './components/execution-varia
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RunPageComponent } from './pages/run/run-page.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { ExecutionReportCardComponent } from './components/execution-report-card/execution-report-card.component';
 import { StageReportCardComponent } from './components/stage-report-card/stage-report-card.component';
 import { ReportTimelineHelpComponent } from './components/report-timeline-help/report-timeline-help.component';
@@ -23,6 +25,8 @@ import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { PostponeRunComponent } from './components/postpone-run/postpone-run.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -51,7 +55,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatProgressSpinnerModule,
     CdkAccordionModule,
     MatDialogModule,
-    MatTooltipModule
-  ]
+    MatTooltipModule,
+    BrowserAnimationsModule,
+    NoopAnimationsModule,
+    MatSelectModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDialogModule
+  ],
+  exports: [TimelineComponent]
 })
 export class RunModule {}

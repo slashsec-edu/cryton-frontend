@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { TemplateCreatorModule } from '../../template-creator.module';
-import { StageCreatorComponent } from './stage-creator.component';
+import { CREATION_MSG_TIMEOUT, StageCreatorComponent } from './stage-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
 import { AlertService } from 'src/app/services/alert.service';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { Spied } from 'src/app/testing/utility/utility-types';
-import { DependencyTreeManagerService, DepTreeRef } from '../../services/dependency-tree-manager.service';
-import { DependencyTree } from '../../classes/dependency-tree/dependency-tree';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { NodeType } from '../../models/enums/node-type';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -19,64 +19,68 @@ import { TriggerType } from '../../models/enums/trigger-type';
 import { Trigger } from '../../classes/triggers/trigger';
 import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
-import { NodeManager } from '../../classes/dependency-tree/node-manager';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { HttpTriggerForm } from '../../classes/stage-creation/forms/http-form';
-import { StageNode } from '../../classes/dependency-tree/node/stage-node';
-import { TreeNode } from '../../classes/dependency-tree/node/tree-node';
-import { StepNode } from '../../classes/dependency-tree/node/step-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
+import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
+import { StepNode } from '../../classes/dependency-graph/node/step-node';
 import { MatDialog } from '@angular/material/dialog';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 
 describe('StageCreatorComponent', () => {
   let component: StageCreatorComponent;
   let fixture: ComponentFixture<StageCreatorComponent>;
   let loader: HarnessLoader;
 
-  // Trees and timelines
-  let parentDepTree: DependencyTree;
+  // Graphs and timelines
+  let parentDepGraph: DependencyGraph;
   let parentTimeline: TemplateTimeline;
-  let emptyChildDepTree: DependencyTree;
-  let correctChildDepTree: DependencyTree;
+  let emptyChildDepGraph: DependencyGraph;
+  let correctChildDepGraph: DependencyGraph;
 
   // Stage config
   let triggerConfig: Record<string, unknown>;
   let trigger: Trigger<Record<string, any>>;
   let correctStage: StageNode;
 
-  // Subjects emmiting new dependency trees from tree manager spy.
-  const childDepTree$ = new BehaviorSubject<DependencyTree>(null);
-  const fakeEditNode$ = new ReplaySubject<TreeNode>(1);
+  // Subjects emmiting new dependency graphs from graph manager spy.
+  const childDepGraph$ = new BehaviorSubject<DependencyGraph>(null);
+  const fakeEditNode$ = new ReplaySubject<GraphNode>(1);
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
    */
-  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', ['isNodeNameUnique', 'clearEditNode', 'moveToDispenser'], {
-    editNode$: fakeEditNode$.asObservable()
-  }) as Spied<NodeManager>;
-  nodeManagerSpy.clearEditNode.and.callFake(() => {
-    fakeEditNode$.next();
-  });
+  const nodeManagerSpy = jasmine.createSpyObj('NodeManager', [
+    'isNodeNameUnique',
+    'clearEditNode',
+    'moveToDispenser'
+  ]) as Spied<NodeManager>;
   nodeManagerSpy.isNodeNameUnique.and.returnValue(true);
+  nodeManagerSpy.clearEditNode.and.callFake(() => fakeEditNode$.next(null));
 
-  const parentDepTreeSpy = jasmine.createSpyObj('DependencyTree', [], {
-    treeNodeManager: nodeManagerSpy
-  }) as Spied<DependencyTree>;
+  const parentDepGraphSpy = jasmine.createSpyObj('DependencyGraph', [], {
+    graphNodeManager: nodeManagerSpy
+  }) as Spied<DependencyGraph>;
 
-  const tcState = new TemplateCreatorStateService();
-
-  const treeManagerSpy = jasmine.createSpyObj('DependencyTreeManagerService', [
-    'getCurrentTree',
-    'resetCurrentTree',
-    'editTree',
-    'restoreTree'
-  ]) as Spied<DependencyTreeManagerService>;
-  treeManagerSpy.getCurrentTree.and.callFake((treeRef: DepTreeRef) => {
-    if (treeRef === DepTreeRef.TEMPLATE_CREATION) {
-      return new BehaviorSubject(parentDepTreeSpy);
+  const graphManagerSpy = jasmine.createSpyObj('DependencyGraphManagerService', [
+    'getCurrentGraph',
+    'resetCurrentGraph',
+    'editGraph',
+    'restoreGraph',
+    'addDispenserNode',
+    'observeNodeEdit',
+    'refreshDispenser'
+  ]) as Spied<DependencyGraphManagerService>;
+  graphManagerSpy.getCurrentGraph.and.callFake((graphRef: DepGraphRef) => {
+    if (graphRef === DepGraphRef.TEMPLATE_CREATION) {
+      return new BehaviorSubject(parentDepGraphSpy);
     } else {
-      return childDepTree$;
+      return childDepGraph$;
     }
   });
+  graphManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
+  const tcState = new TemplateCreatorStateService((graphManagerSpy as unknown) as DependencyGraphManagerService);
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
   /**
@@ -84,7 +88,7 @@ describe('StageCreatorComponent', () => {
    */
   const fillWithCorrectStage = (): void => {
     component.stageForm.fill(correctStage);
-    childDepTree$.next(correctChildDepTree);
+    childDepGraph$.next(correctChildDepGraph);
     fixture.detectChanges();
   };
 
@@ -93,65 +97,69 @@ describe('StageCreatorComponent', () => {
     loader.getHarness(CrytonButtonHarness.with({ text: /.*Create stage/ })) as Promise<CrytonButtonHarness>;
 
   const getCancelBtn = (): Promise<CrytonButtonHarness> =>
-    loader.getHarness(CrytonButtonHarness.with({ text: 'Cancel' })) as Promise<CrytonButtonHarness>;
+    loader.getHarness(CrytonButtonHarness.with({ text: /.*Cancel/ })) as Promise<CrytonButtonHarness>;
 
   const getSaveChangesBtn = (): Promise<CrytonButtonHarness> =>
     loader.getHarness(CrytonButtonHarness.with({ text: /.*Save changes/ })) as Promise<CrytonButtonHarness>;
 
   /**
-   * Expects that stage form and child dep tree have been erased.
+   * Expects that stage form and child dep graph have been erased.
    * You have to spyOn the stageForm before using this function.
    */
   const expectCreatorReset = (): void => {
     expect(component.stageForm.erase).toHaveBeenCalled();
-    expect(treeManagerSpy.resetCurrentTree).toHaveBeenCalled();
+    expect(graphManagerSpy.resetCurrentGraph).toHaveBeenCalled();
   };
 
   const createDeltaStage = (name: string): StageNode => {
-    childDepTree$.next(correctChildDepTree);
+    childDepGraph$.next(correctChildDepGraph);
     triggerConfig = { hours: 1, minutes: 2, seconds: 3 };
     trigger = TriggerFactory.createTrigger(TriggerType.DELTA, triggerConfig);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree,
-      childDepTree: correctChildDepTree,
+      childDepGraph: correctChildDepGraph,
       timeline: parentTimeline,
       trigger
     });
+    node.setParentDepGraph(parentDepGraph);
+    return node;
   };
 
   const createHttpStage = (name: string): StageNode => {
-    childDepTree$.next(correctChildDepTree);
+    childDepGraph$.next(correctChildDepGraph);
     triggerConfig = {
       host: '127.0.0.1',
       port: 80,
       routes: [{ path: 'api', method: 'GET', parameters: [{ name: 'value', value: 'test' }] }]
     };
     trigger = TriggerFactory.createTrigger(TriggerType.HTTP_LISTENER, triggerConfig);
-    return new StageNode({
+    const node = new StageNode({
       name,
-      parentDepTree,
-      childDepTree: correctChildDepTree,
+      childDepGraph: correctChildDepGraph,
       timeline: parentTimeline,
       trigger
     });
+    node.setParentDepGraph(parentDepGraph);
+    return node;
   };
 
   const createState = (): void => {
     // Stage environment needed to create a stage.
     parentTimeline = new TemplateTimeline();
-    parentDepTree = new DependencyTree(NodeType.CRYTON_STAGE);
+    parentDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
 
-    // Empty child dependency tree for testing invalid stages.
-    emptyChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
+    // Empty child dependency graph for testing invalid stages.
+    emptyChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
 
-    // Correctly created dependency tree for testing valid stages.
-    correctChildDepTree = new DependencyTree(NodeType.CRYTON_STEP);
-    const testingStep = new StepNode('testStep', 'module', 'args', correctChildDepTree);
-    correctChildDepTree.treeNodeManager.moveToPlan(testingStep);
+    // Correctly created dependency graph for testing valid stages.
+    correctChildDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
+    correctChildDepGraph.theme = mockTheme;
+    const testingStep = new StepNode('testStep', 'module', 'args');
+    testingStep.setParentDepGraph(correctChildDepGraph);
+    correctChildDepGraph.graphNodeManager.addNode(testingStep);
 
     // Initializing subjects
-    childDepTree$.next(emptyChildDepTree);
+    childDepGraph$.next(emptyChildDepGraph);
 
     // Fake edit node observable for testing stage editing.
     fakeEditNode$.next();
@@ -167,12 +175,13 @@ describe('StageCreatorComponent', () => {
       expect(await createBtn.isDisabled()).toBeFalse();
     });
 
-    it('should create the stage correctly', async () => {
+    it('should create the stage correctly', fakeAsync(async () => {
       fillWithCorrectStage();
       await getCreateBtn().then(btn => btn.click());
+      tick(CREATION_MSG_TIMEOUT);
 
-      expect(nodeManagerSpy.moveToDispenser).toHaveBeenCalled();
-    });
+      expect(graphManagerSpy.addDispenserNode).toHaveBeenCalled();
+    }));
 
     it('should correctly load edited delta stage into editor', () => {
       fakeEditNode$.next(correctStage);
@@ -183,16 +192,17 @@ describe('StageCreatorComponent', () => {
         triggerType: correctStage.trigger.getType()
       });
       expect(component.stageForm.getTriggerArgs()).toEqual(triggerConfig);
-      expect(treeManagerSpy.editTree).toHaveBeenCalledWith(DepTreeRef.STAGE_CREATION, correctChildDepTree, true);
+      expect(graphManagerSpy.editGraph).toHaveBeenCalledWith(DepGraphRef.STAGE_CREATION, correctChildDepGraph, true);
     });
 
-    it('should erase state after creation', async () => {
+    it('should erase state after creation', fakeAsync(async () => {
       fillWithCorrectStage();
       spyOn(component.stageForm, 'erase');
       await getCreateBtn().then(btn => btn.click());
+      tick(CREATION_MSG_TIMEOUT);
 
       expectCreatorReset();
-    });
+    }));
 
     it('should erase state after click on cancel button', async () => {
       // TODO: Chceck also the form inputs in the DOM.
@@ -217,7 +227,7 @@ describe('StageCreatorComponent', () => {
         imports: [TemplateCreatorModule, BrowserAnimationsModule],
         providers: [
           { provide: AlertService, useValue: alertServiceStub },
-          { provide: DependencyTreeManagerService, useValue: treeManagerSpy },
+          { provide: DependencyGraphManagerService, useValue: graphManagerSpy },
           { provide: TemplateCreatorStateService, useValue: tcState },
           { provide: MatDialog, useValue: matDialogStub }
         ]
