@@ -49,7 +49,7 @@ export class TickManager {
 
     while (currentTick) {
       const timeMark = currentTick.value.getAttr('timeMark') as TimeMark;
-      timeMark?.recalculate(currentIndex * tickSeconds + startSeconds);
+      timeMark?.recalculate(currentIndex * tickSeconds + startSeconds, tickSeconds < 1);
       currentTick = currentTick.next;
       currentIndex++;
     }
@@ -109,7 +109,7 @@ export class TickManager {
   }
 
   /**
-   * Renders a single tick in the direction of drag.
+   * Renders ticks in the direction of the drag..
    *
    * @param height Canvas height.
    * @param stageX Stage x coordinate.
@@ -217,7 +217,8 @@ export class TickManager {
         totalSeconds: index * tickSeconds + this._startSeconds,
         useCenterCoords: true,
         listening: false,
-        useUTC: this._useUTC
+        useUTC: this._useUTC,
+        showMillis: tickSeconds < 1
       });
       this._timeMarkLayer.add(timeMark);
     }

@@ -22,12 +22,14 @@ export interface ExecutionData {
   startTime: string;
   pauseTime: string;
   finishTime: string;
+  result?: string;
 }
 
 export class ReportTimeline extends Timeline {
   executionData$ = new Subject<ExecutionData>();
   timelineOpenSeconds = Date.now() / 1000;
   timelinePadding: [number, number, number, number] = [30, 0, 10, 130];
+
   private _steps: ReportStep[] = [];
   private _highlights: ReportStageHighlight[] = [];
   private _labels: ReportStageLabel[] = [];
@@ -37,11 +39,19 @@ export class ReportTimeline extends Timeline {
     super(true);
   }
 
-  clear(): void {
-    this.x = 0;
-    this.mainLayer.y(0);
+  updateExecution(execution: PlanExecutionReport): void {
+    this.executionData$.next(null);
+    this.timelineOpenSeconds = Date.now() / 1000;
     this.mainLayer.destroyChildren();
     this.paddingMask.destroyMiddleChildren();
+    this._steps = [];
+    this._highlights = [];
+    this._labels = [];
+    this._executionBounds = [];
+    this.removeAllElements();
+
+    this.createStages(execution.stage_executions);
+    this._createExecutionBounds(execution);
   }
 
   updateDimensions(): void {
@@ -59,8 +69,8 @@ export class ReportTimeline extends Timeline {
   }
 
   renderExecution(execution: PlanExecutionReport): void {
-    this._setTimeframe(execution);
     const reportHeight = this.createStages(execution.stage_executions);
+    this._setTimeframe(execution.start_time, this._steps);
     this._createExecutionBounds(execution);
     this._centerReport(this.height, reportHeight);
   }
@@ -72,23 +82,19 @@ export class ReportTimeline extends Timeline {
     stageReports.forEach(stageReport => {
       stageTop = currentY;
 
-      const sortedSteps = stageReport.step_executions.sort(
-        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-      );
+      const sortedSteps = stageReport.step_executions
+        .filter(stepReport => stepReport.start_time)
+        .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 
       sortedSteps.forEach(stepReport => {
-        if (stepReport.start_time) {
-          const step = this.createStep(stepReport, currentY);
-          this._steps.push(step);
-          this.addElement(step);
-          currentY += STEP_GAP + STEP_HEIGHT;
-        }
+        const step = this.createStep(stepReport, currentY, stageReport.pause_time);
+        this._steps.push(step);
+        this.addElement(step);
+        currentY += STEP_GAP + STEP_HEIGHT;
       });
 
-      if (sortedSteps.some(step => step.start_time)) {
-        const lastStep = sortedSteps[sortedSteps.length - 1];
-        const lastStepEnd = TimelineUtils.datetimeToSeconds(lastStep.finish_time ?? lastStep.start_time);
-        this.createStage(stageReport, stageTop, currentY, lastStepEnd);
+      if (sortedSteps.length > 0) {
+        this.createStage(stageReport, stageTop, currentY);
       }
 
       currentY += STAGE_GAP;
@@ -97,12 +103,20 @@ export class ReportTimeline extends Timeline {
     return currentY !== 0 ? currentY - STAGE_GAP : currentY;
   }
 
-  createStage(stageReport: StageExecutionReport, top: number, bottom: number, lastStepEnd: number): void {
+  createStage(stageReport: StageExecutionReport, top: number, bottom: number): void {
     const y = top - STAGE_PADDING;
     const height = bottom - top - STEP_GAP + 2 * STAGE_PADDING;
     const stateColor = FILL_MAP[stageReport.state.toLocaleLowerCase()];
     const startSeconds = TimelineUtils.datetimeToSeconds(stageReport.start_time);
-    const endSeconds = stageReport.finish_time ? TimelineUtils.datetimeToSeconds(stageReport.finish_time) : lastStepEnd;
+    let endSeconds: number;
+
+    if (stageReport.finish_time) {
+      endSeconds = TimelineUtils.datetimeToSeconds(stageReport.finish_time);
+    } else if (stageReport.pause_time) {
+      endSeconds = TimelineUtils.datetimeToSeconds(stageReport.pause_time);
+    } else {
+      endSeconds = this.timelineOpenSeconds;
+    }
 
     const highlight = new ReportStageHighlight({
       startSeconds,
@@ -113,7 +127,7 @@ export class ReportTimeline extends Timeline {
     });
 
     const stageLabel = new ReportStageLabel({
-      y,
+      y: y + this.mainLayer.y(),
       height,
       width: this.timelinePadding[3],
       fill: stateColor,
@@ -131,6 +145,7 @@ export class ReportTimeline extends Timeline {
         pauseTime: stageReport.pause_time,
         finishTime: stageReport.finish_time
       });
+      this.moveToX(-highlight.x() + this.timelinePadding[3]);
     });
 
     this.paddingMask.addMiddleChild(stageLabel);
@@ -139,8 +154,16 @@ export class ReportTimeline extends Timeline {
     this.stage.draw();
   }
 
-  createStep(stepReport: StepExecutionReport, y: number): ReportStep {
-    const endSeconds = stepReport.finish_time ? TimelineUtils.datetimeToSeconds(stepReport.finish_time) : null;
+  createStep(stepReport: StepExecutionReport, y: number, stagePauseTime?: string): ReportStep {
+    let endSeconds: number;
+
+    if (stepReport.finish_time) {
+      endSeconds = TimelineUtils.datetimeToSeconds(stepReport.finish_time);
+    } else if (stagePauseTime) {
+      endSeconds = TimelineUtils.datetimeToSeconds(stagePauseTime);
+    } else {
+      endSeconds = this.timelineOpenSeconds;
+    }
 
     const step = new ReportStep({
       theme: this.theme,
@@ -157,11 +180,22 @@ export class ReportTimeline extends Timeline {
         state: stepReport.state,
         startTime: stepReport.start_time,
         pauseTime: null,
-        finishTime: stepReport.finish_time
+        finishTime: stepReport.finish_time,
+        result: stepReport.result
       });
     });
 
     return step;
+  }
+
+  moveToX(x: number): void {
+    if (x > this._maxX) {
+      x = this._maxX;
+    }
+    this.stage.x(x);
+    this.paddingMask.x(-x);
+    this._highlights.forEach(highligh => highligh.x(-x));
+    this.tickManager.renderTicks(this.height, this.stageX, this.tickSeconds, this.theme);
   }
 
   protected _onWheel(e: KonvaEventObject<WheelEvent>): void {
@@ -171,10 +205,11 @@ export class ReportTimeline extends Timeline {
   }
 
   protected _stageDrag = (pos: Vector2d): Vector2d => {
+    const x = pos.x > this._maxX ? this._maxX : pos.x;
     this.paddingMask.x(-pos.x);
     this._highlights.forEach(highligh => highligh.x(-pos.x));
 
-    return { x: pos.x, y: 0 };
+    return { x, y: 0 };
   };
 
   protected _refreshTheme(): void {
@@ -200,7 +235,7 @@ export class ReportTimeline extends Timeline {
   private _createExecutionBound(startSeconds: number): ExecutionBound {
     return new ExecutionBound({
       startSeconds,
-      topY: this.timelinePadding[0],
+      topY: this.timelinePadding[0] - this.mainLayer.y(),
       bottomY: this.height - this.timelinePadding[2]
     });
   }
@@ -218,25 +253,25 @@ export class ReportTimeline extends Timeline {
     this._labels.forEach(label => label.y(label.y() + dist));
   }
 
-  private _setTimeframe(executionReport: PlanExecutionReport): void {
-    const startSeconds = new Date(executionReport.start_time).getTime();
+  private _setTimeframe(executionStart: string, steps: ReportStep[]): void {
+    const startSeconds = new Date(executionStart).getTime();
 
-    const allSteps = executionReport.stage_executions
-      .map(stage => stage.step_executions)
-      .reduce((a, b) => a.concat(b), []);
-
-    this.tickSeconds = this._calcOptimalTickSeconds(allSteps);
-    this.startSeconds = Math.round(startSeconds / 1000);
+    this.tickSeconds = this._calcOptimalTickSeconds(steps);
+    this.startSeconds = startSeconds / 1000;
   }
 
-  private _calcOptimalTickSeconds(steps: StepExecutionReport[]): number {
+  private _calcOptimalTickSeconds(steps: ReportStep[]): number {
     const durationMedian = this._calcDurationMedian(steps);
-    let tickSeconds = Math.round(durationMedian / 5);
+    let tickSeconds = durationMedian / 5;
 
     if (tickSeconds > 3600) {
       tickSeconds = this._roundToUnit(tickSeconds, 3600);
     } else if (tickSeconds > 60) {
       tickSeconds = this._roundToUnit(tickSeconds, 60);
+    } else if (tickSeconds > 1) {
+      tickSeconds = this._roundToUnit(tickSeconds, 1);
+    } else {
+      tickSeconds = this._roundToUnit(tickSeconds, 0.001);
     }
 
     return tickSeconds > 0 ? tickSeconds : 1;
@@ -248,11 +283,11 @@ export class ReportTimeline extends Timeline {
     return num + increment;
   }
 
-  private _calcDurationMedian(steps: StepExecutionReport[]): number {
+  private _calcDurationMedian(steps: ReportStep[]): number {
     if (!steps || steps.length === 0) {
       return 0;
     }
-    const sorted = steps.map(step => ReportStep.calcStepDuration(step)).sort((a, b) => a - b);
+    const sorted = steps.map(step => step.duration).sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
 
     if (sorted.length % 2 === 0) {

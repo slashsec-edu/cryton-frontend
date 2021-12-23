@@ -1,7 +1,6 @@
 import Konva from 'konva';
 import { TextConfig } from 'konva/types/shapes/Text';
 import { Theme } from '../../template-creator/models/interfaces/theme';
-import { CrytonDatetimePipe } from '../pipes/cryton-datetime.pipe';
 
 export interface TimeMarkConfig extends TextConfig {
   totalSeconds: number;
@@ -9,6 +8,7 @@ export interface TimeMarkConfig extends TextConfig {
   constantText?: string;
   useCenterCoords?: boolean;
   useUTC?: boolean;
+  showMillis?: boolean;
 }
 
 export const TIME_MARK_NAME = 'timeMark';
@@ -27,7 +27,7 @@ export class TimeMark extends Konva.Text {
       this.fill(config.theme.templateCreator.timemarkText);
     }
 
-    this.recalculate(config.totalSeconds);
+    this.recalculate(config.totalSeconds, config.showMillis);
 
     if (config.useCenterCoords) {
       this.x(this.x() - this.width() / 2);
@@ -39,18 +39,20 @@ export class TimeMark extends Konva.Text {
    * Calculates time mark text in format HH:MM:SS.
    *
    * @param totalSeconds Time that tick represents in seconds.
+   * @param showMillis If true, the timemark will display milliseconds as well.
    */
-  recalculate(totalSeconds: number): void {
+  recalculate(totalSeconds: number, showMillis: boolean): void {
     const constantText = this.getAttr('constantText') as string;
     const useUTC = this.getAttr('useUTC') as boolean;
 
     let newText: string;
 
     this.setAttr('totalSeconds', totalSeconds);
+    this.setAttr('showMillis', showMillis);
     if (constantText) {
       newText = constantText;
     } else if (useUTC) {
-      newText = this._calcUTC(totalSeconds);
+      newText = this._calcUTC(totalSeconds, showMillis);
     } else {
       newText = this._calcStandard(totalSeconds);
     }
@@ -85,9 +87,17 @@ export class TimeMark extends Konva.Text {
     return `${hours}:${minutes}:${seconds}`;
   }
 
-  private _calcUTC(totalSeconds: number): string {
+  private _calcUTC(totalSeconds: number, showMillis: boolean): string {
     const date = new Date(totalSeconds * 1000);
-    const datePipe = new CrytonDatetimePipe();
-    return datePipe.transform(date.toString());
+
+    const day = date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    const month = (date.getMonth() + 1).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    const year = date.getFullYear().toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false });
+    const hours = date.getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    const minutes = date.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    const seconds = date.getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    const millis = date.getMilliseconds().toLocaleString('en-US', { minimumIntegerDigits: 3, useGrouping: false });
+
+    return `${day}. ${month}. ${year} - ${hours}:${minutes}:${seconds}` + (showMillis ? `.${millis}` : '');
   }
 }

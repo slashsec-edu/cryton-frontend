@@ -10,10 +10,10 @@ import {
   ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
-import { delay, first, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject, throwError } from 'rxjs';
+import { catchError, delay, first, takeUntil, tap } from 'rxjs/operators';
 import { Report } from 'src/app/models/api-responses/report/report.interface';
 import { TickSizePickerComponent } from 'src/app/modules/shared/components/tick-size-picker/tick-size-picker.component';
 import { ResizeService } from 'src/app/services/resize.service';
@@ -39,6 +39,7 @@ export enum Display {
 export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('timelineContainer') timelineContainer: DebugElement;
   @ViewChild(TickSizePickerComponent) tickSizePicker: TickSizePickerComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   display: typeof Display = Display;
   currentDisplay = Display.LOADING;
@@ -66,13 +67,13 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.runID = parseInt(this._route.snapshot.paramMap.get('id'), 10);
+    this.runID = Number(this._route.snapshot.paramMap.get('id'));
     this.timeline = new ReportTimeline();
     this._createResizeSub();
   }
 
   ngAfterViewInit(): void {
-    this._createReportSub();
+    this._loadReport();
   }
 
   ngOnDestroy(): void {
@@ -81,53 +82,60 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeExecution(e: PageEvent): void {
-    this.timeline.clear();
-    this.timeline.renderExecution(this.report.plan_executions[e.pageIndex]);
-    this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
+    this.timeline.destroy();
+    this.timeline = new ReportTimeline();
+    this._initTimeline(this.report, e.pageIndex);
   }
 
   openHelp(): void {
     this._dialog.open(ReportTimelineHelpComponent, { width: '60%' });
   }
 
+  refresh(): void {
+    this._fetchReport().subscribe(report => {
+      this.timeline.updateExecution(report.plan_executions[this.paginator.pageIndex]);
+      this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
+    });
+  }
+
   private _createResizeSub(): void {
     this._resizeService.sidenavResize$
-      .pipe(delay(100), takeUntil(this._destroy$))
+      .pipe(delay(200), takeUntil(this._destroy$))
       .subscribe(() => this.timeline.updateDimensions());
   }
 
-  private _createReportSub(): void {
-    this._runService
-      .fetchReport(this.runID)
-      .pipe(
-        tap(report => {
-          if (report.start_time) {
-            this.currentDisplay = Display.DEFAULT;
-          } else {
-            this.currentDisplay = Display.NOT_STARTED;
-          }
-          this.report = report;
-          this._cd.detectChanges();
-        }),
-        delay(50),
-        first()
-      )
-      .subscribe({
-        next: report => {
-          if (report.start_time) {
-            this._initTimeline(report);
-          }
-        },
-        error: () => {
-          this.currentDisplay = Display.ERROR;
-          this._cd.detectChanges();
-        }
-      });
+  private _loadReport(): void {
+    this._fetchReport().subscribe(report => {
+      if (report.start_time) {
+        this._initTimeline(report);
+      }
+    });
   }
 
-  private _initTimeline(report: Report): void {
+  private _fetchReport(): Observable<Report> {
+    return this._runService.fetchReport(this.runID).pipe(
+      tap(report => {
+        if (report.start_time) {
+          this.currentDisplay = Display.DEFAULT;
+        } else {
+          this.currentDisplay = Display.NOT_STARTED;
+        }
+        this.report = report;
+        this._cd.detectChanges();
+      }),
+      catchError(err => {
+        this.currentDisplay = Display.ERROR;
+        this._cd.detectChanges();
+        return throwError(err);
+      }),
+      delay(50),
+      first()
+    );
+  }
+
+  private _initTimeline(report: Report, executionIndex = 0): void {
     this.timeline.initKonva(this.timelineContainer.nativeElement, this._themeService.currentTheme$);
-    this.timeline.renderExecution(report.plan_executions[0]);
+    this.timeline.renderExecution(report.plan_executions[executionIndex]);
     this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
   }
 }

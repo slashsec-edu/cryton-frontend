@@ -20,7 +20,6 @@ export class ReportTimelineHelpComponent implements OnInit {
 
   ngOnInit(): void {
     this.colorGroups = this._buildColorGroups(FILL_MAP);
-    console.log(this.colorGroups);
   }
 
   close(): void {

@@ -104,7 +104,7 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _createResizeSub(): void {
     this._resizeService.sidenavResize$
-      .pipe(delay(100), takeUntil(this._destroy$))
+      .pipe(delay(200), takeUntil(this._destroy$))
       .subscribe(() => this.timeline.updateDimensions());
   }
 

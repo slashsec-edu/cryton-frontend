@@ -8,10 +8,13 @@
 </app-cryton-card>
 
 <ng-template #default>
-  <h1>
-    Execution on worker:
-    <span class="worker-name">{{ report.plan_executions[paginator.pageIndex].worker_name }}</span>
-  </h1>
+  <header>
+    <h1>
+      Execution on worker:
+      <span class="worker-name">{{ report.plan_executions[paginator.pageIndex].worker_name }}</span>
+    </h1>
+    <button mat-button (click)="refresh()"><mat-icon color="primary">refresh</mat-icon> Refresh</button>
+  </header>
 
   <div class="data-panel">
     <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
@@ -19,12 +22,17 @@
     <div class="report-data" *ngIf="timeline.executionData$ | async as execution">
       <div class="data-chip">
         <label>Name:</label>
-        <span>{{ execution.name | shortString: 20 }}</span>
+        <span>{{ execution.name ? (execution.name | shortString: 20) : 'None' }}</span>
       </div>
 
       <div class="data-chip">
         <label>State:</label>
-        <span>{{ execution.state }}</span>
+        <span>{{ execution.state ? execution.state : 'None' }}</span>
+      </div>
+
+      <div class="data-chip" *ngIf="execution.result">
+        <label>Result:</label>
+        <span>{{ execution.result ? execution.result : 'None' }}</span>
       </div>
 
       <div class="data-chip">
@@ -32,15 +40,17 @@
         <span><mat-icon color="primary">play_arrow</mat-icon> {{ execution.startTime | crytonDatetime }}</span>
       </div>
 
-      <div class="data-chip">
+      <div class="data-chip" *ngIf="!execution.finishTime && execution.pauseTime; else finishTime">
         <label>Pause time:</label>
         <span><mat-icon color="primary">pause</mat-icon> {{ execution.pauseTime | crytonDatetime }}</span>
       </div>
 
-      <div class="data-chip">
-        <label>Finish time:</label>
-        <span><mat-icon color="primary">stop</mat-icon> {{ execution.finishTime | crytonDatetime }}</span>
-      </div>
+      <ng-template #finishTime>
+        <div class="data-chip">
+          <label>Finish time:</label>
+          <span><mat-icon color="primary">stop</mat-icon> {{ execution.finishTime | crytonDatetime }}</span>
+        </div>
+      </ng-template>
     </div>
   </div>
 

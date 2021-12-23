@@ -104,6 +104,34 @@ export class Timeline extends KonvaWrapper {
     this.mainLayer.add(element as Konva.Shape);
   }
 
+  /**
+   * Removes an element from the timeline.
+   *
+   * @param element Element to remove.
+   * @param verticallyStatic Set to true if element is vertically static.
+   * @param horizontallyStatic Set to true if element is horizontally static.
+   */
+  removeElement(element: TimelineShape | Konva.Shape, verticallyStatic = false, horizontallyStatic = false): void {
+    this._elements = this._elements.filter(currentElement => currentElement !== element);
+
+    if (verticallyStatic) {
+      this._verticallyStatic = this._verticallyStatic.filter(currentElement => currentElement !== element);
+    }
+    if (horizontallyStatic) {
+      this._horizontallyStatic = this._horizontallyStatic.filter(currentElement => currentElement !== element);
+    }
+
+    (element as Konva.Shape).remove();
+  }
+
+  removeAllElements(): void {
+    this._elements.forEach(element => (element as Konva.Shape).remove());
+
+    this._elements = [];
+    this._horizontallyStatic = [];
+    this._verticallyStatic = [];
+  }
+
   getParams(): TimelineParams {
     return {
       secondsAtZero: this.startSeconds,

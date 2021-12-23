@@ -13,11 +13,13 @@ export const CIRCLE_RADIUS = 8;
 export const CORNER_RADIUS = 8;
 export const FONT_PADDING = 10;
 export const HIT_AREA_MIN_WIDTH = 20;
-export const MAX_LABEL_WIDTH = 150;
+export const MAX_TEXT_LENGTH = 15;
 
 export interface ReportStepConfig extends ShapeConfig {
   reportData: StepExecutionReport;
   cursorState: CursorState;
+  startSeconds: number;
+  endSeconds: number;
   theme: Theme;
 }
 
@@ -25,7 +27,7 @@ export interface ReportStepConfig extends ShapeConfig {
  * Represents a step execution inside the report timeline.
  */
 export class ReportStep extends Konva.Group implements TimelineShape {
-  private _labelText: Konva.Text;
+  private _label: Konva.Label;
   private _body: Konva.Rect | Konva.Circle;
 
   get duration(): number {
@@ -67,8 +69,13 @@ export class ReportStep extends Konva.Group implements TimelineShape {
    * @param theme New theme.
    */
   changeTheme(theme: Theme): void {
-    if (this.duration === 0) {
-      this._labelText.fill(theme.isDark ? 'white' : 'black');
+    this.setAttr('theme', theme);
+    const labelText = this._getLabelText(this._label);
+    const labelTag = this._getLabelTag(this._label);
+
+    if (this._label.getAttr('labelPosition') === 'outer') {
+      labelText.fill(theme.isDark ? 'black' : 'white');
+      labelTag.fill(theme.isDark ? 'white' : 'black');
     }
   }
 
@@ -80,11 +87,7 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     if (this.duration > 0) {
       const newWidth = TimelineUtils.calcWidthFromDuration(this.duration, params);
       this._body.width(newWidth);
-      this._labelText.width(newWidth);
-    }
-
-    if (this._body.width() < HIT_AREA_MIN_WIDTH) {
-      this._body.hitStrokeWidth(5);
+      this._adjustLabel(this._label, newWidth, (this.getAttr('theme') as Theme).isDark);
     }
   }
 
@@ -92,13 +95,8 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     const duration = config.endSeconds ? config.endSeconds - config.startSeconds : 0;
 
     this._body = this._createStepBody(duration, config.reportData.state);
-    this._labelText = this._createStepText(
-      config.reportData.step_name,
-      this._body.width(),
-      duration,
-      config.theme.isDark
-    );
-    this.add(this._body, this._labelText);
+    this._label = this._createLabel(config.reportData.step_name, this._body.width(), config.theme.isDark);
+    this.add(this._body, this._label);
   }
 
   private _initKonvaEvents(cursorState: CursorState): void {
@@ -118,7 +116,8 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     return new Konva.Circle({
       radius: CIRCLE_RADIUS,
       fill: FILL_MAP[state.toLocaleLowerCase()],
-      y: STEP_HEIGHT / 2
+      y: STEP_HEIGHT / 2,
+      hitStrokeWidth: 5
     });
   }
 
@@ -126,53 +125,92 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     const rect = new Konva.Rect({
       fill: FILL_MAP[state.toLocaleLowerCase()],
       cornerRadius: [0, 0, 0, 0].fill(CORNER_RADIUS),
-      height: STEP_HEIGHT
+      height: STEP_HEIGHT,
+      hitStrokeWidth: 5
     });
 
     return rect;
   }
 
-  private _createStepText(text: string, containerWidth: number, duration: number, darkTheme: boolean): Konva.Text {
-    if (duration === 0) {
-      return this._createCircleText(text, containerWidth, darkTheme);
+  private _createLabel(text: string, containerWidth: number, darkTheme: boolean): Konva.Label {
+    const label = new Konva.Label({
+      y: STEP_HEIGHT / 2
+    });
+
+    const labelText = this._createText(text);
+    const labelTag = this._createTag(darkTheme);
+    label.add(labelTag);
+    label.add(labelText);
+
+    return this._adjustLabel(label, containerWidth, darkTheme);
+  }
+
+  private _createTag(darkTheme: boolean): Konva.Tag {
+    return new Konva.Tag({
+      fill: darkTheme ? 'white' : 'black',
+      pointerDirection: 'left',
+      pointerHeight: 10,
+      pointerWidth: 7,
+      cornerRadius: 5,
+      lineJoin: 'round'
+    });
+  }
+
+  private _adjustLabel(label: Konva.Label, containerWidth: number, darkTheme: boolean): Konva.Label {
+    if (containerWidth < label.width() + FONT_PADDING) {
+      return this._toOuterLabel(label, containerWidth, darkTheme);
     } else {
-      return this._createRectText(text);
+      return this._toInnerLabel(label);
     }
   }
 
-  private _createRectText(text: string): Konva.Text {
-    const konvaText = this._createText(text);
-
-    konvaText.setAttrs({
-      padding: FONT_PADDING,
-      fill: 'white'
+  private _toInnerLabel(label: Konva.Label): Konva.Label {
+    label.setAttrs({
+      x: 0,
+      labelPosition: 'inner'
     });
+    this._getLabelText(label).fill('white');
+    this._getLabelTag(label).fill(null);
 
-    return konvaText;
+    return label;
   }
 
-  private _createCircleText(text: string, circleDiameter: number, darkTheme: boolean): Konva.Text {
-    const konvaText = this._createText(text);
-
-    konvaText.setAttrs({
-      x: circleDiameter,
-      fill: darkTheme ? 'white' : 'black'
+  private _toOuterLabel(label: Konva.Label, bodyWidth: number, darkTheme: boolean): Konva.Label {
+    label.setAttrs({
+      x: bodyWidth,
+      labelPosition: 'outer'
     });
+    this._getLabelText(label).fill(darkTheme ? 'black' : 'white');
+    this._getLabelTag(label).fill(darkTheme ? 'white' : 'black');
 
-    return konvaText;
+    return label;
   }
 
   private _createText(text: string): Konva.Text {
+    let labelText = text;
+
+    if (text.length > MAX_TEXT_LENGTH) {
+      labelText = text.slice(0, MAX_TEXT_LENGTH) + '...';
+    }
+
     return new Konva.Text({
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: 'Roboto, Sans Serif, Arial',
-      text,
+      text: labelText,
       verticalAlign: 'middle',
       align: 'left',
-      height: STEP_HEIGHT,
-      width: MAX_LABEL_WIDTH,
+      height: 20,
       ellipsis: true,
-      wrap: 'none'
+      wrap: 'none',
+      padding: FONT_PADDING
     });
+  }
+
+  private _getLabelText(label: Konva.Label): Konva.Text {
+    return label.findOne('Text');
+  }
+
+  private _getLabelTag(label: Konva.Label): Konva.Tag {
+    return label.findOne('Tag');
   }
 }
