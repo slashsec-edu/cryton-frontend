@@ -1,5 +1,5 @@
 <div class="header">
-  <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
+  <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event" [allowMillis]="false"></app-tick-size-picker>
 
   <div class="buttons">
     <app-cryton-button value="Help" icon="info" (clicked)="openHelp()"></app-cryton-button>

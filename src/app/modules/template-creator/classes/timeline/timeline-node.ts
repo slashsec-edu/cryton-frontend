@@ -268,7 +268,11 @@ export class TimelineNode {
     if (this._leadingTick) {
       this._leadingTick.x(this.konvaObject.x());
       (this._leadingTick.timeMark() as NodeTimemark).changeX(this.konvaObject.x());
-      this._leadingTick.timeMark().recalculate(TimelineUtils.calcSecondsFromX(this.x, this.timeline.getParams()));
+
+      const timelineParams = this.timeline.getParams();
+      this._leadingTick
+        .timeMark()
+        .recalculate(TimelineUtils.calcSecondsFromX(this.x, timelineParams), timelineParams.tickSeconds < 1);
       this.timeline.stage.draw();
     }
   }

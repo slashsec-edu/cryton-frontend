@@ -10,6 +10,8 @@ import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 describe('TimelineComponent', () => {
   let component: TimelineComponent;
@@ -26,7 +28,14 @@ describe('TimelineComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SharedModule, BrowserAnimationsModule, MatProgressSpinnerModule, MatPaginatorModule],
+      imports: [
+        SharedModule,
+        BrowserAnimationsModule,
+        MatProgressSpinnerModule,
+        MatPaginatorModule,
+        MatIconModule,
+        MatButtonModule
+      ],
       declarations: [TimelineComponent],
       providers: [
         { provide: ActivatedRoute, useValue: routeStub },

@@ -27,7 +27,7 @@ describe('TimeMark', () => {
     ];
 
     testingDates.forEach(scenario => {
-      timemark.recalculate(scenario.seconds + timezoneOffset);
+      timemark.recalculate(scenario.seconds + timezoneOffset, false);
       expect(timemark.text()).toEqual(scenario.date);
     });
   });
@@ -45,7 +45,7 @@ describe('TimeMark', () => {
     ];
 
     testingDates.forEach(scenario => {
-      timemark.recalculate(scenario.seconds);
+      timemark.recalculate(scenario.seconds, false);
       expect(timemark.text()).toEqual(scenario.date);
     });
   });
@@ -68,7 +68,7 @@ describe('TimeMark', () => {
     });
 
     expect(timemark.text()).toEqual(constantText);
-    timemark.recalculate(50);
+    timemark.recalculate(50, false);
     expect(timemark.text()).toEqual(constantText);
   });
 

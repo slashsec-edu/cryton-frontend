@@ -15,6 +15,8 @@ export class PaddingMask extends Konva.Layer {
   bottomMask: Konva.Rect;
   leftMask: Konva.Rect;
 
+  middleChildren: Konva.Node[] = [];
+
   constructor(config?: PaddingMaskConfig) {
     super(config);
     this._createMask(config.timelinePadding, config.timelineWidth, config.timelineHeight);
@@ -22,15 +24,14 @@ export class PaddingMask extends Konva.Layer {
 
   addMiddleChild(child: Konva.Group | Konva.Shape): void {
     this.add(child);
+    this.middleChildren.push(child);
     this.topMask.moveToTop();
     this.bottomMask.moveToTop();
   }
 
   destroyMiddleChildren(): void {
-    const maxZIndex = this.children.length - 1;
-    const middleChildren = this.getChildren(child => child.zIndex() !== 0 && child.zIndex() !== maxZIndex);
-
-    middleChildren.toArray().forEach(child => child.destroy());
+    this.middleChildren.forEach(child => child.destroy());
+    this.middleChildren = [];
   }
 
   changeTheme(theme: Theme): void {

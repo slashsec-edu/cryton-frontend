@@ -61,6 +61,7 @@ export abstract class KonvaWrapper {
 
   destroy(): void {
     this._themeSub?.unsubscribe();
+    this.stage?.destroy();
   }
 
   /**

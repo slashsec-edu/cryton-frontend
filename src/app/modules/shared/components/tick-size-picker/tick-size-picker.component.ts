@@ -12,11 +12,16 @@ import { takeUntil } from 'rxjs/operators';
 export class TickSizePickerComponent implements OnInit, OnDestroy {
   @Output() tickChange = new EventEmitter<number>();
 
+  @Input() allowMillis = true;
+
   @Input()
   set tickSeconds(value: number) {
     let size: number, unit: number;
 
-    if (value < 60) {
+    if (value < 1) {
+      size = value / 0.001;
+      unit = 0.001;
+    } else if (value < 60) {
       size = value;
       unit = 1;
     } else if (value < 3600) {
@@ -34,6 +39,7 @@ export class TickSizePickerComponent implements OnInit, OnDestroy {
   }
 
   tickOptions = [
+    { display: 'Milliseconds', value: 0.001 },
     { display: 'Seconds', value: 1 },
     { display: 'Minutes', value: 60 },
     { display: 'Hours', value: 3600 }
@@ -49,6 +55,10 @@ export class TickSizePickerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._createTickChangeSub();
+
+    if (!this.allowMillis) {
+      this.tickOptions = this.tickOptions.slice(1);
+    }
   }
 
   ngOnDestroy(): void {

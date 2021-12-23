@@ -49,9 +49,9 @@ export class NodeTimemark extends Konva.Group {
     this.x(this.getAttr('useCenterCoords') ? x - this._timeMarkBG.width() / 2 : x);
   }
 
-  recalculate(totalSeconds: number): void {
+  recalculate(totalSeconds: number, showMillis: boolean): void {
     this.setAttr('totalSeconds', totalSeconds);
-    this._timeMark.recalculate(totalSeconds);
+    this._timeMark.recalculate(totalSeconds, showMillis);
   }
 
   changeTheme(theme: Theme): void {

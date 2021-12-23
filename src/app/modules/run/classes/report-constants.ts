@@ -12,6 +12,7 @@ export const FILL_MAP: Record<string, string> = {
   finished: SUCCESS_COLOR,
   ignore: ERROR_COLOR,
   error: ERROR_COLOR,
+  terminated: ERROR_COLOR,
   waiting: WAITING_COLOR,
   awaiting: WAITING_COLOR
 };
