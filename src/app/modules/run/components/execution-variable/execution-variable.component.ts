@@ -6,6 +6,7 @@ import { ExecutionVariable } from 'src/app/models/api-responses/execution-variab
 import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { ExecutionVariableService } from 'src/app/services/execution-variable.service';
+import { ExecutionVariablePreviewComponent } from '../execution-variable-preview/execution-variable-preview.component';
 
 @Component({
   selector: 'app-execution-variable',
@@ -36,6 +37,14 @@ export class ExecutionVariableComponent {
           this._deleteVariable();
         }
       });
+  }
+
+  view(): void {
+    this._dialog.open(ExecutionVariablePreviewComponent, {
+      data: { variable: this.variable },
+      width: '700px',
+      maxWidth: '50%'
+    });
   }
 
   private _deleteVariable(): void {

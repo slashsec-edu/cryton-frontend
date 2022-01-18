@@ -28,7 +28,7 @@
 <div [hidden]="isHidden(2)">
   <app-cryton-table
     #inventoryTable
-    header="Choose inventory files"
+    header="Choose execution variables"
     [dataSource]="inventoriesDataSource"
     [hidePageSize]="true"
     [eraseEvent$]="eraseEvent$"
@@ -41,7 +41,7 @@
   #fileInput
   *ngFor="let worker of workersArray()"
   [id]="worker.id"
-  (change)="setFiles($event, worker.id)"
+  (change)="setFiles($event, worker)"
   multiple
   type="file"
   name="hidden-input"

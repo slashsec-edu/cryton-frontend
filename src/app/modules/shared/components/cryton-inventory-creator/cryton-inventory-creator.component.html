@@ -1,0 +1,85 @@
+<header mat-dialog-title>
+  <section>
+    <h2>Create inventory</h2>
+    <button mat-button (click)="createVariable()" [disabled]="!canCreate()">
+      <mat-icon color="primary">add_circle</mat-icon> Add variable
+    </button>
+  </section>
+  <section>
+    <form [formGroup]="variableForm" (submit)="createVariable()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Path</mat-label>
+        <input
+          #pathInput
+          matInput
+          type="text"
+          formControlName="path"
+          spellcheck="false"
+          placeholder="E. g. delta.minutes"
+        />
+        <mat-error *ngIf="getControlError(variableForm, 'path') as error">{{ error }}</mat-error>
+      </mat-form-field>
+      <span id="equals-sign">=</span>
+      <mat-form-field appearance="outline">
+        <mat-label>Value</mat-label>
+        <input matInput type="text" formControlName="value" spellcheck="false" />
+        <mat-error *ngIf="getControlError(variableForm, 'value') as error">{{ error }}</mat-error>
+      </mat-form-field>
+      <button hidden formnovalidate type="submit"></button>
+    </form>
+  </section>
+</header>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+  <div class="inventory">
+    <ng-container *ngIf="inventory.length > 0; else emptyInventory">
+      <ng-container *ngTemplateOutlet="inventoryTemplate; context: { path: '', templateInv: inventory }"></ng-container>
+    </ng-container>
+  </div>
+
+  <ng-template #emptyInventory>
+    <span class="empty">Inventory is empty</span>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" (click)="create()">Create</button>
+</mat-dialog-actions>
+
+<ng-template #inventoryTemplate let-path="path" let-templateInv="templateInv">
+  <ng-container *ngFor="let inv of templateInv">
+    <ng-container
+      *ngTemplateOutlet="
+        isSection(inv) ? section : variable;
+        context: {
+          path: path + (path ? '.' : '') + inv.key,
+          templateInv: inv
+        }
+      "
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #section let-path="path" let-templateInv="templateInv">
+  <span class="section-name" (click)="fillPath(path)"
+    >{{ ' ' + templateInv.key + ':'
+    }}<mat-icon inline class="delete-btn" (click)="deleteRecord(path)">cancel</mat-icon></span
+  >
+  <div class="subsection">
+    <ng-container
+      *ngTemplateOutlet="inventoryTemplate; context: { path: path, templateInv: templateInv.value }"
+    ></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #variable let-path="path" let-templateInv="templateInv">
+  <span class="variable-name" (click)="fillPath(path)"
+    >{{ ' ' + templateInv.key + ':' }}&nbsp;<span class="variable-value">{{ templateInv.value }}</span>
+    <mat-icon inline class="delete-btn" (click)="deleteRecord(path)">cancel</mat-icon></span
+  >
+</ng-template>

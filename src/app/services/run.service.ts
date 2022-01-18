@@ -88,34 +88,42 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
   }
 
   /**
-   * Sends a POST request to create a run and uploads
-   * selected execution variables to created plan executions.
+   * Posts a run and uploads execution variables for each plan execution.
    *
-   * @param body Body of request.
-   * @param inventoryFiles Selected inventory files (execution variables).
+   * @param body Run body.
+   * @param variables Record with keys as worker ids and values as execution variables.
+   * @returns Observable of alert message.
    */
-  postRun(body: Record<string, any>, inventoryFiles: Record<string, any>): Observable<string> {
+  postRun(body: Record<string, any>, variables: Record<number, File[] | string>): Observable<string> {
     return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
       catchError(err => this.handleItemError(err, 'Run creation failed.')),
       switchMap((run: RunResponse) => this.http.get(run.detail.link)),
       pluck('plan_executions'),
       concatAll(),
       mergeMap((executionUrl: string) => this.http.get(executionUrl)),
-      mergeMap((execution: PlanExecution) => {
-        const worker = execution.worker;
-        const workersFiles = inventoryFiles[this._getWorkerID(worker)] as File[];
-
-        if (workersFiles && workersFiles.length > 0) {
-          return of(workersFiles).pipe(
-            mergeMap(files => this._execVarService.uploadVariables(execution.id, files)),
-            catchError(() => throwError('Run created but failed to upload execution variables.'))
-          );
-        } else {
-          return of(null);
-        }
-      }),
+      mergeMap((execution: PlanExecution) => this.postVariables(execution, variables)),
       mapTo('Run created successfully.')
     );
+  }
+
+  postVariables(execution: PlanExecution, variables: Record<number, File[] | string>): Observable<string> {
+    const worker = execution.worker;
+    const workersVariables = variables[this._getWorkerID(worker)];
+
+    if (workersVariables && workersVariables.length > 0) {
+      return of(workersVariables).pipe(
+        mergeMap(vars => {
+          if (Array.isArray(vars)) {
+            return this._execVarService.uploadVariables(execution.id, vars);
+          } else {
+            return this._execVarService.postItem({ plan_execution_id: execution.id, inventory_file: vars });
+          }
+        }),
+        catchError(() => throwError('Run created but failed to upload execution variables.'))
+      );
+    } else {
+      return of('');
+    }
   }
 
   /**

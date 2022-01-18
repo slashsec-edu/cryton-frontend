@@ -1,10 +1,15 @@
 import { Template } from 'src/app/models/api-responses/template.interface';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
 import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { TemplateService } from 'src/app/services/template.service';
 import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
 import { PlanService } from 'src/app/services/plan.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
+import { first } from 'rxjs/operators';
+import { parse, stringify } from 'yaml';
+import { CrytonFileUploaderComponent } from 'src/app/modules/shared/components/cryton-file-uploader/cryton-file-uploader.component';
 
 @Component({
   selector: 'app-plans-creation-steps',
@@ -12,11 +17,16 @@ import { PlanService } from 'src/app/services/plan.service';
   styleUrls: ['./plans-creation-steps.component.scss']
 })
 export class PlansCreationStepsComponent extends CrytonEditorStepsComponent implements OnInit, OnDestroy {
+  @ViewChild(CrytonFileUploaderComponent) fileUploader: CrytonFileUploaderComponent;
   templatesDataSource: TemplatesTableDataSource;
   template: Template;
-  inventories: File[];
+  inventory: File[] | string;
 
-  constructor(private _templateService: TemplateService, private _planService: PlanService) {
+  constructor(
+    private _templateService: TemplateService,
+    private _planService: PlanService,
+    private _dialog: MatDialog
+  ) {
     super();
   }
 
@@ -35,11 +45,46 @@ export class PlansCreationStepsComponent extends CrytonEditorStepsComponent impl
   }
 
   handleUpload(files: File[]): void {
-    this.inventories = files;
+    this.inventory = files;
+    this.emitSelection();
+  }
 
-    if (files) {
-      const selectables = files.map(file => ({ name: file.name, id: null } as Selectable));
-      this.inputChange.emit({ selectables, completion: null });
+  cancelInventory(): void {
+    this.fileUploader.discardFiles();
+    this.inventory = null;
+    this.inputChange.emit({ selectables: null, completion: null });
+  }
+
+  createInventory(): void {
+    const inventoryDialog = this._dialog.open(CrytonInventoryCreatorComponent, {
+      data: { inventory: this._isFileInventory() ? null : this.inventory }
+    });
+
+    inventoryDialog
+      .afterClosed()
+      .pipe(first())
+      .subscribe((yaml: string) => {
+        if (yaml) {
+          this.fileUploader.discardFiles();
+          this.inventory = yaml;
+          this.emitSelection();
+        }
+      });
+  }
+
+  emitSelection(): void {
+    if (this.inventory) {
+      if (Array.isArray(this.inventory)) {
+        const selectables = this.inventory.map(file => ({ name: file.name, id: null } as Selectable));
+        this.inputChange.emit({ selectables, completion: null });
+      } else {
+        const selectables = Object.entries(parse(this.inventory)).map((entry: [string, string]) => ({
+          name: `${entry[0]}: ${stringify(entry[1])}`,
+          id: null
+        }));
+
+        this.inputChange.emit({ selectables, completion: null });
+      }
     } else {
       this.inputChange.emit({ selectables: null, completion: null });
     }
@@ -47,10 +92,14 @@ export class PlansCreationStepsComponent extends CrytonEditorStepsComponent impl
 
   erase(): void {
     this.template = null;
-    this.inventories = null;
+    this.inventory = null;
   }
 
   protected createPostRequest(): void {
-    this.create.emit(this._planService.postPlan(this.template.id, this.inventories));
+    this.create.emit(this._planService.postPlan(this.template.id, this.inventory));
+  }
+
+  private _isFileInventory(): boolean {
+    return Array.isArray(this.inventory);
   }
 }

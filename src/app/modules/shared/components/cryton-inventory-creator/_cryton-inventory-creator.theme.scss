@@ -1,0 +1,24 @@
+@import '~@angular/material/theming';
+
+@mixin color($config) {
+  $config: mat-get-color-config($config);
+  $primary: map-get($config, primary);
+  $warn: map-get($config, warn);
+  $foreground: map-get($config, foreground);
+
+  .section-name:hover,
+  .variable-name:hover {
+    color: map-get($primary, default);
+  }
+  .delete-btn {
+    &:hover {
+      color: map-get($warn, default);
+    }
+    &:active {
+      color: map-get($warn, darker);
+    }
+  }
+  .variable-value {
+    color: map-get($foreground, base);
+  }
+}

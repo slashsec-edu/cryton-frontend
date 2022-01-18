@@ -1,0 +1,81 @@
+$form-field-padding: 1.34375em;
+$form-field-font-size: 12px;
+
+/* Layout */
+header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+
+  h2 {
+    margin: 0;
+  }
+
+  section {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    width: 100%;
+    gap: 5px;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    #equals-sign {
+      font-size: $form-field-font-size;
+      padding-bottom: $form-field-padding;
+      margin: 0.25em 0;
+    }
+  }
+}
+.inventory {
+  word-spacing: 4px;
+  padding: 0 10px;
+}
+.subsection {
+  padding-left: 20px;
+  border-left: 1px solid rgba(128, 128, 128, 0.2);
+}
+.inventory,
+.subsection {
+  display: flex;
+  flex-direction: column;
+}
+mat-dialog-content {
+  padding-top: $form-field-padding;
+  padding-bottom: $form-field-padding;
+}
+mat-form-field {
+  font-size: 14px;
+}
+mat-dialog-actions {
+  justify-content: flex-end;
+}
+
+/* Text styling */
+.section-name,
+.variable-name {
+  color: gray;
+
+  font-size: 16px;
+  display: flex;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+.empty {
+  color: gray;
+}
+.delete-btn {
+  margin-left: auto;
+  color: gray;
+  user-select: none;
+  padding-left: 20px;
+}

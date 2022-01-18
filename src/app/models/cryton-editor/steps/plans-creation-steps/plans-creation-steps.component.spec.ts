@@ -10,6 +10,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { AlertService } from 'src/app/services/alert.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { CrytonFileUploaderComponent } from 'src/app/modules/shared/components/cryton-file-uploader/cryton-file-uploader.component';
+import { MatIconModule } from '@angular/material/icon';
 
 describe('PlansCreationStepsComponent', () => {
   let component: PlansCreationStepsComponent;
@@ -31,7 +32,7 @@ describe('PlansCreationStepsComponent', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [PlansCreationStepsComponent, CrytonFileUploaderComponent],
-        imports: [SharedModule, BrowserAnimationsModule],
+        imports: [SharedModule, BrowserAnimationsModule, MatIconModule],
         providers: [
           { provide: PlanService, useValue: planServiceStub },
           { provide: TemplateService, useValue: templateServiceStub },

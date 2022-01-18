@@ -15,7 +15,7 @@ export class CreateRunComponent implements OnInit {
   stepOverviewItems: StepOverviewItem[] = [
     { name: 'Plan', type: StepType.SELECTABLE, required: true },
     { name: 'Workers', type: StepType.SELECTABLE, required: true },
-    { name: 'Inventories', type: StepType.SELECTABLE, required: false }
+    { name: 'Execution variables', type: StepType.SELECTABLE, required: false }
   ];
 
   constructor() {}

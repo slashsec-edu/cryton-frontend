@@ -27,6 +27,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ExecutionVariablePreviewComponent } from './components/execution-variable-preview/execution-variable-preview.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     RunReportCardComponent,
     StepReportCardComponent,
     TimelineComponent,
-    PostponeRunComponent
+    PostponeRunComponent,
+    ExecutionVariablePreviewComponent
   ],
   imports: [
     CommonModule,
