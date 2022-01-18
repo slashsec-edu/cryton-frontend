@@ -5,6 +5,9 @@
       <span>{{ variable.value | shortString: 9 }}</span>
     </aside>
     <aside class="controls">
+      <button mat-icon-button (click)="view()">
+        <mat-icon>visibility</mat-icon>
+      </button>
       <button mat-icon-button (click)="delete()" *ngIf="!(loading$ | async); else loading">
         <mat-icon>delete</mat-icon>
       </button>

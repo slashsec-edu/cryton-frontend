@@ -66,7 +66,7 @@ export class CrytonFileUploaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Sets variables to initial state.
+   * Discards all selected files.
    */
   discardFiles(): void {
     this.selectedFiles = undefined;

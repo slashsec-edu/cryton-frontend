@@ -14,6 +14,6 @@ const ERROR_MESSAGES: Record<string, Record<string, string>> = {
 };
 
 export const getControlError = (formGroup: FormGroup, controlName: string): string => {
-  const errors = formGroup.get(controlName).errors;
+  const errors = formGroup.get(controlName);
   return errors ? ERROR_MESSAGES[controlName][Object.keys(errors)[0]] : null;
 };

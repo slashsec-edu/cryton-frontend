@@ -49,9 +49,14 @@
 
   <div class="section-header">
     <h3>Execution variables</h3>
-    <button mat-icon-button (click)="loadVariables()" matTooltip="Refresh">
-      <mat-icon color="accent">refresh</mat-icon>
-    </button>
+    <div>
+      <button mat-button (click)="loadVariables()">
+        <mat-icon color="accent" color="primary">refresh</mat-icon> Refresh
+      </button>
+      <button mat-button (click)="createVariables()">
+        <mat-icon color="accent" color="primary">add_circle</mat-icon> Create variables
+      </button>
+    </div>
   </div>
   <mat-divider *ngIf="!(loading$ | async)"></mat-divider>
   <mat-progress-bar mode="query" *ngIf="loading$ | async"></mat-progress-bar>

@@ -1,0 +1,24 @@
+<header mat-dialog-title>
+  <h2>Execution variable preview</h2>
+</header>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+  <main class="variable-data">
+    <section>
+      <h3>Name:</h3>
+      <p class="section-data">{{ data.variable.name }}</p>
+    </section>
+    <section>
+      <h3>Value:</h3>
+      <pre class="section-data">{{ yamlValue }}</pre>
+    </section>
+  </main>
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

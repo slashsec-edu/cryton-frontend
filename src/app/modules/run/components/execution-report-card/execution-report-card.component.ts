@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of, throwError } from 'rxjs';
-import { first, pluck, concatAll, filter, toArray, delay, catchError, switchMapTo } from 'rxjs/operators';
+import { first, pluck, concatAll, filter, toArray, delay, catchError, switchMapTo, switchMap } from 'rxjs/operators';
 import { CrytonRESTApiService } from 'src/app/generics/cryton-rest-api-service';
 import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
 import { PlanExecutionReport } from 'src/app/models/api-responses/report/plan-execution-report.interface';
 import { Endpoint } from 'src/app/models/enums/endpoint.enum';
+import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { ExecutionVariableService } from 'src/app/services/execution-variable.service';
 
@@ -29,9 +31,42 @@ export class ExecutionReportCardComponent implements OnInit {
 
   private _execution: PlanExecutionReport;
 
-  constructor(private _variableService: ExecutionVariableService, private _alert: AlertService) {}
+  constructor(
+    private _variableService: ExecutionVariableService,
+    private _alert: AlertService,
+    private _dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {}
+
+  createVariables(): void {
+    const variableDialog = this._dialog.open(CrytonInventoryCreatorComponent);
+
+    variableDialog
+      .afterClosed()
+      .pipe(
+        first(),
+        filter((yaml: string) => {
+          if (yaml) {
+            return true;
+          }
+        }),
+        switchMap((yaml: string) => {
+          this.loading$.next(true);
+          return this._variableService.postItem({ plan_execution_id: this.execution.id, inventory_file: yaml });
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.loadVariables();
+          this._alert.showSuccess('Variables uploaded successfully.');
+        },
+        error: () => {
+          this.loading$.next(false);
+          this._alert.showError('Failed to upload variables.');
+        }
+      });
+  }
 
   loadVariables(): void {
     const executionEndpoint =

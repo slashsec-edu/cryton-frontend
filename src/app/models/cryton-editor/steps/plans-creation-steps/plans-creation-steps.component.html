@@ -11,5 +11,16 @@
 </div>
 
 <div [hidden]="isHidden(1)" class="file-upload">
+  <header>
+    <h2>Upload inventories</h2>
+    <div class="buttons">
+      <button mat-button (click)="cancelInventory()">
+        <mat-icon color="primary">close</mat-icon> Clear inventories
+      </button>
+      <button mat-button (click)="createInventory()">
+        <mat-icon color="primary">description</mat-icon> Create inventory
+      </button>
+    </div>
+  </header>
   <app-cryton-file-uploader (fileChange)="handleUpload($event)" [eraseEvent$]="eraseEvent$"> </app-cryton-file-uploader>
 </div>

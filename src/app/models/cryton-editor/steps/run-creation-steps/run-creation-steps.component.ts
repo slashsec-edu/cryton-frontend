@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, DebugElement, QueryList } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
 import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
 import { PlanService } from 'src/app/services/plan.service';
@@ -15,6 +15,10 @@ import { Column } from '../../../cryton-table/interfaces/column.interface';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
 import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
 import { CustomActionButton } from 'src/app/modules/shared/components/cryton-table/buttons/custom-action-button';
+import { MatDialog } from '@angular/material/dialog';
+import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
+import { catchError, first, mapTo, tap } from 'rxjs/operators';
+import { parse, stringify } from 'yaml';
 
 @Component({
   selector: 'app-run-creation-steps',
@@ -31,13 +35,14 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   buttons: TableButton[];
   workers: Worker[];
   plan: Plan;
-  inventoryFiles: Record<number, File[]> = {};
+  executionVariables: Record<number, File[] | string> = {};
 
   constructor(
     private _planService: PlanService,
     private _workersService: WorkersService,
     private _runService: RunService,
-    private _workerInventoriesService: WorkerInventoriesService
+    private _workerInventoriesService: WorkerInventoriesService,
+    private _dialog: MatDialog
   ) {
     super();
   }
@@ -48,8 +53,9 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     this.workerDataSource = new WorkerTableDataSource(this._workersService);
     this.inventoriesDataSource = new WorkerInventoriesDataSource(this._workerInventoriesService);
     this.buttons = [
-      new CustomActionButton('Clear variables', 'clear', this._clearFileSelection),
-      new CustomActionButton('Upload variables', 'backup', this._uploadFile)
+      new CustomActionButton('Clear variables', 'clear', this._clearSelection),
+      new CustomActionButton('Upload variables', 'backup', this._uploadFile),
+      new CustomActionButton('Create variables', 'description', this._createVariables)
     ];
   }
 
@@ -60,7 +66,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
   erase(): void {
     this.workers = null;
     this.plan = null;
-    this.inventoryFiles = {};
+    this.executionVariables = {};
   }
 
   /**
@@ -95,24 +101,40 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
    * inputChange event with all the selected files.
    *
    * @param changeEvent Event triggered on input change.
-   * @param workerId ID of worker linked to file input.
+   * @param worker Worker linked to file input.
    */
-  setFiles(changeEvent: Event, workerId: number): void {
+  setFiles(changeEvent: Event, worker: Worker): void {
     const files = (changeEvent.target as HTMLInputElement).files;
-    this.inventoryFiles[workerId] = Array.from(files);
+    this.executionVariables[worker.id] = Array.from(files);
 
-    this.emitSelectedFiles();
+    this.emitSelection();
+  }
+
+  setYaml(yaml: string, worker: Worker): void {
+    this.executionVariables[worker.id] = yaml;
+    this.emitSelection();
   }
 
   /**
-   * Emits selectables of currently selected execution variable files.
+   * Emits selectables of currently selected execution variables.
    */
-  emitSelectedFiles(): void {
-    // Flattens the array of files and emits inputChange event.
-    const selectables = Object.entries(this.inventoryFiles).reduce((resultArray, item: [string, File[]]) => {
-      const mappedFiles = item[1].map((file: File) => ({ name: file.name, id: parseInt(item[0], 10) } as Selectable));
-      return resultArray.concat(mappedFiles) as Selectable[];
-    }, []);
+  emitSelection(): void {
+    const selectables = Object.entries(this.executionVariables).reduce(
+      (resultArray, item: [string, File[] | string]) => {
+        let variables: Selectable[];
+
+        if (Array.isArray(item[1])) {
+          variables = item[1].map((file: File) => ({ name: file.name, id: Number(item[0]) } as Selectable));
+        } else if (item[1]) {
+          variables = Object.entries(parse(item[1])).map((entry: [string, string]) => ({
+            name: `${entry[0]}: ${stringify(entry[1])}`,
+            id: Number(item[0])
+          }));
+        }
+        return (variables ? resultArray.concat(variables) : resultArray) as Selectable[];
+      },
+      []
+    );
     this.emitSelectables(selectables);
   }
 
@@ -137,8 +159,26 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
       workers
     };
 
-    this.create.emit(this._runService.postRun(runPostRequest, this.inventoryFiles));
+    this.create.emit(this._runService.postRun(runPostRequest, this.executionVariables));
   }
+
+  private _createVariables = (row: Worker): Observable<string> => {
+    const workersVariables = this.executionVariables[row.id];
+    const variablesDialog = this._dialog.open(CrytonInventoryCreatorComponent, {
+      data: { inventory: this._isFileInventory(workersVariables) ? null : workersVariables }
+    });
+
+    return variablesDialog.afterClosed().pipe(
+      first(),
+      tap((variables: string) => {
+        if (variables) {
+          this.setYaml(variables, row);
+        }
+      }),
+      mapTo(''),
+      catchError(() => throwError('Execution variable creation failed.'))
+    );
+  };
 
   /**
    * Function for opening a file input window.
@@ -153,18 +193,14 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     return of(null) as Observable<string>;
   };
 
-  /**
-   * Clears file selection for a given worker's execution variables.
-   *
-   * @param row Worker object.
-   * @returns Observable of null.
-   */
-  private _clearFileSelection = (row: Worker): Observable<string> => {
+  private _clearSelection = (row: Worker): Observable<string> => {
+    console.log(this.executionVariables);
+
     const rowInput = this._findRowInput(row);
     rowInput.value = null;
-
-    this.inventoryFiles[row.id] = [];
-    this.emitSelectedFiles();
+    this.executionVariables[row.id] = null;
+    this.emitSelection();
+    console.log(this.executionVariables);
 
     return of(null) as Observable<string>;
   };
@@ -184,6 +220,10 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
     if (rowInput) {
       return rowInput.nativeElement as HTMLInputElement;
     }
+  }
+
+  private _isFileInventory(inventory: string | File[]): boolean {
+    return Array.isArray(inventory);
   }
 }
 

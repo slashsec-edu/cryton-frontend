@@ -17,13 +17,18 @@ export class PlanService extends CrytonRESTApiService<Plan> implements HasYaml {
     super(http);
   }
 
-  postPlan(templateID: number, files: File[]): Observable<string> {
+  postPlan(templateID: number, inventory: File[] | string): Observable<string> {
     const formData = new FormData();
 
     formData.append('plan_template', templateID.toString());
-    if (files) {
-      for (const file of files) {
-        formData.append('inventory_file', file, 'inventory_file');
+
+    if (inventory) {
+      if (Array.isArray(inventory)) {
+        for (const file of inventory) {
+          formData.append('inventory_file', file, 'inventory_file');
+        }
+      } else {
+        formData.append('inventory_file', inventory);
       }
     }
 
