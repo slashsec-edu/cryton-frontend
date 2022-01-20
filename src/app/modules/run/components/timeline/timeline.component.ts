@@ -15,7 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, delay, first, takeUntil, tap } from 'rxjs/operators';
 import { Report } from 'src/app/models/api-responses/report/report.interface';
+import { StageExecutionReport } from 'src/app/models/api-responses/report/stage-execution-report.interface';
+import { StepExecutionReport } from 'src/app/models/api-responses/report/step-execution-report.interface';
 import { TickSizePickerComponent } from 'src/app/modules/shared/components/tick-size-picker/tick-size-picker.component';
+import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { ResizeService } from 'src/app/services/resize.service';
 import { RunService } from 'src/app/services/run.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -47,6 +50,9 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   report: Report;
   runID: number;
   timeline: ReportTimeline;
+  NodeType = NodeType;
+
+  maxTooltipTextLength = 30;
 
   private _destroy$ = new Subject<void>();
 
@@ -70,6 +76,7 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
     this.runID = Number(this._route.snapshot.paramMap.get('id'));
     this.timeline = new ReportTimeline();
     this._createResizeSub();
+    // this._createExecutionDataSub();
   }
 
   ngAfterViewInit(): void {
@@ -96,6 +103,14 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
       this.timeline.updateExecution(report.plan_executions[this.paginator.pageIndex]);
       this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
     });
+  }
+
+  asStageReport(data: StageExecutionReport | StepExecutionReport): StageExecutionReport {
+    return data as StageExecutionReport;
+  }
+
+  asStepReport(data: StageExecutionReport | StepExecutionReport): StepExecutionReport {
+    return data as StepExecutionReport;
   }
 
   private _createResizeSub(): void {

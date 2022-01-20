@@ -18,43 +18,48 @@
 
   <div class="data-panel">
     <app-tick-size-picker (tickChange)="timeline.tickSeconds = $event"></app-tick-size-picker>
+  </div>
 
-    <div class="report-data" *ngIf="timeline.executionData$ | async as execution">
-      <div class="data-chip">
-        <label>Name:</label>
-        <span>{{ execution.name ? (execution.name | shortString: 20) : 'None' }}</span>
-      </div>
+  <div class="tc-responsive-container tooltip-container" appNoScroll>
+    <div
+      class="execution-data-tooltip"
+      [class]="tooltip.horizontalPos + '-' + tooltip.verticalPos"
+      *ngIf="timeline.displayTooltip$ | async as tooltip"
+      [style.top]="tooltip.y + 'px'"
+      [style.left]="tooltip.x + 'px'"
+    >
+      <ng-container *ngIf="tooltip.nodeType === NodeType.CRYTON_STAGE; else crytonStepData">
+        <div *ngIf="asStageReport(tooltip.data) as stage">
+          <h4>{{ stage.stage_name }}</h4>
+          <div class="tooltip-body">
+            <span><b>Id:</b> {{ stage.id | shortString: maxTooltipTextLength }}</span>
+            <span><b>State:</b> {{ stage.state | shortString: maxTooltipTextLength }}</span>
+            <span><b>Start time:</b> {{ stage.start_time | crytonDatetime | shortString: maxTooltipTextLength }}</span>
+            <span
+              ><b>Schedule time:</b>
+              {{ stage.schedule_time | crytonDatetime | shortString: maxTooltipTextLength }}</span
+            >
+            <span><b>Pause time:</b> {{ stage.pause_time | crytonDatetime | shortString: maxTooltipTextLength }}</span>
+            <span
+              ><b>Finish time:</b> {{ stage.finish_time | crytonDatetime | shortString: maxTooltipTextLength }}</span
+            >
+          </div>
+        </div>
+      </ng-container>
 
-      <div class="data-chip">
-        <label>State:</label>
-        <span>{{ execution.state ? execution.state : 'None' }}</span>
-      </div>
-
-      <div class="data-chip" *ngIf="execution.result">
-        <label>Result:</label>
-        <span>{{ execution.result ? execution.result : 'None' }}</span>
-      </div>
-
-      <div class="data-chip">
-        <label>Start time:</label>
-        <span><mat-icon color="primary">play_arrow</mat-icon> {{ execution.startTime | crytonDatetime }}</span>
-      </div>
-
-      <div class="data-chip" *ngIf="!execution.finishTime && execution.pauseTime; else finishTime">
-        <label>Pause time:</label>
-        <span><mat-icon color="primary">pause</mat-icon> {{ execution.pauseTime | crytonDatetime }}</span>
-      </div>
-
-      <ng-template #finishTime>
-        <div class="data-chip">
-          <label>Finish time:</label>
-          <span><mat-icon color="primary">stop</mat-icon> {{ execution.finishTime | crytonDatetime }}</span>
+      <ng-template #crytonStepData>
+        <div *ngIf="asStepReport(tooltip.data) as step">
+          <h4>{{ step.step_name }}</h4>
+          <div class="tooltip-body">
+            <span><b>Id:</b> {{ step.id | shortString: maxTooltipTextLength }}</span>
+            <span><b>State:</b> {{ step.state | shortString: maxTooltipTextLength }}</span>
+            <span><b>Result:</b> {{ step.result | shortString: maxTooltipTextLength }}</span>
+            <span><b>Start time:</b> {{ step.start_time | crytonDatetime | shortString: maxTooltipTextLength }}</span>
+            <span><b>Finish time:</b> {{ step.finish_time | crytonDatetime | shortString: maxTooltipTextLength }}</span>
+          </div>
         </div>
       </ng-template>
     </div>
-  </div>
-
-  <div class="tc-responsive-container" appNoScroll>
     <div #timelineContainer id="timeline-container"></div>
   </div>
 
