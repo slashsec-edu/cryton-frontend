@@ -1,4 +1,12 @@
 $legend-font-size: 14px;
+$tooltip-width: 5px;
+
+@mixin tooltip-arrow() {
+  content: ' ';
+  position: absolute;
+  border-width: $tooltip-width;
+  border-style: solid;
+}
 
 #timeline-container {
   width: 100%;
@@ -82,4 +90,150 @@ header {
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+}
+
+/* TOOLTIP */
+.tooltip-container {
+  position: relative;
+}
+.execution-data-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background: rgb(255, 255, 255);
+  border-radius: 5px;
+  padding: 10px;
+  color: black;
+  box-shadow: 0 5px 10px 1px rgba(0, 0, 0, 0.4);
+  width: max-content;
+  max-width: 500px;
+  max-height: 300px;
+  font-size: 12px;
+
+  /*
+  * ■ ■ ■
+  * ■ ■ ■
+  * - ■ -
+  */
+  &.middle-top {
+    transform: translateY(calc(-100% - 5px)) translateX(-50%);
+
+    &::after {
+      @include tooltip-arrow;
+      top: 100%;
+      left: 50%;
+      margin-left: -$tooltip-width;
+      border-color: white transparent transparent transparent;
+    }
+  }
+
+  /*
+  * - ■ -
+  * ■ ■ ■
+  * ■ ■ ■
+  */
+  &.middle-bottom {
+    transform: translateY(5px) translateX(-50%);
+
+    &::after {
+      @include tooltip-arrow;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -$tooltip-width;
+      border-color: transparent transparent white transparent;
+    }
+  }
+
+  /*  
+  * - ■ ■
+  * ■ ■ ■
+  * - ■ ■
+  */
+  &.right-middle {
+    transform: translateY(-50%);
+
+    &::after {
+      @include tooltip-arrow;
+      top: 50%;
+      right: 100%;
+      margin-top: -$tooltip-width;
+      border-color: transparent white transparent transparent;
+    }
+  }
+
+  /*  
+  * ■ ■ -
+  * ■ ■ ■
+  * ■ ■ -
+  */
+  &.left-middle {
+    transform: translateX(calc(-100% - 5px)) translateY(-50%);
+
+    &::after {
+      @include tooltip-arrow;
+      top: 50%;
+      left: 100%;
+      margin-top: -$tooltip-width;
+      border-color: transparent transparent transparent white;
+    }
+  }
+
+  /*  
+  * ■ - -
+  * - ■ ■
+  * - ■ ■
+  */
+  &.right-bottom {
+    border-radius: 0 5px 5px 5px;
+  }
+
+  /*  
+  * - - ■
+  * ■ ■ -
+  * ■ ■ -
+  */
+  &.left-bottom {
+    transform: translateX(-100%);
+    border-radius: 5px 0 5px 5px;
+  }
+
+  /*  
+  * ■ ■ -
+  * ■ ■ -
+  * - - ■
+  */
+  &.left-top {
+    transform: translateX(-100%) translateY(-100%);
+    border-radius: 5px 5px 0 5px;
+  }
+
+  /*
+  * - ■ ■
+  * - ■ ■
+  * ■ - -
+  */
+  &.right-top {
+    transform: translateY(-100%);
+    border-radius: 5px 5px 5px 0;
+  }
+
+  h4 {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: rgb(38, 39, 41);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  }
+
+  .tooltip-body {
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+
+    b {
+      color: rgb(78, 80, 83);
+    }
+    span {
+      color: rgb(104, 106, 109);
+    }
+  }
 }

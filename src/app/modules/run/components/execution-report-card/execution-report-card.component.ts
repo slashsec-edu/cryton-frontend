@@ -25,8 +25,13 @@ export class ExecutionReportCardComponent implements OnInit {
     this.loadVariables();
   }
 
+  // Array of loaded execution variables.
   variables: ExecutionVariable[] = [];
+
+  // Emits true if the component is currently making an asynchronous request.
   loading$ = new BehaviorSubject<boolean>(false);
+
+  // Says if the first variable load had already happened.
   initialized = false;
 
   private _execution: PlanExecutionReport;
@@ -68,6 +73,9 @@ export class ExecutionReportCardComponent implements OnInit {
       });
   }
 
+  /**
+   * Loads execution variables from the backend. Handles loading observable emission and alert emission.
+   */
   loadVariables(): void {
     const executionEndpoint =
       CrytonRESTApiService.buildEndpointURL(Endpoint.PLAN_EXECUTIONS, 'v1') + `/${this.execution.id}/`;
@@ -101,6 +109,11 @@ export class ExecutionReportCardComponent implements OnInit {
       });
   }
 
+  /**
+   * Removes a variable from the variables array.
+   *
+   * @param variable Variable to be removed.
+   */
   removeVariable(variable: ExecutionVariable): void {
     const index = this.variables.indexOf(variable);
 
@@ -109,6 +122,13 @@ export class ExecutionReportCardComponent implements OnInit {
     }
   }
 
+  /**
+   * Tracking function for *ngFor directive.
+   *
+   * @param _ Item index (not needed).
+   * @param item Tracked item
+   * @returns Unique dentifier.
+   */
   trackByFn(_: number, item: ExecutionVariable): number {
     return item.id;
   }

@@ -27,9 +27,13 @@ export interface ReportStepConfig extends ShapeConfig {
  * Represents a step execution inside the report timeline.
  */
 export class ReportStep extends Konva.Group implements TimelineShape {
+  // Step's label.
   private _label: Konva.Label;
+
+  // Step's body.
   private _body: Konva.Rect | Konva.Circle;
 
+  // Step's duration.
   get duration(): number {
     const startSeconds = this.getAttr('startSeconds') as number;
     const endSeconds = this.getAttr('endSeconds') as number;
@@ -79,6 +83,11 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     }
   }
 
+  /**
+   * Updates step's points on the timeline based on given timeline parameters.
+   *
+   * @param params Timeline parameters.
+   */
   updatePoints(params: TimelineParams): void {
     const { startSeconds } = this.getAttrs() as ReportStepConfig;
     const x = TimelineUtils.calcXFromSeconds(startSeconds, params);
@@ -91,6 +100,11 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     }
   }
 
+  /**
+   * Initializes konva object.
+   *
+   * @param config Report step configuration.
+   */
   private _initKonvaObject(config: ReportStepConfig): void {
     const duration = config.endSeconds ? config.endSeconds - config.startSeconds : 0;
 
@@ -99,11 +113,23 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     this.add(this._body, this._label);
   }
 
+  /**
+   * Initializes mouse events on the report step.
+   *
+   * @param cursorState Timeline's cursor state.
+   */
   private _initKonvaEvents(cursorState: CursorState): void {
     this.on('mouseenter', () => cursorState.setCursor(Cursor.POINTER));
     this.on('mouseleave', () => cursorState.unsetCursor(Cursor.POINTER));
   }
 
+  /**
+   * Creates a body of a step.
+   *
+   * @param duration Step execution duration.
+   * @param state Step execution state.
+   * @returns Step's body.
+   */
   private _createStepBody(duration: number, state: string): Konva.Rect | Konva.Circle {
     if (duration > 0) {
       return this._createStepRect(state);
@@ -112,6 +138,12 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     }
   }
 
+  /**
+   * Creates step's body as a Konva.Circle.
+   *
+   * @param state Step execution state.
+   * @returns Step body as a Konva.Circle.
+   */
   private _createStepCircle(state: string): Konva.Circle {
     return new Konva.Circle({
       radius: CIRCLE_RADIUS,
@@ -121,6 +153,12 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     });
   }
 
+  /**
+   * Creates step's body as a Konva.Rect.
+   *
+   * @param state Step execution state.
+   * @returns Step body as a Konva.Rect.
+   */
   private _createStepRect(state: string): Konva.Rect {
     const rect = new Konva.Rect({
       fill: FILL_MAP[state.toLocaleLowerCase()],
@@ -132,6 +170,14 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     return rect;
   }
 
+  /**
+   * Creates step's label.
+   *
+   * @param text Text of the label.
+   * @param containerWidth Width of step's body.
+   * @param darkTheme True if dark theme is used.
+   * @returns Step's label.
+   */
   private _createLabel(text: string, containerWidth: number, darkTheme: boolean): Konva.Label {
     const label = new Konva.Label({
       y: STEP_HEIGHT / 2
@@ -145,6 +191,12 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     return this._adjustLabel(label, containerWidth, darkTheme);
   }
 
+  /**
+   * Creates a tag for the label.
+   *
+   * @param darkTheme True if dark theme is used.
+   * @returns Tag for the label.
+   */
   private _createTag(darkTheme: boolean): Konva.Tag {
     return new Konva.Tag({
       fill: darkTheme ? 'white' : 'black',
@@ -156,6 +208,14 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     });
   }
 
+  /**
+   * Adjusts label based on container width, converts it to outside label if it doesn't fit inside step's body or inside label if it does.
+   *
+   * @param label Label to adjust.
+   * @param containerWidth Step body width.
+   * @param darkTheme True if dark theme is used.
+   * @returns Adjusted label.
+   */
   private _adjustLabel(label: Konva.Label, containerWidth: number, darkTheme: boolean): Konva.Label {
     if (containerWidth < label.width() + FONT_PADDING) {
       return this._toOuterLabel(label, containerWidth, darkTheme);
@@ -164,6 +224,12 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     }
   }
 
+  /**
+   * Converts label to a label inside step body.
+   *
+   * @param label Label to convert.
+   * @returns Inner label.
+   */
   private _toInnerLabel(label: Konva.Label): Konva.Label {
     label.setAttrs({
       x: 0,
@@ -175,6 +241,14 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     return label;
   }
 
+  /**
+   * Converts label to a label outside step body.
+   *
+   * @param label Label to convert.
+   * @param bodyWidth Step's body width.
+   * @param darkTheme True if dark theme is used.
+   * @returns Outer label.
+   */
   private _toOuterLabel(label: Konva.Label, bodyWidth: number, darkTheme: boolean): Konva.Label {
     label.setAttrs({
       x: bodyWidth,
@@ -186,6 +260,12 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     return label;
   }
 
+  /**
+   * Creates text for the step's label.
+   *
+   * @param text Text content.
+   * @returns Konva text.
+   */
   private _createText(text: string): Konva.Text {
     let labelText = text;
 
@@ -206,10 +286,22 @@ export class ReportStep extends Konva.Group implements TimelineShape {
     });
   }
 
+  /**
+   * Getter for text object inside step's label.
+   *
+   * @param label Step's label.
+   * @returns Text inside the label.
+   */
   private _getLabelText(label: Konva.Label): Konva.Text {
     return label.findOne('Text');
   }
 
+  /**
+   * Getter for tag object inside step's label.
+   *
+   * @param label Step's label.
+   * @returns Tag inside the label.
+   */
   private _getLabelTag(label: Konva.Label): Konva.Tag {
     return label.findOne('Tag');
   }
