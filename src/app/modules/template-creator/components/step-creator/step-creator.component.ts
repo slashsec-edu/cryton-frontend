@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
 import { TcRoutingService } from '../../services/tc-routing.service';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { parse } from 'yaml';
 
 export const CREATION_MSG_TIMEOUT = 7000;
 
@@ -29,6 +30,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
   });
   editedStep: StepNode;
   showCreationMessage$: Observable<boolean>;
+  attackModuleArgsErrorMessage: string;
 
   private _destroy$ = new Subject<void>();
   private _stepManager: NodeManager;
@@ -74,6 +76,9 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @returns Form control error.
    */
   getControlError(controlName: string): string {
+    if (controlName === 'attackModuleArgs' && this.stepForm.get('attackModuleArgs').getError('invalidYaml')) {
+      return this.attackModuleArgsErrorMessage;
+    }
     return getControlError(this.stepForm, controlName);
   }
 
@@ -81,15 +86,21 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * Creates step and resets step form.
    */
   handleCreateStep(): void {
-    if (this.stepForm.valid) {
+    const attackModuleArgs = this.stepForm.get('attackModuleArgs') as FormControl;
+    const attackModuleArgsError = this._validateYaml(attackModuleArgs.value);
+
+    if (!this.stepForm.valid) {
+      this._alertService.showError('Step form is invalid.');
+    } else if (attackModuleArgsError) {
+      attackModuleArgs.setErrors({ invalidYaml: true });
+      this.attackModuleArgsErrorMessage = attackModuleArgsError;
+    } else {
       const step: StepNode = this._createStep();
       this.stepForm.reset();
       this._alertService.showSuccess('Step created successfully');
       this._graphManager.addDispenserNode(DepGraphRef.STAGE_CREATION, step);
 
       this._showCreationMessage$.next(true);
-    } else {
-      this._alertService.showError('Step form is invalid.');
     }
   }
 
@@ -259,4 +270,19 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
     this._parentDepGraph.graphNodeManager.isNodeNameUnique(control.value, this.editedStep?.name ?? null)
       ? null
       : { notUnique: true };
+
+  private _validateYaml(yaml: string): string | undefined {
+    try {
+      parse(yaml);
+      return;
+    } catch (err) {
+      console.error(err);
+      const typedErr = err as { message?: string };
+
+      if (typedErr.message) {
+        return 'Invalid YAML format: ' + typedErr.message;
+      }
+      return 'Invalid YAML format.';
+    }
+  }
 }

@@ -9,7 +9,8 @@ const ERROR_MESSAGES: Record<string, Record<string, string>> = {
     required: 'Attack module is required.'
   },
   attackModuleArgs: {
-    required: 'Attack module arguments are required.'
+    required: 'Attack module arguments are required.',
+    invalidYaml: 'Invalid YAML format.'
   }
 };
 
