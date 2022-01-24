@@ -2,6 +2,6 @@
  * Step edge condition.
  */
 export interface EdgeCondition {
-  value: string;
+  value?: string;
   type: string;
 }

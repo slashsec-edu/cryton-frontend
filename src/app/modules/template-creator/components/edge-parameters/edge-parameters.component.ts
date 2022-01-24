@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EdgeCondition } from '../../models/interfaces/edge-condition';
 import { first } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
+import { EdgeCondition } from '../../models/interfaces/edge-condition';
+
+type Option = { value: string; displayName: string };
 
 @Component({
   selector: 'app-edge-parameters',
@@ -17,20 +19,28 @@ import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
 })
 export class EdgeParametersComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
-  conditions: FormGroup[] = [];
+  conditionsFormGroup = new FormGroup({
+    conditions: new FormArray([])
+  });
 
-  typeOptions: { type: string; display: string }[] = [
-    { type: 'return_code', display: 'RETURN_CODE' },
-    { type: 'state', display: 'STATE' },
-    { type: 'result', display: 'RESULT' },
-    { type: 'std_out', display: 'STD_OUT' },
-    { type: 'std_err', display: 'STD_ERR' },
-    { type: 'mod_out', display: 'MOD_OUT' },
-    { type: 'mod_err', display: 'MOD_ERR' },
-    { type: 'any', display: 'ANY' }
+  typeOptions: Option[] = [
+    { value: 'state', displayName: 'STATE' },
+    { value: 'result', displayName: 'RESULT' },
+    { value: 'std_out', displayName: 'STD_OUT' },
+    { value: 'std_err', displayName: 'STD_ERR' },
+    { value: 'mod_out', displayName: 'MOD_OUT' },
+    { value: 'mod_err', displayName: 'MOD_ERR' },
+    { value: 'any', displayName: 'ANY' }
   ];
 
+  stateOptions: string[] = ['FINISHED'];
+  resultOptions: string[] = ['OK', 'FAIL', 'EXCEPTION'];
+
   invalidError = 'Invalid conditions.';
+
+  get conditions(): FormArray {
+    return this.conditionsFormGroup.get('conditions') as FormArray;
+  }
 
   constructor(
     private _alert: AlertService,
@@ -59,8 +69,9 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    * Saves edge data and closes the dialog window.
    */
   saveEdge(): void {
-    if (this.isValid()) {
-      this.data.edge.conditions = this.conditions.map(condition => condition.value as EdgeCondition);
+    if (this.conditionsFormGroup.valid) {
+      this.data.edge.conditions = this.getEdgeConditions();
+
       this.close();
     } else {
       this._alert.showError('Conditions are invalid.');
@@ -69,27 +80,31 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
 
   /**
    * Adds new empty condition form group to the conditions array.
+   *
+   * @param type Type of condition.
+   * @returns Condition FormGroup.
    */
-  addCondition(): void {
-    this.conditions.push(
-      new FormGroup({
-        type: new FormControl('', [Validators.required]),
-        value: new FormControl('', [Validators.required])
-      })
-    );
+  addCondition(type = null): FormGroup {
+    const condition = new FormGroup({
+      type: new FormControl(type, [Validators.required])
+    });
+
+    if (type !== 'any') {
+      condition.addControl('valueForm', this._createValueForm(type));
+    }
+
+    this.conditions.push(condition);
+    return condition;
   }
 
   /**
    * Removes the given condition from the conditions array.
    *
-   * @param condition Condition to remove.
+   * @param index Index of the condition to remove.
    */
-  removeCondition(condition: FormGroup): void {
+  removeCondition(index: number): void {
     if (this.conditions.length > 1) {
-      const conditionIndex = this.conditions.indexOf(condition);
-      if (conditionIndex !== -1) {
-        this.conditions.splice(conditionIndex, 1);
-      }
+      this.conditions.removeAt(index);
     } else {
       this._alert.showError('Step edge must contain at least 1 condition.');
     }
@@ -115,13 +130,48 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
     return new ShortStringPipe().transform(name, 10);
   }
 
-  /**
-   * Checks if every condition is valid.
-   *
-   * @returns True if every condition is valid.
-   */
-  isValid(): boolean {
-    return this.conditions.every(condition => condition.valid);
+  asFormGroup(control: AbstractControl): FormGroup {
+    return control as FormGroup;
+  }
+
+  onConditionTypeChange(index: number, type: string): void {
+    const condition = this.asFormGroup(this.conditions.at(index));
+    const valueForm = this._createValueForm(type);
+    const currentValueForm = condition.get('valueForm');
+
+    if (currentValueForm) {
+      if (valueForm) {
+        condition.setControl('valueForm', valueForm);
+      } else {
+        condition.removeControl('valueForm');
+      }
+    } else {
+      if (valueForm) {
+        condition.addControl('valueForm', valueForm);
+      }
+    }
+  }
+
+  getEdgeConditions(): EdgeCondition[] {
+    const conditions = this.conditions.value as Record<string, unknown>[];
+    const edgeConditions: EdgeCondition[] = [];
+
+    conditions.forEach(condition => {
+      if (condition.type === 'state' || condition.type === 'result') {
+        const valueForm = condition.valueForm as { selection: string };
+        edgeConditions.push({ type: condition.type, value: valueForm.selection });
+      } else if (condition.type === 'any') {
+        edgeConditions.push({ type: condition.type });
+      } else {
+        const valueForm = condition.valueForm as { isRegex: boolean; value: string };
+        edgeConditions.push({
+          type: condition.type as string,
+          value: valueForm.isRegex ? `r'${valueForm.value}'` : valueForm.value
+        });
+      }
+    });
+
+    return edgeConditions;
   }
 
   /**
@@ -148,21 +198,35 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    */
   private _loadEdgeConditions(edge: StepEdge): void {
     edge.conditions.forEach(condition => {
-      this.conditions.push(
-        new FormGroup({
-          type: new FormControl(condition.type, Validators.required),
-          value: new FormControl(condition.value, Validators.required)
-        })
-      );
+      const conditionForm = this.addCondition(condition.type);
+
+      if (condition.type === 'state' || condition.type === 'result') {
+        conditionForm.get('valueForm').get('selection').setValue(condition.value);
+      } else if (condition.type !== 'any') {
+        const isRegex = condition.value.startsWith("r'");
+        const value = isRegex ? condition.value.slice(2, condition.value.length - 1) : condition.value;
+        conditionForm.get('valueForm').setValue({ value, isRegex });
+      }
     });
 
     if (edge.conditions.length === 0) {
-      this.conditions.push(
-        new FormGroup({
-          type: new FormControl('', [Validators.required]),
+      this.addCondition();
+    }
+  }
+
+  private _createValueForm(type: string): FormGroup {
+    switch (type) {
+      case 'state':
+        return new FormGroup({ selection: new FormControl('FINISHED', [Validators.required]) });
+      case 'result':
+        return new FormGroup({ selection: new FormControl('OK', [Validators.required]) });
+      case 'any':
+        return null;
+      default:
+        return new FormGroup({
+          isRegex: new FormControl(false, [Validators.required]),
           value: new FormControl('', [Validators.required])
-        })
-      );
+        });
     }
   }
 }

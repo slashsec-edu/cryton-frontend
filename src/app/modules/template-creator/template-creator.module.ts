@@ -42,6 +42,8 @@ import { StageCreatorHelpComponent } from './pages/help-pages/stage-creator-help
 import { TemplateCreatorHelpComponent } from './pages/help-pages/template-creator-help/template-creator-help.component';
 import { DependencyGraphHelpComponent } from './pages/help-pages/dependency-graph-help/dependency-graph-help.component';
 import { TemplateYamlPreviewComponent } from './components/template-yaml-preview/template-yaml-preview.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -85,7 +87,9 @@ import { TemplateYamlPreviewComponent } from './components/template-yaml-preview
     MatProgressSpinnerModule,
     MatStepperModule,
     MatCardModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatSlideToggleModule
   ]
 })
 export class TemplateCreatorModule {}

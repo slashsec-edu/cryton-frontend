@@ -1,3 +1,5 @@
+$form-field-padding: 1.34375em;
+
 /* LAYOUT */
 main {
   display: flex;
@@ -11,6 +13,11 @@ main {
   display: flex;
   align-items: center;
 }
+.form-fields {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 mat-dialog-content {
   text-align: right;
 }
@@ -18,15 +25,19 @@ mat-dialog-actions {
   justify-content: right;
   gap: 10px;
 }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 16px;
+}
 
 /* CONDITION FORM */
 mat-form-field {
   font-size: 12px;
-  width: 500px;
-}
-.inputs-wrapper {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
 /* BUTTONS */
@@ -35,6 +46,7 @@ mat-form-field {
   width: 44.625px;
   align-self: center;
   margin-right: 15px;
+  margin-bottom: $form-field-padding;
 }
 .add-btn {
   align-self: flex-end;
@@ -50,16 +62,33 @@ mat-form-field {
 .parent-child {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
 }
 .arrow {
   padding: 0 6px;
 }
-.step-name {
-  text-align: center;
+.step {
+  display: flex;
+  flex-direction: column;
   background: #263238;
   color: white;
   border-radius: 5px;
-  padding: 2px 15px;
+  padding: 5px 15px;
   font-size: 12px;
+
+  span {
+    line-height: 15px;
+  }
+
+  .step-relation {
+    color: rgb(197, 204, 212);
+  }
+}
+
+mat-form-field.checkbox-field {
+  mat-checkbox {
+    margin-bottom: 5px;
+  }
+}
+mat-divider {
+  margin-bottom: $form-field-padding;
 }

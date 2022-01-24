@@ -139,7 +139,7 @@ export class DependencyGraphEditorComponent implements OnInit, AfterViewInit, On
    */
   private _createEditEdgeSub(): void {
     StepEdge.editEdge$.pipe(takeUntil(this._destroy$)).subscribe((edge: GraphEdge) => {
-      this._dialog.open(EdgeParametersComponent, { data: { edge } });
+      this._dialog.open(EdgeParametersComponent, { width: '90%', maxWidth: '600px', data: { edge } });
     });
   }
 
