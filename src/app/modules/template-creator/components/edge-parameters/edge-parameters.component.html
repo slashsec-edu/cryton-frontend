@@ -1,46 +1,107 @@
 <!-- PARENT - CHILD -->
-<header *ngIf="{ parent: getParentName(), child: getChildName() } as data" class="parent-child" mat-dialog-title>
-  <span class="step-name">{{ data.parent }}</span>
-  <img src="assets/img/right_arrow.svg" alt="right arrow" height="10px" class="arrow" />
-  <span class="step-name">{{ data.child }}</span>
-</header>
-
-<mat-dialog-content class="cryton-scrollbar">
-  <!-- CONDITIONS -->
-  <form *ngFor="let condition of conditions" [formGroup]="condition">
-    <div class="flex-section form-fields">
-      <button
-        mat-icon-button
-        type="button"
-        onclick="this.blur()"
-        class="cancel-btn"
-        (click)="removeCondition(condition)"
-        [disabled]="this.conditions.length === 1"
-      >
-        <mat-icon>cancel</mat-icon>
-      </button>
-
-      <div class="inputs-wrapper">
-        <!-- CONDITION TYPE -->
-        <mat-form-field appearance="fill">
-          <mat-label>Type</mat-label>
-          <mat-select formControlName="type">
-            <mat-option *ngFor="let option of typeOptions" [value]="option.type">{{ option.display }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- CONDITION VALUE -->
-        <mat-form-field appearance="fill">
-          <mat-label>Value</mat-label>
-          <textarea matInput placeholder="Value" formControlName="value"></textarea>
-        </mat-form-field>
-      </div>
+<header mat-dialog-title>
+  <div *ngIf="{ parent: getParentName(), child: getChildName() } as data" class="parent-child">
+    <div class="step">
+      <span class="step-relation">Parent step:</span><span class="step-name">{{ data.parent }}</span>
     </div>
-  </form>
+    <img src="assets/img/right_arrow.svg" alt="right arrow" height="10px" class="arrow" />
+    <div class="step">
+      <span class="step-relation">Child step:</span><span class="step-name">{{ data.child }}</span>
+    </div>
+  </div>
 
   <button mat-button class="add-btn" color="primary" (click)="addCondition()">
     <span><mat-icon>add_circle</mat-icon>Add condition</span>
   </button>
+</header>
+
+<mat-dialog-content class="cryton-scrollbar">
+  <!-- CONDITIONS -->
+  <form [formGroup]="conditionsFormGroup">
+    <form
+      *ngFor="let condition of conditions.controls; index as i"
+      [formGroup]="asFormGroup(condition)"
+      class="condition-form"
+    >
+      <div class="flex-section">
+        <button
+          mat-icon-button
+          type="button"
+          onclick="this.blur()"
+          class="cancel-btn"
+          (click)="removeCondition(i)"
+          [disabled]="this.conditions.length === 1"
+        >
+          <mat-icon>cancel</mat-icon>
+        </button>
+
+        <div class="form-fields">
+          <!-- CONDITION TYPE -->
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type" (valueChange)="onConditionTypeChange(i, $event)">
+              <mat-option *ngFor="let option of typeOptions" [value]="option.value">{{
+                option.displayName
+              }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="condition.get('type').hasError('required')">Condition type is required.</mat-error>
+          </mat-form-field>
+
+          <!-- CONDITION VALUE -->
+          <div *ngIf="condition.get('type').value as type">
+            <form
+              *ngIf="asFormGroup(condition.get('valueForm')) as valueForm"
+              [formGroup]="valueForm"
+              class="flex-section"
+            >
+              <!-- STATE -->
+              <ng-container *ngIf="type === 'state' || type === 'result'; else textValues">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ type | titlecase }}</mat-label>
+                  <mat-select formControlName="selection">
+                    <mat-option
+                      *ngFor="let option of type === 'state' ? stateOptions : resultOptions"
+                      [value]="option"
+                      >{{ option }}</mat-option
+                    >
+                  </mat-select>
+                  <mat-error *ngIf="valueForm.get('selection').hasError('required')"
+                    >Condition value is required.</mat-error
+                  >
+                </mat-form-field>
+              </ng-container>
+
+              <!-- STD_*, MOD_*  -->
+              <ng-template #textValues>
+                <ng-container *ngIf="type !== 'any'">
+                  <mat-form-field appearance="outline" class="checkbox-field">
+                    <mat-label>Value</mat-label>
+                    <input matInput type="text" formControlName="value" />
+                    <mat-slide-toggle
+                      matSuffix
+                      color="primary"
+                      #isRegex
+                      formControlName="isRegex"
+                      (click)="$event.cancelBubble = true"
+                      >Regex</mat-slide-toggle
+                    >
+                    <mat-hint *ngIf="isRegex.checked && !valueForm.get('value').hasError('required')"
+                      >Value will be wrapped with r'&lt;value&gt;'</mat-hint
+                    >
+                    <mat-error *ngIf="valueForm.get('value').hasError('required')"
+                      >Condition value is required.</mat-error
+                    >
+                  </mat-form-field>
+                </ng-container>
+              </ng-template>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider *ngIf="i < conditions.length - 1"></mat-divider>
+    </form>
+  </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
@@ -50,8 +111,10 @@
     icon="save"
     value="Save"
     (clicked)="saveEdge()"
-    [disabled]="!isValid()"
-    [matTooltip]="isValid() ? null : invalidError"
+    [disabled]="!conditionsFormGroup.valid"
+    [matTooltip]="conditionsFormGroup.valid ? null : invalidError"
     matTooltipClass="tooltip-error"
   ></app-cryton-button>
 </mat-dialog-actions>
+
+<ng-template #stateForm> </ng-template>

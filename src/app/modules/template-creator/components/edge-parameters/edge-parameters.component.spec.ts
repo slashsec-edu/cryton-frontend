@@ -77,7 +77,7 @@ describe('EdgeParametersComponent', () => {
 
   const getFormsCount = (): number => {
     const nativeEl = fixture.nativeElement as HTMLElement;
-    return nativeEl.querySelectorAll('form').length;
+    return nativeEl.querySelectorAll('.condition-form').length;
   };
 
   beforeEach(async () => {
@@ -146,17 +146,10 @@ describe('EdgeParametersComponent', () => {
 
   it('should delete condition on cancel click if there are more conditions', async () => {
     component.addCondition();
-    component.addCondition();
-
-    const firstCondition = { type: 'return_code', value: 'OK' };
-    const secondCondition = { type: 'state', value: 'UP' };
-    const thirdCondition = { type: 'mod_err', value: 'NONE' };
-
-    // Fill forms with condition values
-    component.conditions[0].setValue(firstCondition);
-    component.conditions[1].setValue(secondCondition);
-    component.conditions[2].setValue(thirdCondition);
-
+    component.conditions.at(0).get('type').setValue('result');
+    component.onConditionTypeChange(0, 'result');
+    component.conditions.at(1).get('type').setValue('state');
+    component.onConditionTypeChange(1, 'state');
     fixture.detectChanges();
 
     // Click on cancel button next to second condition form
@@ -164,9 +157,8 @@ describe('EdgeParametersComponent', () => {
     await button.click();
 
     // Expect that exactly the second condition was removed
-    expect(component.conditions.length).toEqual(2);
-    expect(component.conditions[0].value).toEqual(firstCondition);
-    expect(component.conditions[1].value).toEqual(thirdCondition);
+    expect(component.conditions.length).toEqual(1);
+    expect(component.conditions.at(0).value).toEqual({ type: 'result', valueForm: { selection: 'OK' } });
   });
 
   it('should display "parent name" -> "child name" dependency', () => {
@@ -183,7 +175,8 @@ describe('EdgeParametersComponent', () => {
     expect(await saveBtn.isDisabled()).toBeTrue();
 
     // Make first condition valid, but second condition invalid
-    component.conditions[0].setValue({ type: 'a', value: 'a' });
+    component.conditions.at(0).get('type').setValue('state');
+    component.onConditionTypeChange(0, 'state');
     component.addCondition();
     fixture.detectChanges();
 
@@ -193,7 +186,8 @@ describe('EdgeParametersComponent', () => {
   it('should enable save button if all conditions are valid', async () => {
     const saveBtn = await loader.getHarness(MatButtonHarness.with({ text: /.*Save.*/ }));
 
-    component.conditions[0].setValue({ type: 'a', value: 'a' });
+    component.conditions.at(0).get('type').setValue('state');
+    component.onConditionTypeChange(0, 'state');
     fixture.detectChanges();
 
     expect(await saveBtn.isDisabled()).toBeFalse();

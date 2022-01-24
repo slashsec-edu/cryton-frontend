@@ -50,7 +50,7 @@ export interface StepArguments {
  */
 export interface StepEdgeDescription {
   type: string;
-  value: string;
+  value?: string;
   step: string;
 }
 
