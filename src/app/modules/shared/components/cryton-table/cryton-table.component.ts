@@ -1,39 +1,38 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ViewChild,
-  AfterViewInit,
-  Output,
-  EventEmitter,
-  OnDestroy,
-  Type,
-  ViewChildren,
-  QueryList,
-  ComponentFactoryResolver,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { tap, takeUntil, debounceTime } from 'rxjs/operators';
-import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
-import { Column } from 'src/app/models/cryton-table/interfaces/column.interface';
-import { TableButton } from './buttons/table-button';
-import { TableFilter } from 'src/app/models/cryton-table/interfaces/table-filter.interface';
-import { Observable, Subject } from 'rxjs';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { ExpandedRowInterface } from 'src/app/generics/expanded-row.interface';
-import { Sort } from '@angular/material/sort';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { AlertService } from 'src/app/services/alert.service';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-import { environment } from 'src/environments/environment';
-import { ApiActionButton } from './buttons/api-action-button';
-import { ActionButton } from './buttons/action-button';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  Type,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { ExpandedRowInterface } from 'src/app/generics/expanded-row.interface';
+import { Column } from 'src/app/models/cryton-table/interfaces/column.interface';
+import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
+import { TableFilter } from 'src/app/models/cryton-table/interfaces/table-filter.interface';
 import { TableButtonType } from 'src/app/models/enums/table-button-type';
+import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
+import { AlertService } from 'src/app/services/alert.service';
+import { environment } from 'src/environments/environment';
+import { ActionButton } from './buttons/action-button';
+import { ApiActionButton } from './buttons/api-action-button';
 import { LinkButton } from './buttons/link-button';
+import { TableButton } from './buttons/table-button';
 
 @Component({
   selector: 'app-cryton-table',
@@ -139,12 +138,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
   /* EVENTS */
   private _destroy$ = new Subject<void>();
 
-  constructor(
-    private _componentFactoryResolver: ComponentFactoryResolver,
-    private _fb: FormBuilder,
-    private _alertService: AlertService,
-    private _cd: ChangeDetectorRef
-  ) {}
+  constructor(private _fb: FormBuilder, private _alertService: AlertService, private _cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.checkboxSelection = new SelectionModel<T>(true, []);
@@ -264,7 +258,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
     if (this.isAllChecked()) {
       this.checkboxSelection.clear();
     } else {
-      this.dataSource.data.items.forEach(row => this.checkboxSelection.select(row));
+      this.dataSource.data.data.forEach(row => this.checkboxSelection.select(row));
     }
     this.checkboxChange.emit(this.checkboxSelection.selected);
   }
@@ -286,12 +280,11 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
 
   createExpandedRowComponent(row: T, index: number): void {
     const componentHost = this.expandedHosts.toArray()[index];
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(this.expandedComponent);
     const viewContainerRef = componentHost.viewContainerRef;
 
     viewContainerRef.clear();
 
-    const componentRef = viewContainerRef.createComponent(componentFactory);
+    const componentRef = viewContainerRef.createComponent(this.expandedComponent);
     const componentInstance = componentRef.instance;
 
     componentInstance.rowData = row;
@@ -304,7 +297,7 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
 
   updatePaginator(): void {
     if (this.paginator.length > 0) {
-      this.paginator.length -= 1;
+      this.paginator.previousPage();
     }
     const totalRows = this.paginator.length;
     const currentPage = this.paginator.pageIndex;
@@ -329,8 +322,8 @@ export class CrytonTableComponent<T extends HasID> implements OnInit, AfterViewI
               this._alertService.showSuccess(successMsg);
             }
           },
-          error: (err: string) => {
-            this._alertService.showError(err);
+          error: (err: Error) => {
+            this._alertService.showError(err.message);
           }
         });
     }

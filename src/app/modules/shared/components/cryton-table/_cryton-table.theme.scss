@@ -1,11 +1,12 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $background: map-get($config, background);
+@mixin color($theme) {
+  $colorconfig: mat.get-color-config($theme);
+  $background: map.get($colorconfig, background);
 
   tr.cryton-table--expandable-row td {
-    border-top: 1px solid map-get($background, unselected-chip);
-    border-bottom: 1px solid map-get($background, unselected-chip);
+    border-top: 1px solid map.get($background, unselected-chip);
+    border-bottom: 1px solid map.get($background, unselected-chip);
   }
 }

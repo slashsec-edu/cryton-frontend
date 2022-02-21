@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CrytonCardComponent } from './cryton-card.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CrytonCardComponent } from './cryton-card.component';
 
 describe('CrytonCardComponent', () => {
   let component: CrytonCardComponent;

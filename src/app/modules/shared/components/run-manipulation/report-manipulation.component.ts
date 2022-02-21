@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
 import { Report } from 'src/app/models/api-responses/report/report.interface';

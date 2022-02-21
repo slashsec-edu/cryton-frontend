@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Worker } from '../../../../models/api-responses/worker.interface';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
-import { WorkersService } from 'src/app/services/workers.service';
 import { catchError, first } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
+import { WorkersService } from 'src/app/services/workers.service';
 import { environment } from 'src/environments/environment';
+import { Worker } from '../../../../models/api-responses/worker.interface';
 
 @Component({
   selector: 'app-worker-table',
@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./worker-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkerTableComponent implements OnInit, OnDestroy {
+export class WorkerTableComponent implements OnDestroy {
   @Input() data: Worker;
   @Input() clickable = false;
 
@@ -20,11 +20,9 @@ export class WorkerTableComponent implements OnInit, OnDestroy {
   maxStringLength = 15;
 
   private _destroySubject$ = new Subject<void>();
-  private _currentTimeout: any;
+  private _currentTimeout: ReturnType<typeof setTimeout>;
 
   constructor(private _workerSevice: WorkersService, private _cd: ChangeDetectorRef, private _alert: AlertService) {}
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this._destroySubject$.next();
@@ -57,7 +55,7 @@ export class WorkerTableComponent implements OnInit, OnDestroy {
       .healthCheck(this.data.id)
       .pipe(
         first(),
-        catchError(() => throwError('Healthcheck failed.'))
+        catchError(() => throwError(() => new Error('Healthcheck failed.')))
       )
       .subscribe({
         next: result => {
@@ -68,7 +66,7 @@ export class WorkerTableComponent implements OnInit, OnDestroy {
           this._alert.showSuccess(`Worker ${this.data.id} is ${result.detail.worker_state}.`);
           this._cd.detectChanges();
         },
-        error: err => {
+        error: (err: string) => {
           this.loading$.next(false);
           this._alert.showError(err);
         }

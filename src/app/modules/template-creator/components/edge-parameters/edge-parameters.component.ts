@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
+import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe';
 import { AlertService } from 'src/app/services/alert.service';
 import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
 import { EdgeCondition } from '../../models/interfaces/edge-condition';
@@ -38,15 +37,15 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
 
   invalidError = 'Invalid conditions.';
 
-  get conditions(): FormArray {
-    return this.conditionsFormGroup.get('conditions') as FormArray;
-  }
-
   constructor(
     private _alert: AlertService,
     private _dialogRef: MatDialogRef<EdgeParametersComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { edge: StepEdge }
   ) {}
+
+  get conditions(): FormArray {
+    return this.conditionsFormGroup.get('conditions') as FormArray;
+  }
 
   ngOnInit(): void {
     this._loadEdgeConditions(this.data.edge);
@@ -84,7 +83,7 @@ export class EdgeParametersComponent implements OnInit, OnDestroy {
    * @param type Type of condition.
    * @returns Condition FormGroup.
    */
-  addCondition(type = null): FormGroup {
+  addCondition(type: string = null): FormGroup {
     const condition = new FormGroup({
       type: new FormControl(type, [Validators.required])
     });

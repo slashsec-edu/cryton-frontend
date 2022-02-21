@@ -1,9 +1,8 @@
-import { TestBed } from '@angular/core/testing';
-
-import { LogService } from './log.service';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
-import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
+import { LogService } from './log.service';
 
 describe('LogService', () => {
   let service: LogService;

@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { ResizeService } from './resize.service';
 
 describe('ResizeService', () => {

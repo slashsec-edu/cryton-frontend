@@ -9,7 +9,7 @@ describe('WorkersService', () => {
   const runServiceStub = jasmine.createSpyObj('RunService', ['fetchItem']) as Spied<RunService>;
 
   beforeEach(() => {
-    service = new WorkersService(httpClientSpy, (runServiceStub as unknown) as RunService);
+    service = new WorkersService(httpClientSpy, runServiceStub as unknown as RunService);
   });
 
   it('should be created', () => {

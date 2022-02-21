@@ -1,9 +1,9 @@
 import { DependencyGraph } from 'src/app/modules/template-creator/classes/dependency-graph/dependency-graph';
-import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/step-edge';
 import { GraphEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/graph-edge';
+import { StepEdge } from 'src/app/modules/template-creator/classes/dependency-graph/edge/step-edge';
+import { GraphNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/graph-node';
 import { StageNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/stage-node';
 import { StepNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/step-node';
-import { GraphNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/graph-node';
 import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
 import { compareArrays } from './compare-arrays';
 

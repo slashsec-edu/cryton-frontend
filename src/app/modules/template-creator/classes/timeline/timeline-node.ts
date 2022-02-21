@@ -1,28 +1,28 @@
 import Konva from 'konva';
-import { TemplateTimeline } from './template-timeline';
+import { CIRCLE_RADIUS } from 'src/app/modules/run/classes/report-step';
+import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
+import { Tick } from 'src/app/modules/shared/classes/tick';
+import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
 import { ShortStringPipe } from 'src/app/modules/shared/pipes/short-string.pipe';
+import { Theme } from '../../models/interfaces/theme';
+import { StageNode } from '../dependency-graph/node/stage-node';
+import { Trigger, TriggerArgs } from '../triggers/trigger';
+import { TemplateTimeline } from './template-timeline';
 import { TimelineEdge } from './timeline-edge';
 import {
-  NODE_RADIUS,
-  LABEL_PADDING,
   LABEL_CORNER_RADIUS,
   LABEL_MARGIN_BOTTOM,
-  NAME_FONT_SIZE,
+  LABEL_PADDING,
+  LABEL_TAG_NAME,
+  LABEL_TEXT_NAME,
   MAX_NAME_LENGTH,
-  NODE_LTICK_TIMEMARK_NAME,
-  NODE_LTICK_NAME,
+  NAME_FONT_SIZE,
   NODE_CIRCLE_NAME,
   NODE_LABEL_NAME,
-  LABEL_TAG_NAME,
-  LABEL_TEXT_NAME
+  NODE_LTICK_NAME,
+  NODE_LTICK_TIMEMARK_NAME,
+  NODE_RADIUS
 } from './timeline-node-constants';
-import { Theme } from '../../models/interfaces/theme';
-import { Tick } from 'src/app/modules/shared/classes/tick';
-import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
-import { TimelineUtils } from 'src/app/modules/shared/classes/timeline-utils';
-import { CIRCLE_RADIUS } from 'src/app/modules/run/classes/report-step';
-import { StageNode, TriggerArgs } from '../dependency-graph/node/stage-node';
-import { Trigger } from '../triggers/trigger';
 
 export class TimelineNode {
   graphNode: StageNode;
@@ -41,6 +41,11 @@ export class TimelineNode {
   private _nameLabel: Konva.Label;
   private _nameText: Konva.Text;
   private _nameTag: Konva.Tag;
+
+  constructor(graphNode: StageNode) {
+    this.graphNode = graphNode;
+    this._initKonvaObject();
+  }
 
   get name(): string {
     return this.graphNode.name;
@@ -74,11 +79,6 @@ export class TimelineNode {
 
   get timeline(): TemplateTimeline {
     return this.graphNode.timeline;
-  }
-
-  constructor(graphNode: StageNode) {
-    this.graphNode = graphNode;
-    this._initKonvaObject();
   }
 
   /**

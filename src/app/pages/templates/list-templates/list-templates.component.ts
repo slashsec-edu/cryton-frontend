@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
-import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { Template } from 'src/app/models/api-responses/template.interface';
-import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
-import { TemplateService } from 'src/app/services/template.service';
+import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
+import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
+import { DeleteButton } from 'src/app/modules/shared/components/cryton-table/buttons/delete-button';
 import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
 import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
-import { DeleteButton } from 'src/app/modules/shared/components/cryton-table/buttons/delete-button';
+import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
+import { TemplateService } from 'src/app/services/template.service';
 
 @Component({
   selector: 'app-list-templates',

@@ -1,6 +1,6 @@
 import { Queue } from 'src/app/modules/shared/utils/queue';
 import { GraphEdge } from '../dependency-graph/edge/graph-edge';
-import { NODE_HEIGHT, NODE_WIDTH, GraphNode } from '../dependency-graph/node/graph-node';
+import { GraphNode, NODE_HEIGHT, NODE_WIDTH } from '../dependency-graph/node/graph-node';
 import { TimelineEdge } from '../timeline/timeline-edge';
 import { TimelineNode } from '../timeline/timeline-node';
 import { NODE_RADIUS } from '../timeline/timeline-node-constants';
@@ -117,7 +117,7 @@ export class NodeOrganizer {
     });
 
     const rootNodes = nodes.filter(node => node.parentEdges.length === 0);
-    const prevBounds = [];
+    const prevBounds: Bounds[] = [];
 
     while (rootNodes.length > 0) {
       const currentNode = rootNodes.pop();
@@ -128,7 +128,7 @@ export class NodeOrganizer {
         currentBounds.right += NODE_MARGIN * NODE_WIDTH;
       }
 
-      const intersecting = prevBounds.filter(bounds =>
+      const intersecting: Bounds[] = prevBounds.filter((bounds: Bounds) =>
         this._nodeType === OrganizerNodeType.TIMELINE
           ? this._doesXOverlap(bounds, currentBounds)
           : this._doesYOverlap(bounds, currentBounds)

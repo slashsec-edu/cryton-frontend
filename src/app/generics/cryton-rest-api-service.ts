@@ -1,11 +1,11 @@
-import { HttpErrorResponse, HttpParams, HttpClient } from '@angular/common/http';
-import { of, Observable, throwError } from 'rxjs';
-import { map, catchError, mapTo } from 'rxjs/operators';
-import { TableData } from '../models/api-responses/table-data.interface';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, mapTo } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
+import { TableData } from '../models/api-responses/table-data.interface';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
 import { Endpoint } from '../models/enums/endpoint.enum';
-import { environment } from 'src/environments/environment';
 
 export abstract class CrytonRESTApiService<T> {
   static baseUrl = `http://${environment.crytonRESTApiHost}:${environment.crytonRESTApiPort}/cryton/api`;
@@ -17,12 +17,12 @@ export abstract class CrytonRESTApiService<T> {
     return `${this.baseUrl}/${version}/${endpoint}`;
   }
 
-  postItem(body: Record<string, any>): Observable<string> {
-    return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
+  postItem(body: Record<string, unknown> | FormData): Observable<string> {
+    return this.http.post<Record<string, unknown>>(this.endpoint, body).pipe(
       mapTo('Item created successfully.'),
-      catchError(err => {
+      catchError((err: Error) => {
         console.error(err);
-        return throwError('Item creation failed.');
+        return throwError(() => new Error('Item creation failed.'));
       })
     );
   }
@@ -32,9 +32,9 @@ export abstract class CrytonRESTApiService<T> {
 
     return this.http.delete<Record<string, string>>(url).pipe(
       mapTo('Item deleted successfully.'),
-      catchError(err => {
+      catchError((err: HttpErrorResponse) => {
         console.error(err);
-        return throwError('Item deletion failed.');
+        return throwError(() => new Error('Item deletion failed.'));
       })
     );
   }
@@ -42,11 +42,15 @@ export abstract class CrytonRESTApiService<T> {
   fetchItem(id: number): Observable<T | string> {
     const url = `${this.endpoint}${id}`;
 
-    return this.http.get<T>(url).pipe(catchError(err => this.handleItemError(err, `Item couldn't be fetched.`)));
+    return this.http
+      .get<T>(url)
+      .pipe(catchError((err: HttpErrorResponse) => this.handleItemError(err, `Item couldn't be fetched.`)));
   }
 
   fetchItemByUrl(url: string): Observable<T | string> {
-    return this.http.get<T>(url).pipe(catchError(err => this.handleItemError(err, `Item couldn't be fetched.`)));
+    return this.http
+      .get<T>(url)
+      .pipe(catchError((err: HttpErrorResponse) => this.handleItemError(err, `Item couldn't be fetched.`)));
   }
 
   /**
@@ -57,7 +61,7 @@ export abstract class CrytonRESTApiService<T> {
    * @param orderBy Column to order results by.
    * @param filter TableFilter object for filtering results by column and search value.
    */
-  fetchItems(offset?: number, limit?: number, orderBy: string = 'id', filter?: TableFilter): Observable<TableData<T>> {
+  fetchItems(offset?: number, limit?: number, orderBy = 'id', filter?: TableFilter): Observable<TableData<T>> {
     let params: HttpParams = new HttpParams();
 
     if (offset) {
@@ -73,12 +77,10 @@ export abstract class CrytonRESTApiService<T> {
       params = params.append(filter.column, filter.filter);
     }
 
-    return this.http
-      .get<CrytonResponse<T>>(this.endpoint, { params })
-      .pipe(
-        map(items => ({ count: items.count, data: items.results } as TableData<T>)),
-        catchError(this.handleDatasetError)
-      );
+    return this.http.get<CrytonResponse<T>>(this.endpoint, { params }).pipe(
+      map(items => ({ count: items.count, data: items.results } as TableData<T>)),
+      catchError(this.handleDatasetError)
+    );
   }
 
   protected handleDatasetError = (error: HttpErrorResponse): Observable<TableData<T>> => {
@@ -88,6 +90,6 @@ export abstract class CrytonRESTApiService<T> {
 
   protected handleItemError = (error: HttpErrorResponse, msg: string): Observable<string> => {
     console.error(error);
-    return throwError(msg);
+    return throwError(() => new Error(msg));
   };
 }

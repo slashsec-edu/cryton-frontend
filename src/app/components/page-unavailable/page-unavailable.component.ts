@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-page-unavailable',
@@ -6,8 +6,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   styleUrls: ['./page-unavailable.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PageUnavailableComponent implements OnInit {
+export class PageUnavailableComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

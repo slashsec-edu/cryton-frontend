@@ -1,31 +1,32 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { TemplateCreatorModule } from '../../template-creator.module';
-import { CREATION_MSG_TIMEOUT, StageCreatorComponent } from './stage-creator.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { NodeType } from '../../models/enums/node-type';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { CrytonButtonHarness } from 'src/app/modules/shared/components/cryton-button/cryton-button.harness';
-import { TemplateTimeline } from '../../classes/timeline/template-timeline';
-import { TriggerFactory } from '../../classes/triggers/trigger-factory';
-import { TriggerType } from '../../models/enums/trigger-type';
-import { Trigger } from '../../classes/triggers/trigger';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { HttpTriggerForm } from '../../classes/stage-creation/forms/http-form';
-import { StageNode } from '../../classes/dependency-graph/node/stage-node';
-import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
-import { StepNode } from '../../classes/dependency-graph/node/step-node';
 import { MatDialog } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { CrytonButtonHarness } from 'src/app/modules/shared/components/cryton-button/cryton-button.harness';
+import { AlertService } from 'src/app/services/alert.service';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
+import { StageNode } from '../../classes/dependency-graph/node/stage-node';
+import { StepNode } from '../../classes/dependency-graph/node/step-node';
+import { HttpTriggerForm } from '../../classes/stage-creation/forms/http-form';
+import { TemplateTimeline } from '../../classes/timeline/template-timeline';
+import { Trigger, TriggerArgs } from '../../classes/triggers/trigger';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
+import { NodeType } from '../../models/enums/node-type';
+import { TriggerType } from '../../models/enums/trigger-type';
+import { HTTPListenerArgs } from '../../models/interfaces/http-listener-args';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
+import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { TemplateCreatorModule } from '../../template-creator.module';
+import { CREATION_MSG_TIMEOUT, StageCreatorComponent } from './stage-creator.component';
 
 describe('StageCreatorComponent', () => {
   let component: StageCreatorComponent;
@@ -39,13 +40,13 @@ describe('StageCreatorComponent', () => {
   let correctChildDepGraph: DependencyGraph;
 
   // Stage config
-  let triggerConfig: Record<string, unknown>;
-  let trigger: Trigger<Record<string, any>>;
+  let triggerConfig: TriggerArgs;
+  let trigger: Trigger<TriggerArgs>;
   let correctStage: StageNode;
 
   // Subjects emmiting new dependency graphs from graph manager spy.
   const childDepGraph$ = new BehaviorSubject<DependencyGraph>(null);
-  const fakeEditNode$ = new ReplaySubject<GraphNode>(1);
+  const fakeEditNode$ = new ReplaySubject<GraphNode | undefined>(1);
 
   /**
    * Spy node manager, needed to return the fake edit node subject.
@@ -80,7 +81,7 @@ describe('StageCreatorComponent', () => {
   });
   graphManagerSpy.observeNodeEdit.and.returnValue(fakeEditNode$.asObservable());
 
-  const tcState = new TemplateCreatorStateService((graphManagerSpy as unknown) as DependencyGraphManagerService);
+  const tcState = new TemplateCreatorStateService(graphManagerSpy as unknown as DependencyGraphManagerService);
   const matDialogStub = jasmine.createSpyObj('MatDialog', ['open']) as Spied<MatDialog>;
 
   /**
@@ -162,7 +163,7 @@ describe('StageCreatorComponent', () => {
     childDepGraph$.next(emptyChildDepGraph);
 
     // Fake edit node observable for testing stage editing.
-    fakeEditNode$.next();
+    fakeEditNode$.next(undefined);
   };
   createState();
 
@@ -212,7 +213,7 @@ describe('StageCreatorComponent', () => {
       spyOn(component, 'cancelEditing');
       await getCancelBtn().then(btn => btn.click());
 
-      fakeEditNode$.next();
+      fakeEditNode$.next(undefined);
       component.cancelEditing();
       fixture.detectChanges();
 
@@ -268,7 +269,7 @@ describe('StageCreatorComponent', () => {
     const editedDeltaStageArgs = { name: 'editedDeltaStage', triggerType: TriggerType.DELTA };
     const editedDeltaTriggerArgs = { hours: 777, minutes: 59, seconds: 59 };
     const editedHttpStageArgs = { name: 'editedHttpStage', triggerType: TriggerType.HTTP_LISTENER };
-    const editedHttpTriggerArgs = {
+    const editedHttpTriggerArgs: HTTPListenerArgs = {
       host: '1.1.1.1',
       port: 9999,
       routes: [{ path: '/', method: 'GET', parameters: [{ name: 'is_edited', value: 'true' }] }]

@@ -1,11 +1,11 @@
-import { KonvaWrapper } from '../../template-creator/classes/konva/konva-wrapper';
 import Konva from 'konva';
-import { Vector2d } from 'konva/types/types';
 import { KonvaEventObject } from 'konva/types/Node';
-import { TickManager } from './tick-manager';
-import { PaddingMask } from './padding-mask';
-import { TimelineShape } from '../models/interfaces/timeline-shape.interface';
+import { Vector2d } from 'konva/types/types';
+import { KonvaWrapper } from '../../template-creator/classes/konva/konva-wrapper';
 import { TimelineParams } from '../models/interfaces/timeline-params.interface';
+import { TimelineShape } from '../models/interfaces/timeline-shape.interface';
+import { PaddingMask } from './padding-mask';
+import { TickManager } from './tick-manager';
 import { TimelineUtils } from './timeline-utils';
 
 export class Timeline extends KonvaWrapper {

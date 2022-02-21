@@ -1,13 +1,13 @@
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginPageComponent } from './login-page.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginPageComponent } from './login-page.component';
 
 describe('LoginPageComponent', () => {
   let component: LoginPageComponent;

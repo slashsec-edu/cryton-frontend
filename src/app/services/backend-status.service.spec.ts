@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Spied } from '../testing/utility/utility-types';
-
 import { BackendStatusService } from './backend-status.service';
 
 describe('BackendStatusService', () => {

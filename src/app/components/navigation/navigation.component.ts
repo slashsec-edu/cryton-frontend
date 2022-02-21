@@ -1,16 +1,16 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { routes, Route, metaRoutes } from './routes';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { delay, first, switchMapTo, takeUntil } from 'rxjs/operators';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
-import { MatSidenav } from '@angular/material/sidenav';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { ThemeService } from 'src/app/services/theme.service';
-import { ResizeService } from 'src/app/services/resize.service';
 import { BackendStatusService } from 'src/app/services/backend-status.service';
+import { ResizeService } from 'src/app/services/resize.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { metaRoutes, Route, routes } from './routes';
 
 @Component({
   selector: 'app-navigation',

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-cryton-button',
@@ -6,7 +6,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
   styleUrls: ['./cryton-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonButtonComponent implements OnInit {
+export class CrytonButtonComponent {
   /**
    * Color of the button.
    */
@@ -33,8 +33,6 @@ export class CrytonButtonComponent implements OnInit {
   @Output() clicked = new EventEmitter<void>();
 
   constructor() {}
-
-  ngOnInit(): void {}
 
   /**
    * Triggers click event if button is not disabled.

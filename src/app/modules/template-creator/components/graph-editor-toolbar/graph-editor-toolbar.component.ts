@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { ToolsService } from '../../services/tools.service';
 
@@ -15,7 +15,7 @@ interface Tool {
   styleUrls: ['./graph-editor-toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphEditorToolbarComponent implements OnInit {
+export class GraphEditorToolbarComponent {
   @Input() depGraph: DependencyGraph;
 
   tools: Tool[] = [
@@ -47,6 +47,4 @@ export class GraphEditorToolbarComponent implements OnInit {
   ];
 
   constructor(private _toolsService: ToolsService) {}
-
-  ngOnInit(): void {}
 }

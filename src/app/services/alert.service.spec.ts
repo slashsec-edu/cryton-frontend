@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Spied } from '../testing/utility/utility-types';
-
 import { AlertService } from './alert.service';
 
 describe('AlertService', () => {

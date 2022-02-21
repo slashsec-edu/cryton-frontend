@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
-import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
 import { Run } from 'src/app/models/api-responses/run.interface';
+import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
+import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
+import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
+import { ExpandedRunManipulationComponent } from 'src/app/modules/shared/components/run-manipulation/expanded-run-manipulation.component';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { RunService } from 'src/app/services/run.service';
-import { ExpandedRunManipulationComponent } from 'src/app/modules/shared/components/run-manipulation/expanded-run-manipulation.component';
-import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
-import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
 
 @Component({
   selector: 'app-list-runs',

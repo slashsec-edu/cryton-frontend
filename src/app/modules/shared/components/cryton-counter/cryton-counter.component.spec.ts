@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { CrytonCounterComponent } from './cryton-counter.component';
-import { By } from '@angular/platform-browser';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { CrytonCounterComponent } from './cryton-counter.component';
 
 describe('CrytonCounterComponent', () => {
   let component: CrytonCounterComponent;

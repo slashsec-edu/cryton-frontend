@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cryton-counter',
@@ -6,11 +6,9 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
   styleUrls: ['./cryton-counter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonCounterComponent implements OnInit {
+export class CrytonCounterComponent {
   @Input() name: string;
   @Input() count: number;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

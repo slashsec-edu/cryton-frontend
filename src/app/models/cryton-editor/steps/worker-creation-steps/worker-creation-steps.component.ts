@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { WorkersService } from 'src/app/services/workers.service';
 import { takeUntil } from 'rxjs/operators';
+import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
+import { WorkersService } from 'src/app/services/workers.service';
 
 @Component({
   selector: 'app-worker-creation-steps',

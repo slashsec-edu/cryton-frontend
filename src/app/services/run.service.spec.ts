@@ -1,8 +1,8 @@
-import { RunService } from './run.service';
-import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 import { Spied } from 'src/app/testing/utility/utility-types';
 import { ExecutionVariableService } from './execution-variable.service';
+import { RunService } from './run.service';
 
 describe('RunService', () => {
   let service: RunService;
@@ -13,8 +13,8 @@ describe('RunService', () => {
 
   beforeEach(() => {
     service = new RunService(
-      (httpClientSpy as unknown) as HttpClient,
-      (execVarServiceSpy as unknown) as ExecutionVariableService
+      httpClientSpy as unknown as HttpClient,
+      execVarServiceSpy as unknown as ExecutionVariableService
     );
     httpClientSpy.post.and.returnValue(of({}));
   });

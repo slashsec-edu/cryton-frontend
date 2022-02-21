@@ -1,24 +1,19 @@
 import { DataSource } from '@angular/cdk/collections/data-source';
-import { BehaviorSubject } from 'rxjs';
-import { Observable, of, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { catchError, first } from 'rxjs/operators';
-import { CrytonRESTApiService } from './cryton-rest-api-service';
-import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
+import { TableData } from '../models/api-responses/table-data.interface';
 import { HasID } from '../models/cryton-table/interfaces/has-id.interface';
-
-export interface TableData<T> {
-  count: number;
-  items: T[];
-}
+import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
+import { CrytonRESTApiService } from './cryton-rest-api-service';
 
 export abstract class TableDataSource<T extends HasID> implements DataSource<T> {
-  data: TableData<T> = { count: 0, items: [] };
+  data: TableData<T> = { count: 0, data: [] };
 
   protected _dataSubject$ = new BehaviorSubject<T[]>([]);
   protected _countSubject$ = new BehaviorSubject<number>(0);
   protected _loadingSubject$ = new BehaviorSubject<boolean>(false);
   protected _currentSub: Subscription;
-  protected _currentTimeout: any;
+  protected _currentTimeout: ReturnType<typeof setTimeout>;
 
   constructor(private _service?: CrytonRESTApiService<T>) {}
 
@@ -71,7 +66,7 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
    * @param sort Column to order results by.
    * @param filter TableFilter object for filtering results by column and search value.
    */
-  loadItems(offset: number, limit: number, sort: string, filter: TableFilter, delay: number = 0): void {
+  loadItems(offset: number, limit: number, sort: string, filter: TableFilter, delay = 0): void {
     if (this._currentSub) {
       this._currentSub.unsubscribe();
     }
@@ -101,8 +96,8 @@ export abstract class TableDataSource<T extends HasID> implements DataSource<T> 
         first(),
         catchError(() => of({ count: 0, data: [] }))
       )
-      .subscribe(items => {
-        this.data = { count: items.count, items: items.data };
+      .subscribe((items: TableData<T>) => {
+        this.data = { count: items.count, data: items.data };
         this._countSubject$.next(items.count);
         this._dataSubject$.next(items.data);
         this._loadingSubject$.next(false);

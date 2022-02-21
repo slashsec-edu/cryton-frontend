@@ -1,13 +1,13 @@
 import Konva from 'konva';
-import { DependencyGraph } from '../dependency-graph';
 import { ShortStringPipe } from '../../../../shared/pipes/short-string.pipe';
 import { StrokeAnimation } from '../../../animations/stroke.animation';
+import { Theme } from '../../../models/interfaces/theme';
 import { Cursor } from '../cursor-state';
+import { DependencyGraph } from '../dependency-graph';
+import { CANVAS_PADDING } from '../dependency-graph-constants';
+import { GraphEdge } from '../edge/graph-edge';
 import { NodeConnector } from '../node-connector';
 import { SettingsButton, SETTINGS_BTN_PADDING } from '../settings-button';
-import { GraphEdge } from '../edge/graph-edge';
-import { Theme } from '../../../models/interfaces/theme';
-import { CANVAS_PADDING } from '../dependency-graph-constants';
 
 export const NODE_WIDTH = 170;
 export const NODE_HEIGHT = 40;
@@ -28,6 +28,10 @@ export class GraphNode {
   private _nodeRect: Konva.Rect;
   private _connector: NodeConnector;
 
+  constructor(name: string) {
+    this.name = name;
+  }
+
   // X coordinate
   get x(): number {
     return this.konvaObject.x();
@@ -47,10 +51,6 @@ export class GraphNode {
   // Moving
   set moving(value: boolean) {
     this.konvaObject.draggable(value);
-  }
-
-  constructor(name: string) {
-    this.name = name;
   }
 
   /**

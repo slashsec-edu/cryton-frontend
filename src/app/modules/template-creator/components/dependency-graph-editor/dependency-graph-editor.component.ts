@@ -1,30 +1,30 @@
 import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DebugElement,
+  EventEmitter,
   HostListener,
   Input,
   OnDestroy,
   OnInit,
-  AfterViewInit,
-  Component,
-  ViewChild,
-  ChangeDetectionStrategy,
   Output,
-  EventEmitter,
-  DebugElement
+  ViewChild
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
 import { Alert } from 'src/app/modules/shared/models/interfaces/alert.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { EdgeParametersComponent } from '../edge-parameters/edge-parameters.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
 import { GraphEdge } from '../../classes/dependency-graph/edge/graph-edge';
 import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
-import { DependencyGraphHelpComponent } from '../../pages/help-pages/dependency-graph-help/dependency-graph-help.component';
 import { NavigationButton } from '../../models/interfaces/navigation-button';
+import { DependencyGraphHelpComponent } from '../../pages/help-pages/dependency-graph-help/dependency-graph-help.component';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
 import { TcRoutingService } from '../../services/tc-routing.service';
+import { EdgeParametersComponent } from '../edge-parameters/edge-parameters.component';
 
 @Component({
   selector: 'app-dependency-graph-editor',
@@ -118,7 +118,7 @@ export class DependencyGraphEditorComponent implements OnInit, AfterViewInit, On
       .pipe(
         takeUntil(this._destroy$),
         tap(depGraph => {
-          depGraph.initKonva(this.canvasContainer.nativeElement, theme$);
+          depGraph.initKonva(this.canvasContainer.nativeElement as HTMLDivElement, theme$);
           depGraph.cursorState.container = this.canvasContainer.nativeElement as HTMLDivElement;
           depGraph.fitScreen();
         }),

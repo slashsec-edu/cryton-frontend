@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
 import { parse, stringify } from 'yaml';
@@ -9,7 +9,7 @@ import { parse, stringify } from 'yaml';
   styleUrls: ['./execution-variable-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExecutionVariablePreviewComponent implements OnInit {
+export class ExecutionVariablePreviewComponent {
   data: { variable: ExecutionVariable };
   yamlValue: string;
 
@@ -17,6 +17,4 @@ export class ExecutionVariablePreviewComponent implements OnInit {
     this.data = data;
     this.yamlValue = stringify(parse(data.variable.value));
   }
-
-  ngOnInit(): void {}
 }

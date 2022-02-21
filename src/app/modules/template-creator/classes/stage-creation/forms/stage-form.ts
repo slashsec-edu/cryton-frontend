@@ -1,13 +1,15 @@
+import { Type } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { TriggerType } from '../../../models/enums/trigger-type';
 import { NodeManager } from '../../dependency-graph/node-manager';
+import { StageNode } from '../../dependency-graph/node/stage-node';
+import { TriggerArgs } from '../../triggers/trigger';
+import { TriggerParameters } from '../trigger-parameters';
+import { DateTimeForm } from './date-time-form';
 import { DeltaForm } from './delta-form';
 import { HttpForm, HttpTriggerForm } from './http-form';
 import { TriggerForm } from './trigger-form.interface';
-import { TriggerParameters } from '../trigger-parameters';
-import { Type } from '@angular/core';
-import { Observable } from 'rxjs';
-import { StageNode } from '../../dependency-graph/node/stage-node';
 
 const INITIAL_TRIGGER = TriggerType.DELTA;
 
@@ -55,7 +57,7 @@ export class StageForm {
     return this._triggerForm.getArgsForm();
   }
 
-  getTriggerArgs(): Record<string, any> {
+  getTriggerArgs(): TriggerArgs {
     return this._triggerForm.getArgs();
   }
 
@@ -78,9 +80,9 @@ export class StageForm {
   }
 
   erase(): void {
+    this._triggerForm.erase();
     this._stageArgsForm.get('name').reset();
     this._stageArgsForm.get('triggerType').setValue(INITIAL_TRIGGER);
-    this._triggerForm.erase();
   }
 
   cancelEditing(): void {
@@ -138,6 +140,9 @@ export class StageForm {
         break;
       case TriggerType.HTTP_LISTENER:
         triggerForm = new HttpForm();
+        break;
+      case TriggerType.DATE_TIME:
+        triggerForm = new DateTimeForm();
         break;
       default:
         throw new Error('Unknown trigger type');

@@ -1,11 +1,11 @@
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { Timeline } from './timeline';
+import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { Theme } from '../../template-creator/models/interfaces/theme';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
 import { Tick, TICK_NAME } from './tick';
 import { TimeMark } from './time-mark';
+import { Timeline } from './timeline';
 import { LTICK_DIST } from './timeline-constants';
 
 describe('Timeline', () => {

@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { RippleAnimation } from '../../animations/ripple.animation';
-import { DependencyGraph } from './dependency-graph';
 import { Cursor } from './cursor-state';
+import { DependencyGraph } from './dependency-graph';
 
 /**
  * Width of settings button area.

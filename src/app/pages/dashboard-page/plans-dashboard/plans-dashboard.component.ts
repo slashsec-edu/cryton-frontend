@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { PlanService } from 'src/app/services/plan.service';
 import { PlanTableDataSource } from 'src/app/models/data-sources/plan-table.data-source';
-import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
-import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
 import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
+import { PlanService } from 'src/app/services/plan.service';
 
 @Component({
   selector: 'app-plans-dashboard',

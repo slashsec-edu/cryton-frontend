@@ -15,7 +15,7 @@ export const simulateMouseDown = (stage: Konva.Stage, pos: Vector2d): void => {
     clientX: pos.x,
     clientY: pos.y + top,
     type: 'mousedown'
-  } as any);
+  } as PointerEvent);
 };
 
 export const simulateMouseMove = (stage: Konva.Stage, pos: Vector2d): void => {
@@ -29,7 +29,7 @@ export const simulateMouseMove = (stage: Konva.Stage, pos: Vector2d): void => {
     type: 'mousemove'
   };
 
-  stage._pointermove(evt as any);
+  stage._pointermove(evt as PointerEvent);
   Konva.DD._drag(evt);
 };
 
@@ -46,7 +46,7 @@ export const simulateMouseUp = (stage: Konva.Stage, pos: Vector2d): void => {
   };
 
   Konva.DD._endDragBefore(evt);
-  stage._pointerup(evt as any);
+  stage._pointerup(evt as PointerEvent);
   Konva.DD._endDragAfter(evt);
 };
 
@@ -59,7 +59,7 @@ export const simulatePointerDown = (stage: Konva.Stage, pos: Vector2d): void => 
     button: 0,
     pointerId: 1,
     type: 'pointerdown'
-  } as any);
+  } as PointerEvent);
 };
 
 export const simulatePointerMove = (stage: Konva.Stage, pos: Vector2d): void => {
@@ -71,7 +71,7 @@ export const simulatePointerMove = (stage: Konva.Stage, pos: Vector2d): void => 
     button: 0,
     pointerId: 1,
     type: 'pointermove'
-  } as any);
+  } as PointerEvent);
 };
 
 export const simulatePointerUp = (stage: Konva.Stage, pos: Vector2d): void => {
@@ -83,5 +83,5 @@ export const simulatePointerUp = (stage: Konva.Stage, pos: Vector2d): void => {
     button: 0,
     pointerId: 1,
     type: 'pointerup'
-  } as any);
+  } as PointerEvent);
 };

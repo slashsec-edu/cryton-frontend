@@ -1,27 +1,25 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { By } from '@angular/platform-browser';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { RunCreationStepsComponent } from './run-creation-steps.component';
-
-import { workers } from 'src/app/testing/mockdata/workers.mockdata';
-import { plans } from 'src/app/testing/mockdata/plans.mockdata';
-import { Plan } from '../../../api-responses/plan.interface';
-import { Worker } from '../../../api-responses/worker.interface';
-
-import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
-import { WorkersService } from 'src/app/services/workers.service';
-import { TestingService } from 'src/app/testing/services/testing.service';
-import { PlanService } from 'src/app/services/plan.service';
-import { RunService } from 'src/app/services/run.service';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { AlertService } from 'src/app/services/alert.service';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HttpClientModule } from '@angular/common/http';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CrytonCounterHarness } from 'src/app/modules/shared/components/cryton-counter/cryton-counter.harness';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { AlertService } from 'src/app/services/alert.service';
+import { PlanService } from 'src/app/services/plan.service';
+import { RunService } from 'src/app/services/run.service';
+import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
+import { WorkersService } from 'src/app/services/workers.service';
+import { plans } from 'src/app/testing/mockdata/plans.mockdata';
+import { workers } from 'src/app/testing/mockdata/workers.mockdata';
+import { TestingService } from 'src/app/testing/services/testing.service';
+import { Plan } from '../../../api-responses/plan.interface';
+import { Worker } from '../../../api-responses/worker.interface';
+import { RunCreationStepsComponent } from './run-creation-steps.component';
 
 describe('RunCreationStepsComponent', () => {
   let component: RunCreationStepsComponent;

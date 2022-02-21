@@ -1,8 +1,8 @@
-import { Plan } from '../api-responses/plan.interface';
-import { PlanService } from 'src/app/services/plan.service';
-import { Column } from '../cryton-table/interfaces/column.interface';
-import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
+import { PlanService } from 'src/app/services/plan.service';
+import { Plan } from '../api-responses/plan.interface';
+import { Column } from '../cryton-table/interfaces/column.interface';
 
 export class PlanTableDataSource extends CrytonTableDataSource<Plan> {
   columns: Column[] = [

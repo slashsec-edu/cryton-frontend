@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, DebugElement, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Inject, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { parse, stringify } from 'yaml';
@@ -7,7 +7,7 @@ import { getControlError } from './cryton-inventory.errors';
 type InventoryRecord = { key: string; value: string | Inventory };
 type Inventory = InventoryRecord[];
 
-type OutputInventory = Record<string, any>;
+type OutputInventory = Record<string, unknown>;
 type InputData = { inventory: string };
 
 @Component({
@@ -16,7 +16,7 @@ type InputData = { inventory: string };
   styleUrls: ['./cryton-inventory-creator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonInventoryCreatorComponent implements OnInit {
+export class CrytonInventoryCreatorComponent {
   @ViewChild('pathInput') pathInput: DebugElement;
   inventory: Inventory = [];
   variableForm = new FormGroup({
@@ -33,8 +33,6 @@ export class CrytonInventoryCreatorComponent implements OnInit {
       this.inventory = this._deserializeInventory(data.inventory);
     }
   }
-
-  ngOnInit(): void {}
 
   isSection(inventoryRecord: InventoryRecord): boolean {
     return Array.isArray(inventoryRecord.value);

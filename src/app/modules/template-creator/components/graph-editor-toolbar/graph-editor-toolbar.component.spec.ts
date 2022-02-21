@@ -1,15 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { GraphEditorToolbarComponent } from './graph-editor-toolbar.component';
-import { MatIconModule } from '@angular/material/icon';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { ToolsService } from '../../services/tools.service';
+import { MatIconModule } from '@angular/material/icon';
 import { MatIconHarness } from '@angular/material/icon/testing';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { ToolsService } from '../../services/tools.service';
+import { GraphEditorToolbarComponent } from './graph-editor-toolbar.component';
 
 class ToolStateStub {
   isMoveNodeEnabled = false;

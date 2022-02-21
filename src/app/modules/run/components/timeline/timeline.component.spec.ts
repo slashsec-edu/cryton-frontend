@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { RunService } from 'src/app/services/run.service';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
-import { TimelineComponent } from './timeline.component';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { RunService } from 'src/app/services/run.service';
+import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { TimelineComponent } from './timeline.component';
 
 describe('TimelineComponent', () => {
   let component: TimelineComponent;

@@ -1,14 +1,14 @@
 import { EventEmitter } from '@angular/core';
-import { ExpandedRowInterface } from '../../../../generics/expanded-row.interface';
-import { RunService } from 'src/app/services/run.service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { CrytonDatetimePickerComponent } from 'src/app/modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.component';
 import { MatDialog } from '@angular/material/dialog';
-import { mergeMap, first, switchMap } from 'rxjs/operators';
-import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
-import { AlertService } from 'src/app/services/alert.service';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { first, mergeMap, switchMap } from 'rxjs/operators';
 import { HasID } from 'src/app/models/cryton-table/interfaces/has-id.interface';
 import { PostponeRunComponent } from 'src/app/modules/run/components/postpone-run/postpone-run.component';
+import { CertainityCheckComponent } from 'src/app/modules/shared/components/certainity-check/certainity-check.component';
+import { CrytonDatetimePickerComponent } from 'src/app/modules/shared/components/cryton-datetime-picker/cryton-datetime-picker.component';
+import { AlertService } from 'src/app/services/alert.service';
+import { RunService } from 'src/app/services/run.service';
+import { ExpandedRowInterface } from '../../../../generics/expanded-row.interface';
 
 type RunState = 'PENDING' | 'SCHEDULED' | 'RUNNING' | 'FINISHED' | 'PAUSED' | 'PAUSING' | 'TERMINATED';
 
@@ -138,9 +138,9 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
             this._alertService.showSuccess(successMsg);
           }
         },
-        error: err => {
+        error: (err: Error) => {
           this.loadingSubject$.next(false);
-          this._alertService.showError(err);
+          this._alertService.showError(err.message);
         }
       });
   }
@@ -151,7 +151,8 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
    */
   scheduleRun(shouldReschedule: boolean): void {
     const dialogRef = this._dialog.open(CrytonDatetimePickerComponent, {
-      width: '380px'
+      width: '380px',
+      data: { blockPastDates: true }
     });
 
     dialogRef
@@ -179,9 +180,9 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
             this._alertService.showSuccess(successMsg);
           }
         },
-        error: err => {
+        error: (err: Error) => {
           this.loadingSubject$.next(false);
-          this._alertService.showError(err);
+          this._alertService.showError(err.message);
         }
       });
   }
@@ -209,9 +210,9 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
             this._alertService.showSuccess(msg);
           }
         },
-        error: err => {
+        error: (err: Error) => {
           this.loadingSubject$.next(false);
-          this._alertService.showError(err);
+          this._alertService.showError(err.message);
         }
       });
   }
@@ -232,9 +233,9 @@ export abstract class RunManipulationComponent<T extends HasIDAndState> implemen
           this._updateRowData();
           this._alertService.showSuccess(successMsg);
         },
-        error: err => {
+        error: (err: Error) => {
           this.loadingSubject$.next(false);
-          this._alertService.showError(err);
+          this._alertService.showError(err.message);
         }
       });
   }

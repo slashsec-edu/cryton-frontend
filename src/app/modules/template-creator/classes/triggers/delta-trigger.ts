@@ -3,8 +3,6 @@ import { DeltaArgs } from '../../models/interfaces/delta-args';
 import { Trigger } from './trigger';
 
 export class DeltaTrigger extends Trigger<DeltaArgs> {
-  protected _tag = null;
-
   constructor(args: DeltaArgs) {
     super(args, TriggerType.DELTA);
   }

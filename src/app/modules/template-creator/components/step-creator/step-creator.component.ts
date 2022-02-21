@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { getControlError } from './step-creator.errors';
 import { AlertService } from 'src/app/services/alert.service';
-import { StepNode } from '../../classes/dependency-graph/node/step-node';
-import { MatDialog } from '@angular/material/dialog';
-import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
-import { TcRoutingService } from '../../services/tc-routing.service';
-import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
 import { parse } from 'yaml';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { StepNode } from '../../classes/dependency-graph/node/step-node';
+import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { StepCreatorHelpComponent } from '../../pages/help-pages/step-creator-help/step-creator-help.component';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
+import { TcRoutingService } from '../../services/tc-routing.service';
+import { getControlError } from './step-creator.errors';
 
 export const CREATION_MSG_TIMEOUT = 7000;
 
@@ -267,7 +267,7 @@ export class StepCreatorComponent implements OnInit, OnDestroy {
    * @returns Validation errors.
    */
   private _uniqueNameValidator = (control: AbstractControl): ValidationErrors | null =>
-    this._parentDepGraph.graphNodeManager.isNodeNameUnique(control.value, this.editedStep?.name ?? null)
+    this._parentDepGraph.graphNodeManager.isNodeNameUnique(control.value as string, this.editedStep?.name ?? null)
       ? null
       : { notUnique: true };
 

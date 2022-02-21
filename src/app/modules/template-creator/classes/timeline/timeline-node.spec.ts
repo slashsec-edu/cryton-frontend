@@ -2,7 +2,10 @@ import Konva from 'konva';
 import { BehaviorSubject } from 'rxjs';
 import { NodeTimemark } from 'src/app/modules/shared/classes/node-timemark';
 import { Tick } from 'src/app/modules/shared/classes/tick';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { Theme } from '../../models/interfaces/theme';
+import { StageEdge } from '../dependency-graph/edge/stage-edge';
+import { StageNode } from '../dependency-graph/node/stage-node';
 import { TemplateTimeline } from './template-timeline';
 import { TimelineNode } from './timeline-node';
 import {
@@ -14,9 +17,6 @@ import {
   NODE_LTICK_NAME,
   NODE_LTICK_TIMEMARK_NAME
 } from './timeline-node-constants';
-import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
-import { StageEdge } from '../dependency-graph/edge/stage-edge';
-import { StageNode } from '../dependency-graph/node/stage-node';
 
 const DEFAULT_STAGE_NAME = 'name';
 const CANVAS_CONTAINER_ID = 'canvasContainer';
@@ -64,7 +64,7 @@ describe('TimelineNode', () => {
 
   beforeEach(() => {
     crytonStage = new StageNodeFake();
-    timelineNode = new TimelineNode((crytonStage as unknown) as StageNode);
+    timelineNode = new TimelineNode(crytonStage as unknown as StageNode);
   });
 
   it('should create', () => {
@@ -91,7 +91,7 @@ describe('TimelineNode', () => {
         .fill('a')
         .join('');
       crytonStage = new StageNodeFake(longName);
-      timelineNode = new TimelineNode((crytonStage as unknown) as StageNode);
+      timelineNode = new TimelineNode(crytonStage as unknown as StageNode);
 
       expect(getLabelText().text().endsWith('...')).toBeTrue();
     });

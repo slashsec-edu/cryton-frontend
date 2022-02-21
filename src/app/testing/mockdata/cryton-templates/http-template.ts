@@ -1,10 +1,10 @@
-import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
 import { DependencyGraph } from 'src/app/modules/template-creator/classes/dependency-graph/dependency-graph';
-import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
-import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
-import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
 import { StageNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/stage-node';
 import { StepNode } from 'src/app/modules/template-creator/classes/dependency-graph/node/step-node';
+import { TemplateTimeline } from 'src/app/modules/template-creator/classes/timeline/template-timeline';
+import { TriggerFactory } from 'src/app/modules/template-creator/classes/triggers/trigger-factory';
+import { NodeType } from 'src/app/modules/template-creator/models/enums/node-type';
+import { TriggerType } from 'src/app/modules/template-creator/models/enums/trigger-type';
 
 /**
  * Main template dependency graph.

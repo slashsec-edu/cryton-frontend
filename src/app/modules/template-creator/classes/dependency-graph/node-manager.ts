@@ -1,8 +1,8 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { DependencyGraph } from './dependency-graph';
 import { NodeNameNotUniqueError } from './errors/node-name-not-unique.error';
-import { StageNode } from './node/stage-node';
 import { GraphNode } from './node/graph-node';
+import { StageNode } from './node/stage-node';
 
 export class NodeManager {
   /**

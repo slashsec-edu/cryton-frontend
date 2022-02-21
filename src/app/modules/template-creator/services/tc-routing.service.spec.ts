@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { TcRoutingService } from './tc-routing.service';
 
 describe('TcRoutingService', () => {

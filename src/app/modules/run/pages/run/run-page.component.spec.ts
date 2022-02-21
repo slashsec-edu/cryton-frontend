@@ -1,23 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RunService } from 'src/app/services/run.service';
-import { Spied } from 'src/app/testing/utility/utility-types';
-
-import { RunPageComponent } from './run-page.component';
-import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
-import { of } from 'rxjs';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { AlertService } from 'src/app/services/alert.service';
+import { RunService } from 'src/app/services/run.service';
+import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
 import { ExecutionReportCardComponent } from '../../components/execution-report-card/execution-report-card.component';
 import { RunReportCardComponent } from '../../components/run-report-card/run-report-card.component';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { StageReportCardComponent } from '../../components/stage-report-card/stage-report-card.component';
 import { StepReportCardComponent } from '../../components/step-report-card/step-report-card.component';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RunPageComponent } from './run-page.component';
 
 describe('RunPageComponent', () => {
   let component: RunPageComponent;

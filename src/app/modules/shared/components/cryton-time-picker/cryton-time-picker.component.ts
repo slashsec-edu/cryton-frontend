@@ -1,4 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output
+} from '@angular/core';
 
 export interface Time {
   hours: string;
@@ -29,7 +37,7 @@ export class CrytonTimePickerComponent implements OnInit, AfterViewInit {
   ];
   time: Time;
 
-  constructor() {}
+  constructor(private _cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.time = { hours: '00', minutes: '00', seconds: '00' };
@@ -97,6 +105,13 @@ export class CrytonTimePickerComponent implements OnInit, AfterViewInit {
 
       this.time.seconds = this._formatTimeWidth(newSeconds.toString());
     }
+  }
+
+  setTime(hours: number, minutes: number, seconds: number): void {
+    this.time.hours = this._formatTimeWidth(hours.toString());
+    this.time.minutes = this._formatTimeWidth(minutes.toString());
+    this.time.seconds = this._formatTimeWidth(seconds.toString());
+    this._cd.detectChanges();
   }
 
   /**

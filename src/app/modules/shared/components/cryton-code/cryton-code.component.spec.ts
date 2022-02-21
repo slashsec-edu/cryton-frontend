@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { CrytonCodeComponent } from './cryton-code.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
+import { CrytonCodeComponent } from './cryton-code.component';
 
 describe('CrytonCodeComponent', () => {
   let component: CrytonCodeComponent;

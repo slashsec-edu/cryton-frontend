@@ -2,8 +2,8 @@ import { Subject } from 'rxjs';
 import { EdgeCondition } from '../../../models/interfaces/edge-condition';
 import { Cursor } from '../cursor-state';
 import { DependencyGraph } from '../dependency-graph';
-import { GraphEdge } from './graph-edge';
 import { GraphNode } from '../node/graph-node';
+import { GraphEdge } from './graph-edge';
 
 export class StepEdge extends GraphEdge {
   static editEdge$ = new Subject<StepEdge>();

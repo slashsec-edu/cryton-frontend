@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { trigger, transition, useAnimation } from '@angular/animations';
+import { transition, trigger, useAnimation } from '@angular/animations';
+import { Component } from '@angular/core';
 import { renderComponentAnimation } from 'src/app/modules/shared/animations/render-component.animation';
 
 @Component({
@@ -8,8 +8,6 @@ import { renderComponentAnimation } from 'src/app/modules/shared/animations/rend
   styleUrls: ['./dashboard-page.component.scss'],
   animations: [trigger('renderTrigger', [transition(':enter', [useAnimation(renderComponentAnimation)])])]
 })
-export class DashboardPageComponent implements OnInit {
+export class DashboardPageComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

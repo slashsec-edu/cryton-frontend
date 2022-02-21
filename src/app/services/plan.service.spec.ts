@@ -1,10 +1,10 @@
-import { PlanService } from './plan.service';
-import { of } from 'rxjs';
-import { TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
+import { TestBed, waitForAsync } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { environment } from 'src/environments/environment';
 import { Endpoint } from '../models/enums/endpoint.enum';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
+import { PlanService } from './plan.service';
 
 describe('PlanService', () => {
   let service: PlanService;

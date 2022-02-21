@@ -1,22 +1,22 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
-import { NodeType } from '../../models/enums/node-type';
-import { DependencyGraph, MAX_SCALE, MIN_SCALE } from './dependency-graph';
-import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import Konva from 'konva';
+import { Vector2d } from 'konva/lib/types';
 import { BehaviorSubject } from 'rxjs';
+import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { GraphComparator } from 'src/app/testing/utility/graph-comparator';
+import { NodeType } from '../../models/enums/node-type';
+import { TriggerType } from '../../models/enums/trigger-type';
 import { Theme } from '../../models/interfaces/theme';
 import { TemplateTimeline } from '../timeline/template-timeline';
 import { TriggerFactory } from '../triggers/trigger-factory';
-import { TriggerType } from '../../models/enums/trigger-type';
-import { NODE_HEIGHT, NODE_WIDTH, GraphNode, GRAPH_NODE_NAME, GRAPH_NODE_RECT_NAME } from './node/graph-node';
-import { Vector2d } from 'konva/types/types';
+import { DependencyGraph, MAX_SCALE, MIN_SCALE } from './dependency-graph';
 import { EDGE_POINTER_LENGTH, GraphEdge, GRAPH_EDGE_NAME } from './edge/graph-edge';
-import { ToolState } from './tool-state';
-import { GraphComparator } from 'src/app/testing/utility/graph-comparator';
-import Konva from 'konva';
+import { StepEdge } from './edge/step-edge';
+import { GraphNode, GRAPH_NODE_NAME, GRAPH_NODE_RECT_NAME, NODE_HEIGHT, NODE_WIDTH } from './node/graph-node';
 import { StageNode } from './node/stage-node';
 import { StepNode } from './node/step-node';
-import { StepEdge } from './edge/step-edge';
+import { ToolState } from './tool-state';
 
 describe('DependencyGraph', () => {
   let depGraph: DependencyGraph;

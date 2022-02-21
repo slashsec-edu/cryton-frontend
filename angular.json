@@ -18,17 +18,32 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/cryton-frontend",
-            "allowedCommonJsDependencies": ["konva", "yaml", "highlight.js"],
+            "allowedCommonJsDependencies": [
+              "konva",
+              "yaml",
+              "highlight.js"
+            ],
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "styles": [
               "src/styles.scss",
-              { "input": "src/app/styles/themes/light-theme.scss", "bundleName": "light-theme", "inject": false },
-              { "input": "src/app/styles/themes/dark-theme.scss", "bundleName": "dark-theme", "inject": false }
+              {
+                "input": "src/app/styles/themes/light-theme.scss",
+                "bundleName": "light-theme",
+                "inject": false
+              },
+              {
+                "input": "src/app/styles/themes/dark-theme.scss",
+                "bundleName": "dark-theme",
+                "inject": false
+              }
             ],
             "scripts": []
           },
@@ -86,8 +101,13 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [],
             "fileReplacements": [
               {
@@ -95,13 +115,6 @@
                 "with": "src/environments/environment.test.ts"
               }
             ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "e2e/tsconfig.json"],
-            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {
@@ -115,12 +128,22 @@
               "devServerTarget": "cryton-frontend:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "defaultProject": "cryton-frontend",
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }

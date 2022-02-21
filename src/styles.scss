@@ -1,9 +1,10 @@
+@use '@angular/material' as mat;
 @import './app/styles/cryton-elements.scss';
 @import './app/styles/themes/light-theme.scss';
 @import './app/styles/themes/dark-theme.scss';
 @import './app/styles/state-colors.scss';
 
-@include mat-core();
+@include mat.core();
 
 /* GLOBAL STYLE */
 body {

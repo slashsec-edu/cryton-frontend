@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
-import { ThemeService } from 'src/app/services/theme.service';
 import { first, takeUntil } from 'rxjs/operators';
-import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
-import { TcRoutingService } from '../../services/tc-routing.service';
-import { NodeNameNotUniqueError } from '../../classes/dependency-graph/errors/node-name-not-unique.error';
 import { AlertService } from 'src/app/services/alert.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { NodeNameNotUniqueError } from '../../classes/dependency-graph/errors/node-name-not-unique.error';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
+import { TcRoutingService } from '../../services/tc-routing.service';
 
 @Component({
   selector: 'app-graph-node-dispenser',

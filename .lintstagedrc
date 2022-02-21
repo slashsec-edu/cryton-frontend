@@ -1,4 +1,4 @@
 {
-  "src/**/*.{html,ts,js}": ["prettier --write"],
-  "src/**/*.{js,ts,json}": ["eslint --fix"]
+  "src/app/**/*.{html,ts,js}": ["prettier --write"],
+  "src/app/**/*.{js,ts,json}": ["eslint --fix"]
 }

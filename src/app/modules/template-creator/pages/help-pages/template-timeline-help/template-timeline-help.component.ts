@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-template-timeline-help',
@@ -6,8 +6,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./template-timeline-help.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TemplateTimelineHelpComponent implements OnInit {
+export class TemplateTimelineHelpComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

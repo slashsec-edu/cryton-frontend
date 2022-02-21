@@ -141,7 +141,7 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
       catchError(err => {
         this.currentDisplay = Display.ERROR;
         this._cd.detectChanges();
-        return throwError(err);
+        return throwError(() => new Error(err));
       }),
       delay(50),
       first()
@@ -149,7 +149,7 @@ export class TimelineComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private _initTimeline(report: Report, executionIndex = 0): void {
-    this.timeline.initKonva(this.timelineContainer.nativeElement, this._themeService.currentTheme$);
+    this.timeline.initKonva(this.timelineContainer.nativeElement as HTMLDivElement, this._themeService.currentTheme$);
     this.timeline.renderExecution(report.plan_executions[executionIndex]);
     this.tickSizePicker.tickSeconds = this.timeline.tickSeconds;
   }

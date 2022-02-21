@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ExecutionVariableUploaderComponent } from './execution-variable-uploader.component';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { HttpClient } from '@angular/common/http';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
+import { ExecutionVariableUploaderComponent } from './execution-variable-uploader.component';
 
 describe('ExecutionVariableUploaderComponent', () => {
   let component: ExecutionVariableUploaderComponent;

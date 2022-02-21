@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AlertService } from 'src/app/services/alert.service';
+import { TemplateService } from 'src/app/services/template.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { TemplateConverterService } from '../../services/template-converter.service';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { TemplateCreatorPageComponent } from './template-creator-page.component';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { TemplateConverterService } from '../../services/template-converter.service';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { TemplateService } from 'src/app/services/template.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('TemplateCreatorPageComponent', () => {
   let component: TemplateCreatorPageComponent;

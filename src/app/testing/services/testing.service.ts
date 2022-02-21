@@ -1,6 +1,6 @@
-import { TableFilter } from '../../models/cryton-table/interfaces/table-filter.interface';
-import { TableData } from '../../models/api-responses/table-data.interface';
 import { Observable, of } from 'rxjs';
+import { TableData } from '../../models/api-responses/table-data.interface';
+import { TableFilter } from '../../models/cryton-table/interfaces/table-filter.interface';
 
 export type CrytonRecord = string | number;
 

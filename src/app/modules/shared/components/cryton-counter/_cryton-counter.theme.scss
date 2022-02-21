@@ -1,11 +1,12 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $accent: map-get($config, accent);
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+  $accent: map.get($color-config, accent);
 
   .cryton-counter--counter {
-    background: map-get($accent, default);
-    color: mat-color($accent, default-contrast);
+    background: map.get($accent, default);
+    color: mat.get-color-from-palette($accent, default-contrast);
   }
 }

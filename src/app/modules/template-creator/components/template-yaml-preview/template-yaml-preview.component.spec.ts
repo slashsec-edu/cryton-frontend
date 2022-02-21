@@ -1,19 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { TemplateYamlPreviewComponent } from './template-yaml-preview.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AlertService } from 'src/app/services/alert.service';
 import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
 import { InvalidTemplateFormatError } from './errors/invalid-template-format.error';
-import { UndefinedTemplatePropertyError } from './errors/undefined-template-property.error';
 import { NotASequenceError } from './errors/not-a-sequence.error';
 import { NotUniqueNameError } from './errors/not-unique-name.error';
+import { UndefinedTemplatePropertyError } from './errors/undefined-template-property.error';
+import { TemplateYamlPreviewComponent } from './template-yaml-preview.component';
 
 describe('TemplateYamlPreviewComponent', () => {
   let component: TemplateYamlPreviewComponent;

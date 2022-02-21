@@ -1,18 +1,18 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
-import { MatDialogModule } from '@angular/material/dialog';
-import { ExpandedRunManipulationComponent } from './expanded-run-manipulation.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Run } from 'src/app/models/api-responses/run.interface';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { By } from '@angular/platform-browser';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HttpClientModule } from '@angular/common/http';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Run } from 'src/app/models/api-responses/run.interface';
 import { CrytonButtonHarness } from 'src/app/modules/shared/components/cryton-button/cryton-button.harness';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { ExpandedRunManipulationComponent } from './expanded-run-manipulation.component';
 
 enum Button {
   EXECUTE = 'Execute run',

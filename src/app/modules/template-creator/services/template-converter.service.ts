@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, first, mapTo, tap } from 'rxjs/operators';
+import { TemplateDetail } from 'src/app/models/api-responses/template-detail.interface';
+import { TemplateService } from 'src/app/services/template.service';
 import { parse, stringify } from 'yaml';
 import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
+import { StepEdge } from '../classes/dependency-graph/edge/step-edge';
+import { StageNode } from '../classes/dependency-graph/node/stage-node';
+import { StepNode } from '../classes/dependency-graph/node/step-node';
+import { TemplateTimeline } from '../classes/timeline/template-timeline';
+import { TriggerFactory } from '../classes/triggers/trigger-factory';
+import { NodeOrganizer, OrganizerNodeType } from '../classes/utils/node-organizer';
 import { NodeType } from '../models/enums/node-type';
 import {
-  TemplateDescription,
   StageDescription,
   StepDescription,
-  StepEdgeDescription
+  StepEdgeDescription,
+  TemplateDescription
 } from '../models/interfaces/template-description';
 import { DependencyGraphManagerService, DepGraphRef } from './dependency-graph-manager.service';
 import { TemplateCreatorStateService } from './template-creator-state.service';
-import { NodeOrganizer, OrganizerNodeType } from '../classes/utils/node-organizer';
-import { Observable, of } from 'rxjs';
-import { first, tap, mapTo, catchError } from 'rxjs/operators';
-import { TemplateTimeline } from '../classes/timeline/template-timeline';
-import { TemplateService } from 'src/app/services/template.service';
-import { TemplateDetail } from 'src/app/models/api-responses/template-detail.interface';
-import { TriggerFactory } from '../classes/triggers/trigger-factory';
-import { StageNode } from '../classes/dependency-graph/node/stage-node';
-import { StepNode } from '../classes/dependency-graph/node/step-node';
-import { StepEdge } from '../classes/dependency-graph/edge/step-edge';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class TemplateConverterService {
     return this._templateService.fetchYaml(templateID).pipe(
       first(),
       tap((template: Record<string, unknown>) =>
-        this.importTemplate(((template as unknown) as TemplateDetail).detail.template)
+        this.importTemplate((template as unknown as TemplateDetail).detail.template)
       ),
       catchError(() => of(false)),
       mapTo(true)
@@ -48,7 +48,7 @@ export class TemplateConverterService {
    * @param yaml YAML description of the template.
    */
   importYAMLTemplate(yaml: string): void {
-    this.importTemplate(parse(yaml));
+    this.importTemplate(parse(yaml) as TemplateDescription);
   }
 
   /**
@@ -138,7 +138,7 @@ export class TemplateConverterService {
         step_type: 'cryton/execute-on-worker',
         arguments: {
           attack_module: step.attackModule,
-          attack_module_args: parse(step.attackModuleArgs) as Record<string, any>
+          attack_module_args: parse(step.attackModuleArgs) as Record<string, string>
         }
       };
       const next: StepEdgeDescription[] = [];

@@ -30,7 +30,7 @@ export class DeleteButton<T extends HasID> extends ApiActionButton<T> {
             }),
             catchError(err => {
               this.removeFromLoading(row);
-              return throwError(err);
+              return throwError(() => new Error(err));
             })
           );
         } else {

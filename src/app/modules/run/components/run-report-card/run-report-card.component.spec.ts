@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RunReportCardComponent } from './run-report-card.component';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { HttpClient } from '@angular/common/http';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { AlertService } from 'src/app/services/alert.service';
+import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
+import { RunReportCardComponent } from './run-report-card.component';
 
 describe('RunReportCardComponent', () => {
   let component: RunReportCardComponent;

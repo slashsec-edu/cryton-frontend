@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PlanTableDataSource } from 'src/app/models/data-sources/plan-table.data-source';
 import { Plan } from 'src/app/models/api-responses/plan.interface';
+import { PlanTableDataSource } from 'src/app/models/data-sources/plan-table.data-source';
+import { DeleteButton } from 'src/app/modules/shared/components/cryton-table/buttons/delete-button';
+import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
 import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
 import { PlanService } from 'src/app/services/plan.service';
-import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
-import { DeleteButton } from 'src/app/modules/shared/components/cryton-table/buttons/delete-button';
-import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
 
 @Component({
   selector: 'app-list-plans',

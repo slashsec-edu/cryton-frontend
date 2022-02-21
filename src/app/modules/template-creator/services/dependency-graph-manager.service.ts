@@ -183,6 +183,6 @@ export class DependencyGraphManagerService implements OnDestroy {
   private _forEachKey(func: (key: DepGraphRef) => void): void {
     Object.keys(DepGraphRef)
       .filter(val => !isNaN(Number(val)))
-      .forEach(key => func((key as unknown) as DepGraphRef));
+      .forEach(key => func(key as unknown as DepGraphRef));
   }
 }

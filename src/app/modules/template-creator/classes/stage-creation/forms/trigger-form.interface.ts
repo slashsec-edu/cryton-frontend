@@ -1,6 +1,7 @@
 import { Type } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { StageNode } from '../../dependency-graph/node/stage-node';
+import { TriggerArgs } from '../../triggers/trigger';
 import { TriggerParameters } from '../trigger-parameters';
 import { HttpTriggerForm } from './http-form';
 
@@ -16,7 +17,7 @@ export interface TriggerForm {
    * Returns arguments from form in a shape which
    * can be directly used as trigger args.
    */
-  getArgs(): Record<string, any>;
+  getArgs(): TriggerArgs;
 
   /**
    * Decides if form is filled out correcly.

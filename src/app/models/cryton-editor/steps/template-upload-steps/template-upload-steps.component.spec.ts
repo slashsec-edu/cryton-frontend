@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { TestingService } from 'src/app/testing/services/testing.service';
-import { Template } from '../../../api-responses/template.interface';
-import { templates } from 'src/app/testing/mockdata/templates.mockdata';
-import { TemplateUploadStepsComponent } from './template-upload-steps.component';
-import { TemplateService } from 'src/app/services/template.service';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { FileNamePipe } from 'src/app/modules/shared/pipes/file-name.pipe';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CrytonFileUploaderComponent } from 'src/app/modules/shared/components/cryton-file-uploader/cryton-file-uploader.component';
+import { FileNamePipe } from 'src/app/modules/shared/pipes/file-name.pipe';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { TemplateService } from 'src/app/services/template.service';
+import { templates } from 'src/app/testing/mockdata/templates.mockdata';
+import { TestingService } from 'src/app/testing/services/testing.service';
+import { Template } from '../../../api-responses/template.interface';
+import { TemplateUploadStepsComponent } from './template-upload-steps.component';
 
 describe('TemplateUploadStepsComponent', () => {
   let component: TemplateUploadStepsComponent;

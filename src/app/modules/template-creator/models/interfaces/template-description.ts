@@ -1,3 +1,4 @@
+import { TriggerArgs } from '../../classes/triggers/trigger';
 import { TriggerType } from '../enums/trigger-type';
 
 /**
@@ -17,7 +18,7 @@ export interface TemplateDescription {
 export interface StageDescription {
   depends_on?: string[];
   name: string;
-  trigger_args: Record<string, unknown>;
+  trigger_args: TriggerArgs;
   trigger_type: TriggerType;
   steps: StepDescription[];
 }
@@ -42,7 +43,7 @@ export interface StepDescription {
  */
 export interface StepArguments {
   attack_module: string;
-  attack_module_args: Record<string, any>;
+  attack_module_args: Record<string, string>;
 }
 
 /**

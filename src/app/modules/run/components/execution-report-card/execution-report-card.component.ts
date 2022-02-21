@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of, throwError } from 'rxjs';
-import { first, pluck, concatAll, filter, toArray, delay, catchError, switchMapTo, switchMap } from 'rxjs/operators';
+import { catchError, concatAll, delay, filter, first, pluck, switchMap, switchMapTo, toArray } from 'rxjs/operators';
 import { CrytonRESTApiService } from 'src/app/generics/cryton-rest-api-service';
 import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
 import { PlanExecutionReport } from 'src/app/models/api-responses/report/plan-execution-report.interface';
@@ -16,15 +16,7 @@ import { ExecutionVariableService } from 'src/app/services/execution-variable.se
   styleUrls: ['../../styles/report.scss', './execution-report-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExecutionReportCardComponent implements OnInit {
-  get execution(): PlanExecutionReport {
-    return this._execution;
-  }
-  @Input() set execution(value: PlanExecutionReport) {
-    this._execution = value;
-    this.loadVariables();
-  }
-
+export class ExecutionReportCardComponent {
   // Array of loaded execution variables.
   variables: ExecutionVariable[] = [];
 
@@ -42,7 +34,14 @@ export class ExecutionReportCardComponent implements OnInit {
     private _dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {}
+  get execution(): PlanExecutionReport {
+    return this._execution;
+  }
+
+  @Input() set execution(value: PlanExecutionReport) {
+    this._execution = value;
+    this.loadVariables();
+  }
 
   createVariables(): void {
     const variableDialog = this._dialog.open(CrytonInventoryCreatorComponent);
@@ -94,15 +93,15 @@ export class ExecutionReportCardComponent implements OnInit {
             toArray()
           )
         ),
-        catchError(() => throwError('Loading execution variables failed.'))
+        catchError(() => throwError(() => new Error('Loading execution variables failed.')))
       )
       .subscribe({
-        next: vars => {
+        next: (vars: ExecutionVariable[]) => {
           this.variables = vars;
           this.initialized = true;
           this.loading$.next(false);
         },
-        error: err => {
+        error: (err: string) => {
           this.loading$.next(false);
           this._alert.showError(err);
         }

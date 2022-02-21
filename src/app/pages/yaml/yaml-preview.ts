@@ -1,6 +1,6 @@
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { first, tap, switchMap, catchError, map, pluck } from 'rxjs/operators';
+import { catchError, first, map, pluck, switchMap, tap } from 'rxjs/operators';
 import { HasYaml } from 'src/app/models/services/has-yaml.interface';
 import { AlertService } from 'src/app/services/alert.service';
 
@@ -16,7 +16,7 @@ export abstract class YamlPreview {
     this.yaml$ = this._route.params.pipe(
       first(),
       tap((params: Params) => (this.itemID = Number(params['id']))),
-      switchMap((params: Params) => this._planService.fetchYaml(params['id'])),
+      switchMap((params: Params) => this._planService.fetchYaml(params['id'] as number)),
       pluck(...this.pluckArgs),
       map(yaml => {
         const lastProperty = this.pluckArgs[this.pluckArgs.length - 1];

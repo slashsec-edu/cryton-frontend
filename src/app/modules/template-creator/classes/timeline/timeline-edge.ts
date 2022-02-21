@@ -1,10 +1,10 @@
 import Konva from 'konva';
-import { TemplateTimeline } from './template-timeline';
-import { NODE_RADIUS } from './timeline-node-constants';
-import { Vector } from '../utils/vector';
 import { Theme } from '../../models/interfaces/theme';
+import { Vector } from '../utils/vector';
+import { TemplateTimeline } from './template-timeline';
 import { EDGE_ARROW_NAME } from './timeline-edge-constants';
 import { TimelineNode } from './timeline-node';
+import { NODE_RADIUS } from './timeline-node-constants';
 
 export class TimelineEdge {
   konvaObject: Konva.Arrow;

@@ -1,14 +1,14 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, concatAll, first, mapTo, mergeMap, pluck, switchMap } from 'rxjs/operators';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { PlanExecution } from '../models/api-responses/plan-execution.interface';
-import { Run } from '../models/api-responses/run.interface';
-import { catchError, concatAll, first, mapTo, mergeMap, pluck, switchMap } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
 import { Report } from '../models/api-responses/report/report.interface';
-import { ExecutionVariableService } from './execution-variable.service';
+import { Run } from '../models/api-responses/run.interface';
 import { Endpoint } from '../models/enums/endpoint.enum';
 import { HasYaml } from '../models/services/has-yaml.interface';
+import { ExecutionVariableService } from './execution-variable.service';
 
 export interface RunResponse {
   detail: {
@@ -32,7 +32,7 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
 
     return this._runAction(runID, 'schedule', body).pipe(
       mapTo(`Run with ID: ${runID} scheduled successfully.`),
-      catchError(err => this.handleItemError(err, `Scheudling run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Scheudling run with ID: ${runID} failed.`))
     );
   }
 
@@ -41,49 +41,49 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
 
     return this._runAction(runID, 'reschedule', body).pipe(
       mapTo(`Run with ID: ${runID} rescheduled successfully.`),
-      catchError(err => this.handleItemError(err, `Rescheduling run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Rescheduling run with ID: ${runID} failed.`))
     );
   }
 
   unscheduleRun(runID: number): Observable<string> {
     return this._runAction(runID, 'unschedule').pipe(
       mapTo(`Run with ID: ${runID} unscheduled successfully.`),
-      catchError(err => this.handleItemError(err, `Unscheduling run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Unscheduling run with ID: ${runID} failed.`))
     );
   }
 
   pauseRun(runID: number): Observable<string> {
     return this._runAction(runID, 'pause').pipe(
       mapTo(`Run with ID: ${runID} paused successfully.`),
-      catchError(err => this.handleItemError(err, `Pausing run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Pausing run with ID: ${runID} failed.`))
     );
   }
 
   unpauseRun(runID: number): Observable<string> {
     return this._runAction(runID, 'unpause').pipe(
       mapTo(`Run with ID: ${runID} unpaused successfully.`),
-      catchError(err => this.handleItemError(err, `Unpausing run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Unpausing run with ID: ${runID} failed.`))
     );
   }
 
   executeRun(runID: number): Observable<string> {
     return this._runAction(runID, 'execute').pipe(
       mapTo(`Run with ID: ${runID} started successfully.`),
-      catchError(err => this.handleItemError(err, `Execution of run with ID: ${runID} failed.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Execution of run with ID: ${runID} failed.`))
     );
   }
 
   killRun(runID: number): Observable<string> {
     return this._runAction(runID, 'kill').pipe(
       mapTo(`Run with ID: ${runID} killed successfully.`),
-      catchError(err => this.handleItemError(err, `Failed to kill run with ID: ${runID}.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Failed to kill run with ID: ${runID}.`))
     );
   }
 
   postponeRun(runID: number, delta: string): Observable<string> {
     return this._runAction(runID, 'postpone', { delta }).pipe(
       mapTo(`Run with ID: ${runID} postponed successfully.`),
-      catchError(err => this.handleItemError(err, `Failed to postpone run with ID: ${runID}.`))
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, `Failed to postpone run with ID: ${runID}.`))
     );
   }
 
@@ -94,10 +94,10 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
    * @param variables Record with keys as worker ids and values as execution variables.
    * @returns Observable of alert message.
    */
-  postRun(body: Record<string, any>, variables: Record<number, File[] | string>): Observable<string> {
-    return this.http.post<Record<string, any>>(this.endpoint, body).pipe(
-      catchError(err => this.handleItemError(err, 'Run creation failed.')),
-      switchMap((run: RunResponse) => this.http.get(run.detail.link)),
+  postRun(body: Record<string, unknown>, variables: Record<number, File[] | string>): Observable<string> {
+    return this.http.post<RunResponse>(this.endpoint, body).pipe(
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, 'Run creation failed.')),
+      switchMap((run: RunResponse) => this.http.get<Run>(run.detail.link)),
       pluck('plan_executions'),
       concatAll(),
       mergeMap((executionUrl: string) => this.http.get(executionUrl)),
@@ -119,7 +119,7 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
             return this._execVarService.postItem({ plan_execution_id: execution.id, inventory_file: vars });
           }
         }),
-        catchError(() => throwError('Run created but failed to upload execution variables.'))
+        catchError(() => throwError(() => new Error('Run created but failed to upload execution variables.')))
       );
     } else {
       return of('');
@@ -169,10 +169,14 @@ export class RunService extends CrytonRESTApiService<Run> implements HasYaml {
     return parseInt(workerUrl.slice(index + 1, workerUrl.length - 1), 10);
   }
 
-  private _runAction(runID: number, action: string, body: Record<string, any> = {}): Observable<Record<string, any>> {
+  private _runAction(
+    runID: number,
+    action: string,
+    body: Record<string, unknown> = {}
+  ): Observable<Record<string, unknown>> {
     const runUrl = `${this.endpoint}${runID}/${action}/`;
 
-    return this.http.post<Record<string, any>>(runUrl, body);
+    return this.http.post<Record<string, unknown>>(runUrl, body);
   }
 
   /**

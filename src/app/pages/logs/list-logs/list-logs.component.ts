@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -21,7 +20,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./list-logs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ListLogsComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   logs: LogsResponse;
 
@@ -37,8 +36,6 @@ export class ListLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   private _destroy$ = new Subject<void>();
 
   constructor(private _logService: LogService, private _alertService: AlertService, private _cd: ChangeDetectorRef) {}
-
-  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     merge(this.paginator.initialized, this.paginator.page, this._filter$)

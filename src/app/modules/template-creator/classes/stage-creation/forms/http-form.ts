@@ -26,7 +26,7 @@ export class HttpForm implements TriggerForm {
 
   getArgs(): HTTPListenerArgs {
     const host = this._triggerArgsForm.args.get('host').value as string;
-    const port = parseInt(this._triggerArgsForm.args.get('port').value, 10);
+    const port = parseInt(this._triggerArgsForm.args.get('port').value as string, 10);
     const routes: HTTPListenerRoute[] = [];
 
     this._triggerArgsForm.routes.forEach(route => {
@@ -35,7 +35,7 @@ export class HttpForm implements TriggerForm {
       const parameters: HTTPListenerParams[] = [];
 
       route.parameters.forEach(params => {
-        parameters.push(params.value);
+        parameters.push(params.value as HTTPListenerParams);
       });
       routes.push({ path, method, parameters } as HTTPListenerRoute);
     });
@@ -59,7 +59,7 @@ export class HttpForm implements TriggerForm {
   }
 
   fill(stage: StageNode): void {
-    const httpArgs = (stage.trigger.getArgs() as unknown) as HTTPListenerArgs;
+    const httpArgs = stage.trigger.getArgs() as unknown as HTTPListenerArgs;
 
     this._triggerArgsForm.args.setValue({
       host: httpArgs.host,
@@ -68,7 +68,7 @@ export class HttpForm implements TriggerForm {
 
     this._triggerArgsForm.routes = [];
     httpArgs.routes.forEach(route => {
-      const params = [];
+      const params: FormGroup[] = [];
 
       route.parameters.forEach(param => {
         params.push(this._createParam(param.name, param.value));
@@ -101,16 +101,20 @@ export class HttpForm implements TriggerForm {
   copy(): HttpForm {
     const copyForm = new HttpForm();
 
-    copyForm._triggerArgsForm.args.setValue(this._triggerArgsForm.args.value);
+    copyForm._triggerArgsForm.args.setValue(this._triggerArgsForm.args.value as Record<string, unknown>);
 
     copyForm._triggerArgsForm.routes = [];
     this._triggerArgsForm.routes.forEach(route => {
       const params = route.parameters.map(parameters =>
-        this._createParam(parameters.get('name').value, parameters.get('value').value)
+        this._createParam(parameters.get('name').value as string, parameters.get('value').value as string)
       );
 
       copyForm._triggerArgsForm.routes.push(
-        this._createRoute(route.args.get('path').value, route.args.get('method').value, params)
+        this._createRoute(
+          route.args.get('path').value as string,
+          route.args.get('method').value as 'GET' | 'POST',
+          params
+        )
       );
     });
 
@@ -129,11 +133,11 @@ export class HttpForm implements TriggerForm {
 
   isNotEmpty(): boolean {
     return (
-      FormUtils.someValueDefined(this._triggerArgsForm.args.value) ||
+      FormUtils.someValueDefined(this._triggerArgsForm.args.value as Record<string, string>) ||
       this._triggerArgsForm.routes.some(
         route =>
-          FormUtils.someValueDefined(route.args.value) ||
-          route.parameters.some(params => FormUtils.someValueDefined(params.value))
+          FormUtils.someValueDefined(route.args.value as Record<string, string>) ||
+          route.parameters.some(params => FormUtils.someValueDefined(params.value as Record<string, string>))
       )
     );
   }

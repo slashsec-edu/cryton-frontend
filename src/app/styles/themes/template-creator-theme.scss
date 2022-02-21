@@ -1,15 +1,15 @@
 @use '../../modules/template-creator/components/dependency-graph-editor/dependency-graph-editor.theme' as dep-graph;
-@use '../../modules/template-creator/components/graph-node-dispenser/graph-node-dispenser.theme.scss' as node-dispenser;
+@use '../../modules/template-creator/components/graph-node-dispenser/graph-node-dispenser.theme' as node-dispenser;
 @use '../../modules/template-creator/components/stage-creator/stage-creator.theme' as stage-creator;
 @use '../../modules/template-creator/components/timeline/timeline.theme' as timeline;
 @use '../../modules/template-creator/styles/template-creator.theme' as template-creator;
 @use '../../modules/template-creator/components/graph-editor-toolbar/graph-editor-toolbar.theme' as graph-editor-toolbar;
 
-@mixin template-creator-theme($config) {
-  @include dep-graph.color($config);
-  @include node-dispenser.color($config);
-  @include stage-creator.color($config);
-  @include timeline.color($config);
-  @include template-creator.color($config);
-  @include graph-editor-toolbar.color($config);
+@mixin template-creator-theme($theme) {
+  @include dep-graph.color($theme);
+  @include node-dispenser.color($theme);
+  @include stage-creator.color($theme);
+  @include timeline.color($theme);
+  @include template-creator.color($theme);
+  @include graph-editor-toolbar.color($theme);
 }

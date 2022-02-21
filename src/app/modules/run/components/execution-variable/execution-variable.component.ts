@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, first, switchMapTo } from 'rxjs/operators';
@@ -57,12 +57,12 @@ export class ExecutionVariableComponent {
         switchMapTo(this._execVarService.deleteItem(this.variable.id).pipe(first(), delay(200)))
       )
       .subscribe({
-        next: msg => {
+        next: (msg: string) => {
           this.loading$.next(false);
           this._alert.showSuccess(msg);
           this.deleted.emit();
         },
-        error: err => {
+        error: (err: string) => {
           this.loading$.next(false);
           this._alert.showError(err);
         }
