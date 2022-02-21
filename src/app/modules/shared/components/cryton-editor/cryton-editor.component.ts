@@ -1,25 +1,24 @@
+import { transition, trigger, useAnimation } from '@angular/animations';
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
-  Input,
-  Type,
-  ViewChild,
-  ComponentFactoryResolver,
-  OnDestroy,
-  Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  Type,
+  ViewChild
 } from '@angular/core';
-import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
-import { InputChange } from 'src/app/models/cryton-editor/interfaces/input-change.interface';
-import { StepType } from 'src/app/models/cryton-editor/enums/step-type.enum';
-import { StepOverviewItem } from 'src/app/models/cryton-editor/interfaces/step-overview-item.interface';
-import { trigger, transition, useAnimation } from '@angular/animations';
-import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
-import { errorShakeAnimation } from 'src/app/modules/shared/animations/error-shake.animation';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
+import { StepType } from 'src/app/models/cryton-editor/enums/step-type.enum';
+import { InputChange } from 'src/app/models/cryton-editor/interfaces/input-change.interface';
+import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
+import { StepOverviewItem } from 'src/app/models/cryton-editor/interfaces/step-overview-item.interface';
+import { errorShakeAnimation } from 'src/app/modules/shared/animations/error-shake.animation';
+import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
@@ -73,7 +72,7 @@ export class CrytonEditorComponent implements OnInit, OnDestroy {
 
   private _destroy$ = new Subject<void>();
 
-  constructor(private _componentFactoryResolver: ComponentFactoryResolver, private _alertService: AlertService) {}
+  constructor(private _alertService: AlertService) {}
 
   ngOnInit(): void {
     this._loadSteps();
@@ -150,10 +149,10 @@ export class CrytonEditorComponent implements OnInit, OnDestroy {
           this._alertService.showSuccess(successMsg);
         }
       },
-      error: (msg: string) => {
+      error: (err: Error) => {
         this.creatingSubject$.next(false);
         this.errorSubject$.next(true);
-        this._alertService.showError(msg);
+        this._alertService.showError(err.message);
       }
     });
   }
@@ -197,8 +196,7 @@ export class CrytonEditorComponent implements OnInit, OnDestroy {
    * Creates the steps component, provides inputs and subscribes to outputs.
    */
   private _loadSteps(): void {
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(this.stepsComponent);
-    const componentRef = this.stepsDirective.viewContainerRef.createComponent(componentFactory);
+    const componentRef = this.stepsDirective.viewContainerRef.createComponent(this.stepsComponent);
     const componentInstance = componentRef.instance;
 
     componentInstance.currentStepSubject$ = this.currentStep$;

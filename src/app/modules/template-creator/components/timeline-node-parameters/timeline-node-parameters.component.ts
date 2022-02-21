@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Inject,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
 import { StageNode } from '../../classes/dependency-graph/node/stage-node';
@@ -18,7 +10,7 @@ import { StageParametersComponent } from '../stage-parameters/stage-parameters.c
   styleUrls: ['./timeline-node-parameters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
+export class TimelineNodeParametersComponent implements AfterViewInit {
   @ViewChild(StageParametersComponent) stageParams: StageParametersComponent;
 
   constructor(
@@ -27,8 +19,6 @@ export class TimelineNodeParametersComponent implements OnInit, AfterViewInit {
     private _alertService: AlertService,
     @Inject(MAT_DIALOG_DATA) public data: { stage: StageNode }
   ) {}
-
-  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this.stageParams.setEditedNodeName(this.data.stage.name);

@@ -1,11 +1,13 @@
-import Konva from 'konva';
 import { TriggerType } from '../../models/enums/trigger-type';
+import { DateTimeArgs } from '../../models/interfaces/date-time-args';
+import { DeltaArgs } from '../../models/interfaces/delta-args';
+import { HTTPListenerArgs } from '../../models/interfaces/http-listener-args';
 
-export abstract class Trigger<T extends Record<string, any>> {
+export type TriggerArgs = DeltaArgs | HTTPListenerArgs | DateTimeArgs;
+
+export abstract class Trigger<T extends TriggerArgs> {
   protected _args: T;
   private _type: TriggerType;
-
-  protected abstract _tag: Konva.Text;
 
   constructor(args: T, type: TriggerType) {
     this.editArgs(args);
@@ -18,10 +20,6 @@ export abstract class Trigger<T extends Record<string, any>> {
 
   getArgs(): T {
     return this._args;
-  }
-
-  getTag(): Konva.Text {
-    return this._tag;
   }
 
   abstract editArgs(triggerArgs: T): void;

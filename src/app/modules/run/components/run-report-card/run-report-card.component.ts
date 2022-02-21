@@ -5,12 +5,11 @@ import {
   Component,
   Input,
   OnDestroy,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil, first } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
 import { Report } from 'src/app/models/api-responses/report/report.interface';
 import { ReportManiupulationComponent } from 'src/app/modules/shared/components/run-manipulation/report-manipulation.component';
 
@@ -20,15 +19,13 @@ import { ReportManiupulationComponent } from 'src/app/modules/shared/components/
   styleUrls: ['../../styles/report.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RunReportCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class RunReportCardComponent implements AfterViewInit, OnDestroy {
   @ViewChild(ReportManiupulationComponent) runManipulation: ReportManiupulationComponent;
   @Input() report: Report;
 
   private _destroy$ = new Subject<void>();
 
   constructor(private _cd: ChangeDetectorRef, private _router: Router) {}
-
-  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this._createRunDeleteSub();

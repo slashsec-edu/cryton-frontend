@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Worker, WorkerExecution } from '../models/api-responses/worker.interface';
 import { HttpClient } from '@angular/common/http';
-import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RunService } from './run.service';
 import { concatAll, map, mergeMap, pluck, tap, toArray } from 'rxjs/operators';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { PlanExecution } from '../models/api-responses/plan-execution.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
-import { Endpoint } from '../models/enums/endpoint.enum';
 import { WorkerHealth } from '../models/api-responses/worker-health.interface';
+import { Worker, WorkerExecution } from '../models/api-responses/worker.interface';
+import { Endpoint } from '../models/enums/endpoint.enum';
+import { RunService } from './run.service';
 
 @Injectable({
   providedIn: 'root'

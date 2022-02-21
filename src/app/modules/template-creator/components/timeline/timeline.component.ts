@@ -20,8 +20,8 @@ import { ResizeService } from 'src/app/services/resize.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TemplateTimeline } from '../../classes/timeline/template-timeline';
 import { NavigationButton } from '../../models/interfaces/navigation-button';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { TemplateTimelineHelpComponent } from '../../pages/help-pages/template-timeline-help/template-timeline-help.component';
+import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
 import { TimelineNodeParametersComponent } from '../timeline-node-parameters/timeline-node-parameters.component';
 
 @Component({
@@ -38,6 +38,14 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _destroy$ = new Subject<void>();
 
+  constructor(
+    private _state: TemplateCreatorStateService,
+    private _dialog: MatDialog,
+    private _themeService: ThemeService,
+    private _resizeService: ResizeService,
+    private _cd: ChangeDetectorRef
+  ) {}
+
   get timeline(): TemplateTimeline {
     return this._state.timeline;
   }
@@ -49,14 +57,6 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   get isGraphMoveEnabled(): boolean {
     return this.timeline.toolState.isGraphMoveEnabled;
   }
-
-  constructor(
-    private _state: TemplateCreatorStateService,
-    private _dialog: MatDialog,
-    private _themeService: ThemeService,
-    private _resizeService: ResizeService,
-    private _cd: ChangeDetectorRef
-  ) {}
 
   /**
    * Resizes canvas on window resize
@@ -71,7 +71,10 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this._state.timeline.initKonva(this.canvasContainer.nativeElement, this._themeService.currentTheme$);
+    this._state.timeline.initKonva(
+      this.canvasContainer.nativeElement as HTMLDivElement,
+      this._themeService.currentTheme$
+    );
     this.timeline.updateDimensions();
     this._updateTickSize();
     this._cd.detectChanges();

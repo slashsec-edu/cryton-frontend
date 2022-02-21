@@ -1,24 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 import { TemplateService } from 'src/app/services/template.service';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { TemplateConverterService } from './template-converter.service';
+import {
+  advancedTemplateDepGraph,
+  advancedTemplateDescription
+} from 'src/app/testing/mockdata/cryton-templates/advanced-template';
 import {
   basicTemplateDepGraph,
   basicTemplateDescription
 } from 'src/app/testing/mockdata/cryton-templates/basic-template';
 import { httpTemplateDepGraph, httpTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/http-template';
-import {
-  advancedTemplateDepGraph,
-  advancedTemplateDescription
-} from 'src/app/testing/mockdata/cryton-templates/advanced-template';
-import { DependencyGraphManagerService } from './dependency-graph-manager.service';
-import { TemplateTimeline } from '../classes/timeline/template-timeline';
-import { TemplateCreatorStateService } from './template-creator-state.service';
-import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
-import { NodeType } from '../models/enums/node-type';
-import { parse } from 'yaml';
-import { TemplateDescription } from '../models/interfaces/template-description';
 import { GraphComparator } from 'src/app/testing/utility/graph-comparator';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { parse } from 'yaml';
+import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
+import { TemplateTimeline } from '../classes/timeline/template-timeline';
+import { NodeType } from '../models/enums/node-type';
+import { TemplateDescription } from '../models/interfaces/template-description';
+import { DependencyGraphManagerService } from './dependency-graph-manager.service';
+import { TemplateConverterService } from './template-converter.service';
+import { TemplateCreatorStateService } from './template-creator-state.service';
 
 class StateServiceFake {
   name = {

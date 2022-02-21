@@ -1,16 +1,16 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { WorkerTableComponent } from './worker-table.component';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Spied } from 'src/app/testing/utility/utility-types';
+import { AlertService } from 'src/app/services/alert.service';
 import { WorkersService } from 'src/app/services/workers.service';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { WorkerTableComponent } from './worker-table.component';
 
 describe('WorkerTableComponent', () => {
   let component: WorkerTableComponent;

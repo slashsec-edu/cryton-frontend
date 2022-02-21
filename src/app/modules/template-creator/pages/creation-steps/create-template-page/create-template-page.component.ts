@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { DependencyGraphManagerService, DepGraphRef } from '../../../services/dependency-graph-manager.service';
-import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
 import { FormGroup } from '@angular/forms';
-import { TemplateConverterService } from '../../../services/template-converter.service';
-import { TemplateService } from 'src/app/services/template.service';
-import { AlertService } from 'src/app/services/alert.service';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { TemplateCreatorHelpComponent } from '../../help-pages/template-creator-help/template-creator-help.component';
-import { NavigationButton } from '../../../models/interfaces/navigation-button';
-import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
+import { AlertService } from 'src/app/services/alert.service';
+import { TemplateService } from 'src/app/services/template.service';
 import { TemplateYamlPreviewComponent } from '../../../components/template-yaml-preview/template-yaml-preview.component';
+import { NavigationButton } from '../../../models/interfaces/navigation-button';
+import { DependencyGraphManagerService, DepGraphRef } from '../../../services/dependency-graph-manager.service';
+import { TCRoute, TcRoutingService } from '../../../services/tc-routing.service';
+import { TemplateConverterService } from '../../../services/template-converter.service';
+import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
+import { TemplateCreatorHelpComponent } from '../../help-pages/template-creator-help/template-creator-help.component';
 
 @Component({
   selector: 'app-create-template-page',
@@ -38,10 +38,6 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
 
   private _destroy$ = new Subject<void>();
 
-  get templateForm(): FormGroup {
-    return this._state.templateForm;
-  }
-
   constructor(
     private _graphManager: DependencyGraphManagerService,
     private _state: TemplateCreatorStateService,
@@ -52,6 +48,10 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
     private _tcRouter: TcRoutingService,
     private _cd: ChangeDetectorRef
   ) {}
+
+  get templateForm(): FormGroup {
+    return this._state.templateForm;
+  }
 
   ngOnInit(): void {
     this._tcRouter.route$.pipe(takeUntil(this._destroy$)).subscribe((route: TCRoute) => {
@@ -97,15 +97,15 @@ export class CreateTemplatePageComponent implements OnInit, OnDestroy {
       .uploadYAML(templateYAML)
       .pipe(first())
       .subscribe({
-        next: successMsg => {
+        next: (successMsg: string) => {
           this._state.clear();
           this._graphManager.reset();
           this.creating$.next(false);
           this._alertService.showSuccess(successMsg);
         },
-        error: errMsg => {
+        error: (err: Error) => {
           this.creating$.next(false);
-          this._alertService.showError(errMsg);
+          this._alertService.showError(err.message);
         }
       });
   }

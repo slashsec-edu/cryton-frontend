@@ -9,7 +9,7 @@ export interface StepExecutionReport {
   std_err: string;
   std_out: string;
   mod_err: string;
-  mod_out: any;
+  mod_out: Record<string, unknown>;
   evidence_file: string;
   result: string;
   valid: boolean;

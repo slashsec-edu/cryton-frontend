@@ -1,15 +1,15 @@
-import { Template } from 'src/app/models/api-responses/template.interface';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
-import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
-import { TemplateService } from 'src/app/services/template.service';
-import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
-import { PlanService } from 'src/app/services/plan.service';
 import { MatDialog } from '@angular/material/dialog';
-import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
 import { first } from 'rxjs/operators';
-import { parse, stringify } from 'yaml';
+import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
+import { Template } from 'src/app/models/api-responses/template.interface';
+import { Selectable } from 'src/app/models/cryton-editor/interfaces/selectable.interface';
+import { TemplatesTableDataSource } from 'src/app/models/data-sources/templates-table.data-source';
 import { CrytonFileUploaderComponent } from 'src/app/modules/shared/components/cryton-file-uploader/cryton-file-uploader.component';
+import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
+import { PlanService } from 'src/app/services/plan.service';
+import { TemplateService } from 'src/app/services/template.service';
+import { parse, stringify } from 'yaml';
 
 @Component({
   selector: 'app-plans-creation-steps',
@@ -78,10 +78,12 @@ export class PlansCreationStepsComponent extends CrytonEditorStepsComponent impl
         const selectables = this.inventory.map(file => ({ name: file.name, id: null } as Selectable));
         this.inputChange.emit({ selectables, completion: null });
       } else {
-        const selectables = Object.entries(parse(this.inventory)).map((entry: [string, string]) => ({
-          name: `${entry[0]}: ${stringify(entry[1])}`,
-          id: null
-        }));
+        const selectables = Object.entries(parse(this.inventory) as Record<string, string>).map(
+          (entry: [string, string]) => ({
+            name: `${entry[0]}: ${stringify(entry[1])}`,
+            id: null
+          })
+        );
 
         this.inputChange.emit({ selectables, completion: null });
       }

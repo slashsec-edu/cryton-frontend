@@ -1,15 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ExecutionReportCardComponent } from './execution-report-card.component';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { StageReportCardComponent } from '../stage-report-card/stage-report-card.component';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { AlertService } from 'src/app/services/alert.service';
+import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { RunModule } from '../../run.module';
+import { StageReportCardComponent } from '../stage-report-card/stage-report-card.component';
+import { ExecutionReportCardComponent } from './execution-report-card.component';
 
 describe('ExecutionReportCardComponent', () => {
   let component: ExecutionReportCardComponent;

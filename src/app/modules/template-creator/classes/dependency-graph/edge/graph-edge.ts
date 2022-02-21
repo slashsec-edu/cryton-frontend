@@ -1,9 +1,9 @@
 import Konva from 'konva';
 import { StrokeAnimation } from '../../../animations/stroke.animation';
-import { Cursor } from '../cursor-state';
-import { NODE_WIDTH, NODE_HEIGHT, GraphNode } from '../node/graph-node';
-import { DependencyGraph } from '../dependency-graph';
 import { Theme } from '../../../models/interfaces/theme';
+import { Cursor } from '../cursor-state';
+import { DependencyGraph } from '../dependency-graph';
+import { GraphNode, NODE_HEIGHT, NODE_WIDTH } from '../node/graph-node';
 
 export const EDGE_POINTER_LENGTH = 10;
 export const GRAPH_EDGE_NAME = 'graphEdge';

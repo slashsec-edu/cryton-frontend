@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { HttpForm } from '../../classes/stage-creation/forms/http-form';
 import { TriggerParameters } from '../../classes/stage-creation/trigger-parameters';
 import { ERROR_MESSAGES } from './http-trigger.errors';

@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { CrytonFileUploaderComponent } from './cryton-file-uploader.component';
-import { MatIconModule } from '@angular/material/icon';
-import { createMockFileList, MockFile } from 'src/app/testing/utility/mock-filelist';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
+import { By } from '@angular/platform-browser';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { createMockFileList, MockFile } from 'src/app/testing/utility/mock-filelist';
+import { CrytonFileUploaderComponent } from './cryton-file-uploader.component';
 
 describe('CrytonFileUploaderComponent', () => {
   let component: CrytonFileUploaderComponent;

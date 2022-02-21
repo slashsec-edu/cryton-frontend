@@ -1,4 +1,5 @@
-@use '../../components/navigation/navigation.theme.scss' as sidenav;
+@use '@angular/material' as mat;
+@use '../../components/navigation/navigation.theme' as sidenav;
 @use '../../modules/shared/components/cryton-card/cryton-card.theme' as cryton-card;
 @use '../../modules/worker/components/worker-table/worker-table.theme' as worker-table;
 @use '../../modules/shared/components/cryton-counter/cryton-counter.theme' as cryton-counter;
@@ -13,34 +14,43 @@
 @use '../../modules/shared/components/cryton-flat-card/cryton-flat-card.theme' as flat-card;
 @use '../../modules/shared/components/cryton-id-chip/cryton-id-chip.theme' as id-chip;
 @use '../../modules/run/components/execution-variable/execution-variable.theme' as execution-variable;
-@use '../../modules/run/components/execution-variable-uploader/execution-variable-uploader.theme' as execution-variable-uploader;
+@use '../../modules/run/components/execution-variable-uploader/execution-variable-uploader.theme' as
+  execution-variable-uploader;
 @use '../../modules/shared/components/cryton-code/cryton-code.theme' as cryton-code;
 @use '../../modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.theme' as inv-creator;
 
 // CRYTON WORKER THEME
-$worker-primary: mat-palette($mat-blue, A200);
-$worker-accent: mat-palette($mat-green, 400);
-$worker-warn: mat-palette($mat-grey, 600);
-$worker-theme: mat-light-theme($worker-primary, $worker-accent, $worker-warn);
+$worker-primary: mat.define-palette(mat.$blue-palette, A200);
+$worker-accent: mat.define-palette(mat.$green-palette, 400);
+$worker-warn: mat.define-palette(mat.$grey-palette, 600);
+$worker-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $worker-primary,
+      accent: $worker-accent,
+      warn: $worker-warn
+    )
+  )
+);
 
-@mixin cryton-components-theme($config) {
-  @include cryton-card.color($config);
-  @include cryton-counter.color($config);
-  @include cryton-editor.color($config);
-  @include sidenav.color($config);
-  @include color-getter.color($config);
-  @include cryton-table.color($config);
-  @include file-uploader.color($config);
-  @include scrollbar.color($config);
-  @include datetime-picker.color($config);
-  @include log.color($config);
-  @include page-unavailable.color($config);
-  @include flat-card.color($config);
-  @include id-chip.color($config);
-  @include execution-variable.color($config);
-  @include execution-variable-uploader.color($config);
-  @include cryton-code.color($config);
-  @include inv-creator.color($config);
+@mixin cryton-components-theme($theme) {
+  @include cryton-card.color($theme);
+  @include cryton-counter.color($theme);
+  @include cryton-editor.color($theme);
+  @include sidenav.color($theme);
+  @include color-getter.color($theme);
+  @include cryton-table.color($theme);
+  @include file-uploader.color($theme);
+  @include scrollbar.color($theme);
+  @include datetime-picker.color($theme);
+  @include log.color($theme);
+  @include page-unavailable.color($theme);
+  @include flat-card.color($theme);
+  @include id-chip.color($theme);
+  @include execution-variable.color($theme);
+  @include execution-variable-uploader.color($theme);
+  @include cryton-code.color($theme);
+  @include inv-creator.color($theme);
 
   @include worker-table.color($worker-theme);
 }

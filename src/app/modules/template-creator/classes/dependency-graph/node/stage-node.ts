@@ -1,12 +1,10 @@
-import { Trigger } from '../../triggers/trigger';
+import { TriggerType } from '../../../models/enums/trigger-type';
 import { TemplateTimeline } from '../../timeline/template-timeline';
 import { TimelineNode } from '../../timeline/timeline-node';
+import { Trigger, TriggerArgs } from '../../triggers/trigger';
+import { DeltaDependency, DeltaDependencyFinder } from '../../utils/delta-dependency-finder';
 import { DependencyGraph } from '../dependency-graph';
 import { GraphNode } from './graph-node';
-import { TriggerType } from '../../../models/enums/trigger-type';
-import { DeltaDependency, DeltaDependencyFinder } from '../../utils/delta-dependency-finder';
-
-export type TriggerArgs = Record<string, unknown>;
 
 export interface CrytonStageConfig {
   name: string;
@@ -76,6 +74,8 @@ export class StageNode extends GraphNode {
       }
     } else if (this.timelineNode) {
       this._handleChangeToNonDelta(trigger);
+    } else {
+      this.trigger = trigger;
     }
 
     this.timeline.mainLayer.draw();

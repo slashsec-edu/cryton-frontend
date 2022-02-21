@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { LineCap } from 'konva/types/Shape';
+import { LineCap } from 'konva/lib/Shape';
 
 export class StrokeAnimation {
   private _strokedShape: Konva.Shape;

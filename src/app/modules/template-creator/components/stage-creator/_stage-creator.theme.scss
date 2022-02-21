@@ -1,12 +1,13 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $background: map-get($config, background);
-  $foreground: map-get($config, foreground);
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+  $background: map.get($color-config, background);
+  $foreground: map.get($color-config, foreground);
 
   #stage-creator--graph-preview {
-    background: map-get($background, background);
-    border: 1px solid map-get($foreground, divider);
+    background: map.get($background, background);
+    border: 1px solid map.get($foreground, divider);
   }
 }

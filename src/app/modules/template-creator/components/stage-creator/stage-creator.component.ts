@@ -1,24 +1,35 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core';
-import { Component, Output, EventEmitter, DebugElement, ViewChild, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DebugElement,
+  EventEmitter,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import Konva from 'konva';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
-import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
-import { StageForm } from '../../classes/stage-creation/forms/stage-form';
-import { NodeType } from '../../models/enums/node-type';
-import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
-import { ThemeService } from 'src/app/services/theme.service';
-import { DependencyGraphPreview } from '../../classes/dependency-graph/dependency-graph-preview';
-import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { AlertService } from 'src/app/services/alert.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { DependencyGraphPreview } from '../../classes/dependency-graph/dependency-graph-preview';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { StageNode } from '../../classes/dependency-graph/node/stage-node';
-import { MatDialog } from '@angular/material/dialog';
-import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
+import { StageForm } from '../../classes/stage-creation/forms/stage-form';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
 import { CreateStageComponent } from '../../models/enums/create-stage-component.enum';
+import { NodeType } from '../../models/enums/node-type';
+import { StageCreatorHelpComponent } from '../../pages/help-pages/stage-creator-help/stage-creator-help.component';
+import { DependencyGraphManagerService, DepGraphRef } from '../../services/dependency-graph-manager.service';
 import { TcRoutingService } from '../../services/tc-routing.service';
+import { TemplateCreatorStateService } from '../../services/template-creator-state.service';
+import { StageParametersComponent } from '../stage-parameters/stage-parameters.component';
 
 export const CREATION_MSG_TIMEOUT = 7000;
 
@@ -42,20 +53,6 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _destroy$ = new Subject<void>();
   private _showCreationMessage$ = new BehaviorSubject<boolean>(false);
 
-  get stageForm(): StageForm {
-    return this._state.stageForm;
-  }
-  set stageForm(value: StageForm) {
-    this._state.stageForm = value;
-  }
-
-  get editedStage(): StageNode {
-    return this._state.editedStage;
-  }
-  set editedStage(value: StageNode) {
-    this._state.editedStage = value;
-  }
-
   constructor(
     private _graphManager: DependencyGraphManagerService,
     private _state: TemplateCreatorStateService,
@@ -66,6 +63,19 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
     private _tcRouter: TcRoutingService
   ) {
     this.showCreationMessage$ = this._showCreationMessage$.asObservable();
+  }
+
+  get editedStage(): StageNode {
+    return this._state.editedStage;
+  }
+  set editedStage(value: StageNode) {
+    this._state.editedStage = value;
+  }
+  get stageForm(): StageForm {
+    return this._state.stageForm;
+  }
+  set stageForm(value: StageForm) {
+    this._state.stageForm = value;
   }
 
   /**
@@ -110,7 +120,7 @@ export class StageCreatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.depGraphPreview.initPreview(
       originalGraph,
-      this.canvasContainer.nativeElement,
+      this.canvasContainer.nativeElement as HTMLDivElement,
       this._themeService.currentTheme$
     );
     this.depGraphPreview.fitScreen();

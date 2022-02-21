@@ -48,7 +48,7 @@ export class StageNodeUtils {
     return node;
   };
 
-  createGraphEdge = (parent: StageNode, child: StageNode, ignoreTimeline: boolean = true): StageEdge => {
+  createGraphEdge = (parent: StageNode, child: StageNode, ignoreTimeline = true): StageEdge => {
     let edge: StageEdge;
 
     if (ignoreTimeline) {

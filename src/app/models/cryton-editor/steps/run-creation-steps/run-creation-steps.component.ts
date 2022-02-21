@@ -1,24 +1,24 @@
-import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, DebugElement, QueryList } from '@angular/core';
+import { Component, DebugElement, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, of, throwError } from 'rxjs';
-import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
-import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
-import { PlanService } from 'src/app/services/plan.service';
-import { WorkersService } from 'src/app/services/workers.service';
-import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
-import { RunService } from 'src/app/services/run.service';
+import { catchError, first, mapTo, tap } from 'rxjs/operators';
 import { CrytonEditorStepsComponent } from 'src/app/generics/cryton-editor-steps.component';
+import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
+import { WorkerInventoriesDataSource } from 'src/app/models/data-sources/worker-inventories.data-source';
+import { WorkerTableDataSource } from 'src/app/models/data-sources/worker-table.data-source';
+import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
+import { CustomActionButton } from 'src/app/modules/shared/components/cryton-table/buttons/custom-action-button';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
 import { CrytonTableComponent } from 'src/app/modules/shared/components/cryton-table/cryton-table.component';
+import { PlanService } from 'src/app/services/plan.service';
+import { RunService } from 'src/app/services/run.service';
+import { WorkerInventoriesService } from 'src/app/services/worker-inventories.service';
+import { WorkersService } from 'src/app/services/workers.service';
+import { parse, stringify } from 'yaml';
 import { Plan } from '../../../api-responses/plan.interface';
 import { Worker } from '../../../api-responses/worker.interface';
 import { Selectable } from '../../../cryton-editor/interfaces/selectable.interface';
 import { Column } from '../../../cryton-table/interfaces/column.interface';
-import { CrytonTableDataSource } from 'src/app/generics/cryton-table.datasource';
-import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
-import { CustomActionButton } from 'src/app/modules/shared/components/cryton-table/buttons/custom-action-button';
-import { MatDialog } from '@angular/material/dialog';
-import { CrytonInventoryCreatorComponent } from 'src/app/modules/shared/components/cryton-inventory-creator/cryton-inventory-creator.component';
-import { catchError, first, mapTo, tap } from 'rxjs/operators';
-import { parse, stringify } from 'yaml';
 
 @Component({
   selector: 'app-run-creation-steps',
@@ -119,21 +119,21 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
    * Emits selectables of currently selected execution variables.
    */
   emitSelection(): void {
-    const selectables = Object.entries(this.executionVariables).reduce(
+    const selectables: Selectable[] = Object.entries(this.executionVariables).reduce(
       (resultArray, item: [string, File[] | string]) => {
         let variables: Selectable[];
 
         if (Array.isArray(item[1])) {
           variables = item[1].map((file: File) => ({ name: file.name, id: Number(item[0]) } as Selectable));
         } else if (item[1]) {
-          variables = Object.entries(parse(item[1])).map((entry: [string, string]) => ({
+          variables = Object.entries(parse(item[1]) as Record<string, string>).map((entry: [string, string]) => ({
             name: `${entry[0]}: ${stringify(entry[1])}`,
             id: Number(item[0])
           }));
         }
-        return (variables ? resultArray.concat(variables) : resultArray) as Selectable[];
+        return variables ? resultArray.concat(variables) : resultArray;
       },
-      []
+      [] as Selectable[]
     );
     this.emitSelectables(selectables);
   }
@@ -176,7 +176,7 @@ export class RunCreationStepsComponent extends CrytonEditorStepsComponent implem
         }
       }),
       mapTo(''),
-      catchError(() => throwError('Execution variable creation failed.'))
+      catchError(() => throwError(() => new Error('Execution variable creation failed.')))
     );
   };
 

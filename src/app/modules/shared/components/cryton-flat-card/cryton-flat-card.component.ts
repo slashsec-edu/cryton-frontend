@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cryton-flat-card',
@@ -6,11 +6,9 @@ import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core
   styleUrls: ['./cryton-flat-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonFlatCardComponent implements OnInit {
+export class CrytonFlatCardComponent {
   @Input() noMargin = false;
   @Input() noPadding = false;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

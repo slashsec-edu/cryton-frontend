@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ExecutionVariableComponent } from './execution-variable.component';
-import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
 import { MatIconModule } from '@angular/material/icon';
+import { of } from 'rxjs';
+import { ExecutionVariable } from 'src/app/models/api-responses/execution-variable.interface';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { httpClientStub } from 'src/app/testing/stubs/http-client.stub';
+import { ExecutionVariableComponent } from './execution-variable.component';
 
 describe('ExecutionVariableComponent', () => {
   let component: ExecutionVariableComponent;

@@ -3,22 +3,22 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ComponentFactoryResolver,
   Input,
   OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { getControlError } from './stage-parameters.errors';
-import { TriggerType } from '../../models/enums/trigger-type';
-import { TriggerFactory } from '../../classes/triggers/trigger-factory';
-import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { StageForm } from '../../classes/stage-creation/forms/stage-form';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
 import { StageNode } from '../../classes/dependency-graph/node/stage-node';
+import { StageForm } from '../../classes/stage-creation/forms/stage-form';
+import { TriggerFactory } from '../../classes/triggers/trigger-factory';
+import { getControlError } from './stage-parameters.errors';
+
+type Option = { value: string; name: string };
 
 @Component({
   selector: 'app-stage-parameters',
@@ -29,6 +29,24 @@ import { StageNode } from '../../classes/dependency-graph/node/stage-node';
 export class StageParametersComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(ComponentInputDirective) triggerFormHost: ComponentInputDirective;
   @Input() nodeManager: NodeManager;
+
+  triggerTypeOpts: Option[] = [
+    { value: 'delta', name: 'Delta' },
+    { value: 'HTTPListener', name: 'HTTPListener' },
+    { value: 'datetime', name: 'DateTime' }
+  ];
+  stageFormGroup: FormGroup;
+
+  private _destroy$ = new Subject<void>();
+  private _stageForm: StageForm;
+  private _initialized = false;
+  private _triggerChangeSub: Subscription;
+
+  constructor(private _cd: ChangeDetectorRef) {}
+
+  get valid(): boolean {
+    return this.stageForm.isValid();
+  }
 
   get stageForm(): StageForm {
     return this._stageForm;
@@ -48,20 +66,6 @@ export class StageParametersComponent implements OnInit, AfterViewInit, OnDestro
       this._createTriggerChangeSub(value);
     }
   }
-
-  triggerTypes = Object.values(TriggerType);
-  stageFormGroup: FormGroup;
-
-  private _destroy$ = new Subject<void>();
-  private _stageForm: StageForm;
-  private _initialized = false;
-  private _triggerChangeSub: Subscription;
-
-  get valid(): boolean {
-    return this.stageForm.isValid();
-  }
-
-  constructor(private _componentFactoryResolver: ComponentFactoryResolver, private _cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (!this.stageForm) {
@@ -121,13 +125,11 @@ export class StageParametersComponent implements OnInit, AfterViewInit, OnDestro
 
   renderTrigger(): void {
     const triggerParamsComponent = this.stageForm.getTriggerFormComponent();
-
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(triggerParamsComponent);
     const viewContainerRef = this.triggerFormHost.viewContainerRef;
 
     viewContainerRef.clear();
 
-    const componentRef = viewContainerRef.createComponent(componentFactory);
+    const componentRef = viewContainerRef.createComponent(triggerParamsComponent);
     const componentInstance = componentRef.instance;
 
     componentInstance.triggerForm = this.stageForm.getTriggerForm();

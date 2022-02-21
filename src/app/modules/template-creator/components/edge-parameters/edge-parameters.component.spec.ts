@@ -1,19 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { TemplateCreatorModule } from '../../template-creator.module';
-import { EdgeParametersComponent } from './edge-parameters.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { EdgeCondition } from '../../models/interfaces/edge-condition';
-import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Subject } from 'rxjs';
 import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
 import { StepEdge } from '../../classes/dependency-graph/edge/step-edge';
-import { MatDialogModule } from '@angular/material/dialog';
+import { EdgeCondition } from '../../models/interfaces/edge-condition';
+import { TemplateCreatorModule } from '../../template-creator.module';
+import { EdgeParametersComponent } from './edge-parameters.component';
 
 class CrytonNodeFake {
   name: string;
@@ -22,10 +21,10 @@ class CrytonNodeFake {
     this.name = name;
   }
 
-  addChildEdge() {}
-  addParentEdge() {}
-  removeChildEdge() {}
-  removeParentEdge() {}
+  addChildEdge = () => {};
+  addParentEdge = () => {};
+  removeChildEdge = () => {};
+  removeParentEdge = () => {};
 }
 
 class CrytonEdgeFake {
@@ -44,7 +43,7 @@ class CrytonEdgeFake {
     this.childNode = child;
   }
 
-  destroy() {}
+  destroy = () => {};
 
   reset() {
     this.conditions = [];

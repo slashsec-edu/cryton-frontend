@@ -1,12 +1,11 @@
-import { TimelineNode } from './timeline-node';
-import { TimelineEdge } from './timeline-edge';
-import { ToolState } from './tool-state';
 import { Subject } from 'rxjs';
-import { NodeOrganizer } from '../utils/node-organizer';
-import { OrganizerNodeType } from '../utils/node-organizer';
 import { Timeline } from 'src/app/modules/shared/classes/timeline';
-import { NodeMover } from './node-mover';
 import { StageNode } from '../dependency-graph/node/stage-node';
+import { NodeOrganizer, OrganizerNodeType } from '../utils/node-organizer';
+import { NodeMover } from './node-mover';
+import { TimelineEdge } from './timeline-edge';
+import { TimelineNode } from './timeline-node';
+import { ToolState } from './tool-state';
 
 export class TemplateTimeline extends Timeline {
   nodeOrganizer = new NodeOrganizer(OrganizerNodeType.TIMELINE);

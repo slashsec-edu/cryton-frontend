@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StageExecutionReport } from 'src/app/models/api-responses/report/stage-execution-report.interface';
 
 @Component({
@@ -7,13 +7,11 @@ import { StageExecutionReport } from 'src/app/models/api-responses/report/stage-
   styleUrls: ['./stage-report-card.component.scss', '../../styles/report.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StageReportCardComponent implements OnInit {
+export class StageReportCardComponent {
   @Input() stage: StageExecutionReport;
   showSteps = false;
 
   constructor() {}
-
-  ngOnInit(): void {}
 
   toggleSteps(): void {
     this.showSteps = !this.showSteps;

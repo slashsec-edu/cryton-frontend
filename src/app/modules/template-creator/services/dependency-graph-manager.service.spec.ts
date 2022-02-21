@@ -3,7 +3,6 @@ import Konva from 'konva';
 import { DependencyGraph } from '../classes/dependency-graph/dependency-graph';
 import { GraphNode } from '../classes/dependency-graph/node/graph-node';
 import { NodeType } from '../models/enums/node-type';
-
 import { DependencyGraphManagerService, DepGraphRef } from './dependency-graph-manager.service';
 
 describe('DependencyGraphManagerService', () => {

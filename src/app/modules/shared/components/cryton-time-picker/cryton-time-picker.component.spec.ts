@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CrytonTimePickerComponent, Time, TimeUnit } from './cryton-time-picker.component';
-import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { CrytonTimePickerComponent, Time, TimeUnit } from './cryton-time-picker.component';
 
 describe('CrytonTimePickerComponent', () => {
   let component: CrytonTimePickerComponent;

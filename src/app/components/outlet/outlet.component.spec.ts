@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AppRoutingModule } from 'src/app/app-routing.module';
-
 import { OutletComponent } from './outlet.component';
 
 describe('OutletComponent', () => {

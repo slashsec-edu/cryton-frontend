@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cryton-code',
@@ -6,12 +6,8 @@ import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core
   styleUrls: ['./cryton-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonCodeComponent implements OnInit {
+export class CrytonCodeComponent {
   @Input() code: string;
 
   constructor() {}
-
-  ngOnInit(): void {}
-
-  copy(): void {}
 }

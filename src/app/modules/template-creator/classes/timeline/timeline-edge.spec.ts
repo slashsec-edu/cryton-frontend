@@ -1,17 +1,17 @@
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import Konva from 'konva';
 import { BehaviorSubject } from 'rxjs';
+import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { NodeType } from '../../models/enums/node-type';
 import { Theme } from '../../models/interfaces/theme';
-import { DeltaTrigger } from '../triggers/delta-trigger';
-import { Trigger } from '../triggers/trigger';
 import { DependencyGraph } from '../dependency-graph/dependency-graph';
+import { StageNode } from '../dependency-graph/node/stage-node';
+import { DeltaTrigger } from '../triggers/delta-trigger';
+import { Trigger, TriggerArgs } from '../triggers/trigger';
 import { TemplateTimeline } from './template-timeline';
 import { TimelineEdge } from './timeline-edge';
 import { EDGE_ARROW_NAME } from './timeline-edge-constants';
-import { StageNode } from '../dependency-graph/node/stage-node';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
-import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 
 describe('TimelineEdge', () => {
   let fixture: ComponentFixture<KonvaContainerComponent>;
@@ -30,7 +30,7 @@ describe('TimelineEdge', () => {
   let childStageDepGraph: DependencyGraph;
   let childStage: StageNode;
 
-  const createEdge = (parentTrigger: Trigger<Record<string, any>>, childTrigger: Trigger<Record<string, any>>) => {
+  const createEdge = (parentTrigger: Trigger<TriggerArgs>, childTrigger: Trigger<TriggerArgs>) => {
     parentStage = new StageNode({
       name: 'parent',
       childDepGraph: parentStageDepGraph,
@@ -101,7 +101,8 @@ describe('TimelineEdge', () => {
     parentStageDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
     childStageDepGraph = new DependencyGraph(NodeType.CRYTON_STEP);
     timeline = new TemplateTimeline();
-    component.afterInit = () => timeline.initKonva(component.konvaContainer.nativeElement, theme$.asObservable());
+    component.afterInit = () =>
+      timeline.initKonva(component.konvaContainer.nativeElement as HTMLDivElement, theme$.asObservable());
     fixture.detectChanges();
   });
 

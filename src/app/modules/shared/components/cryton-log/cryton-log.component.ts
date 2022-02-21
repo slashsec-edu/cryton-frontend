@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cryton-log',
@@ -6,10 +6,8 @@ import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core
   styleUrls: ['./cryton-log.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonLogComponent implements OnInit {
+export class CrytonLogComponent {
   @Input() value: string;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

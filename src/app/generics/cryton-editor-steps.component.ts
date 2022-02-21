@@ -1,8 +1,8 @@
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { Input, Output, EventEmitter, Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { Selectable } from '../models/cryton-editor/interfaces/selectable.interface';
-import { InputChange } from '../models/cryton-editor/interfaces/input-change.interface';
 import { takeUntil } from 'rxjs/operators';
+import { InputChange } from '../models/cryton-editor/interfaces/input-change.interface';
+import { Selectable } from '../models/cryton-editor/interfaces/selectable.interface';
 
 @Component({ template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 export abstract class CrytonEditorStepsComponent implements OnInit, OnDestroy {
@@ -11,7 +11,7 @@ export abstract class CrytonEditorStepsComponent implements OnInit, OnDestroy {
   @Input() createEvent$: Observable<void>;
 
   @Output() inputChange = new EventEmitter<InputChange>();
-  @Output() create = new EventEmitter<Record<string, any>>();
+  @Output() create = new EventEmitter<Observable<string>>();
 
   protected destroySubject$ = new Subject<void>();
 

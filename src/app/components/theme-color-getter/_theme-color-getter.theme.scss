@@ -1,18 +1,19 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $primary: map-get($config, primary);
-  $accent: map-get($config, accent);
-  $warn: map-get($config, warn);
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+  $primary: map.get($color-config, primary);
+  $accent: map.get($color-config, accent);
+  $warn: map.get($color-config, warn);
 
   .theme-color-getter--primary {
-    background: map-get($primary, default);
+    background: map.get($primary, default);
   }
   .theme-color-getter--accent {
-    background: map-get($accent, default);
+    background: map.get($accent, default);
   }
   .theme-color-getter--warn {
-    background: map-get($warn, default);
+    background: map.get($warn, default);
   }
 }

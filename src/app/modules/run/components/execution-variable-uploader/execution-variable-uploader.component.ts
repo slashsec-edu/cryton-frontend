@@ -1,11 +1,11 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  Input,
-  ViewChild,
+  Component,
   DebugElement,
+  EventEmitter,
+  Input,
   Output,
-  EventEmitter
+  ViewChild
 } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, first, switchMapTo } from 'rxjs/operators';
@@ -56,13 +56,13 @@ export class ExecutionVariableUploaderComponent {
         switchMapTo(this._execVarService.uploadVariables(this.executionID, [this.selectedFile]))
       )
       .subscribe({
-        next: msg => {
+        next: (msg: string) => {
           this.loading$.next(false);
           this.cancel();
           this._alert.showSuccess(msg);
           this.uploaded.emit();
         },
-        error: err => {
+        error: (err: string) => {
           this.loading$.next(false);
           this._alert.showError(err);
         }

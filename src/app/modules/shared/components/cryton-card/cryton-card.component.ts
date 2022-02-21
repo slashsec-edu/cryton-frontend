@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
 
 @Component({
@@ -8,7 +8,7 @@ import { renderComponentTrigger } from 'src/app/modules/shared/animations/render
   animations: [renderComponentTrigger],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrytonCardComponent implements OnInit {
+export class CrytonCardComponent {
   /**
    * Enables render component animation.
    */
@@ -25,6 +25,4 @@ export class CrytonCardComponent implements OnInit {
   @Input() noBorder = false;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

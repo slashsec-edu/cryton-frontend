@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
@@ -37,7 +37,7 @@ export class TemplateYamlPreviewComponent implements OnInit {
       if (!templateControlVal) {
         throw new InvalidTemplateFormatError();
       }
-      const template = this._tryParsingTemplate(this.templateControl.value);
+      const template = this._tryParsingTemplate(this.templateControl.value as string);
       this._checkTemplateValues(template);
       this._checkNameUniqueness(template);
       this._dialogRef.close(this.templateControl.value);

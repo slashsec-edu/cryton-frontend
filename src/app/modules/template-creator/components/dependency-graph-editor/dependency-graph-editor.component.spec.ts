@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SharedModule } from '../../../shared/shared.module';
 import { TemplateCreatorModule } from '../../template-creator.module';
 import { DependencyGraphEditorComponent } from './dependency-graph-editor.component';
-import { SharedModule } from '../../../shared/shared.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('DependencyGraphEditorComponent', () => {
   let component: DependencyGraphEditorComponent;

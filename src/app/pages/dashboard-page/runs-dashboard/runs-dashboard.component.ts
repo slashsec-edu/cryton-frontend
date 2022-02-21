@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { RunService } from 'src/app/services/run.service';
-import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
-import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
-import { Run } from 'src/app/models/api-responses/run.interface';
-import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { Observable, of } from 'rxjs';
+import { Run } from 'src/app/models/api-responses/run.interface';
+import { RunTableDataSource } from 'src/app/models/data-sources/run-table.data-source';
 import { LinkButton } from 'src/app/modules/shared/components/cryton-table/buttons/link-button';
+import { TableButton } from 'src/app/modules/shared/components/cryton-table/buttons/table-button';
+import { CrytonDatetimePipe } from 'src/app/modules/shared/pipes/cryton-datetime.pipe';
+import { RunService } from 'src/app/services/run.service';
 
 @Component({
   selector: 'app-runs-dashboard',

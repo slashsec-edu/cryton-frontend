@@ -1,16 +1,16 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { parse } from 'yaml';
 import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
 import { CrytonResponse } from '../models/api-responses/cryton-response.interface';
-import { Template } from '../models/api-responses/template.interface';
 import { TableData } from '../models/api-responses/table-data.interface';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Template } from '../models/api-responses/template.interface';
 import { TableFilter } from '../models/cryton-table/interfaces/table-filter.interface';
-import { Observable } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
 import { Endpoint } from '../models/enums/endpoint.enum';
 import { HasYaml } from '../models/services/has-yaml.interface';
 import { TemplateDescription } from '../modules/template-creator/models/interfaces/template-description';
-import { parse } from 'yaml';
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +22,7 @@ export class TemplateService extends CrytonRESTApiService<Template> implements H
     super(http);
   }
 
-  fetchItems(
-    offset: number,
-    limit: number,
-    orderBy: string = 'id',
-    filter: TableFilter
-  ): Observable<TableData<Template>> {
+  fetchItems(offset: number, limit: number, orderBy = 'id', filter: TableFilter): Observable<TableData<Template>> {
     let params: HttpParams = new HttpParams().set('offset', offset.toString()).set('limit', limit.toString());
 
     if (orderBy && orderBy !== '') {
@@ -37,23 +32,21 @@ export class TemplateService extends CrytonRESTApiService<Template> implements H
       params = params.append(filter.column, filter.filter);
     }
 
-    return this.http
-      .get<CrytonResponse<Template>>(this.endpoint, { params })
-      .pipe(
-        // Extracting file name from file url
-        tap(items => {
-          items.results = items.results.map(
-            (result: Template) =>
-              ({
-                url: result.url,
-                id: result.id,
-                file: this._getFileName(result.file)
-              } as Template)
-          );
-        }),
-        map(items => ({ count: items.count, data: items.results } as TableData<Template>)),
-        catchError(this.handleDatasetError)
-      );
+    return this.http.get<CrytonResponse<Template>>(this.endpoint, { params }).pipe(
+      // Extracting file name from file url
+      tap(items => {
+        items.results = items.results.map(
+          (result: Template) =>
+            ({
+              url: result.url,
+              id: result.id,
+              file: this._getFileName(result.file)
+            } as Template)
+        );
+      }),
+      map(items => ({ count: items.count, data: items.results } as TableData<Template>)),
+      catchError(this.handleDatasetError)
+    );
   }
 
   uploadFile(file: File): Observable<string> {

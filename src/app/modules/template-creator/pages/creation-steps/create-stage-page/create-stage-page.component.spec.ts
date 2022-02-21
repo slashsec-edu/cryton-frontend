@@ -1,25 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CreateStagePageComponent } from './create-stage-page.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ChangeDetectionStrategy, ViewContainerRef } from '@angular/core';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { StageParametersComponent } from '../../../components/stage-parameters/stage-parameters.component';
-import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
-import { StageCreatorComponent } from '../../../components/stage-creator/stage-creator.component';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
-import { MatIconModule } from '@angular/material/icon';
 import { PortalModule } from '@angular/cdk/portal';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatButtonModule } from '@angular/material/button';
+import { ChangeDetectionStrategy, ViewContainerRef } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
+import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
+import { AlertService } from 'src/app/services/alert.service';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { StageCreatorComponent } from '../../../components/stage-creator/stage-creator.component';
+import { StageParametersComponent } from '../../../components/stage-parameters/stage-parameters.component';
+import { CreateStagePageComponent } from './create-stage-page.component';
 
 describe('CreateStagePageComponent', () => {
   let component: CreateStagePageComponent;

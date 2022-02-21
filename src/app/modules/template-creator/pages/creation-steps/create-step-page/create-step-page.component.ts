@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-create-step-page',
@@ -6,8 +6,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./create-step-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateStepPageComponent implements OnInit {
+export class CreateStepPageComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

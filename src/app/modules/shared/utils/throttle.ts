@@ -1,7 +1,7 @@
-export const throttle = (fn: () => void, wait: number = 300): (() => void) => {
+export const throttle = (fn: () => void, wait = 300): (() => void) => {
   let inThrottle: boolean, lastFn: ReturnType<typeof setTimeout>, lastTime: number;
   // eslint-disable-next-line space-before-function-paren
-  return function (this: any) {
+  return function (this: unknown) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-this-alias
     const context = this,
       // eslint-disable-next-line prefer-rest-params

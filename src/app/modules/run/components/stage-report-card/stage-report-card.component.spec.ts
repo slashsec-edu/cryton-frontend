@@ -1,10 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { StageReportCardComponent } from './stage-report-card.component';
-import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { ChangeDetectionStrategy } from '@angular/core';
-import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
+import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { mockReport } from 'src/app/testing/mockdata/report.mockdata';
+import { StageReportCardComponent } from './stage-report-card.component';
 
 describe('StageReportCardComponent', () => {
   let component: StageReportCardComponent;

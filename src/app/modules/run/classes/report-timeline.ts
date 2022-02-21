@@ -11,7 +11,7 @@ import { ExecutionBound } from './execution-bound';
 import { FILL_MAP } from './report-constants';
 import { ReportStageHighlight } from './report-stage-highlight';
 import { ReportStageLabel } from './report-stage-label';
-import { STEP_HEIGHT, ReportStep } from './report-step';
+import { ReportStep, STEP_HEIGHT } from './report-step';
 
 // Vertical space between steps.
 const STEP_GAP = 10;
@@ -41,7 +41,7 @@ export interface TooltipData {
 
 export class ReportTimeline extends Timeline {
   // Emits data for the tooltip for stage / step detail.
-  displayTooltip$ = new Subject<TooltipData>();
+  displayTooltip$ = new Subject<TooltipData | undefined>();
 
   // Time when user opened / refreshed the timeline.
   currentTime = Date.now() / 1000;
@@ -281,7 +281,7 @@ export class ReportTimeline extends Timeline {
    */
   protected _createStage(container: HTMLDivElement): void {
     super._createStage(container);
-    this.stage.on('dragstart click', () => this.displayTooltip$.next());
+    this.stage.on('dragstart click', () => this.displayTooltip$.next(undefined));
   }
 
   /**
@@ -292,7 +292,7 @@ export class ReportTimeline extends Timeline {
   protected _onWheel(e: KonvaEventObject<WheelEvent>): void {
     super._onWheel(e);
     this._moveStageLabels(e.evt.deltaY * 0.2);
-    this.displayTooltip$.next();
+    this.displayTooltip$.next(undefined);
     this.paddingMask.draw();
   }
 

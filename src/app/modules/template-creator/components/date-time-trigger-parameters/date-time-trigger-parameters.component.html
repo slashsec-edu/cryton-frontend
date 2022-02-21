@@ -1,0 +1,23 @@
+<form *ngIf="triggerForm && triggerForm.getArgsForm() as formGroup" [formGroup]="formGroup" class="form-field-wrapper">
+  <mat-form-field appearance="fill">
+    <mat-label>Timezone</mat-label>
+    <mat-select formControlName="timezone">
+      <mat-option>
+        <ngx-mat-select-search
+          [formControl]="timezoneFilterCtrl"
+          placeholderLabel="Find timezone..."
+          noEntriesFoundLabel="'no matching timezone found'"
+        ></ngx-mat-select-search>
+      </mat-option>
+      <mat-option *ngFor="let timezone of filteredTimezones" [value]="timezone">{{ timezone }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Date and time</mat-label>
+    <input type="text" matInput formControlName="displayDateTime" />
+    <button mat-icon-button matSuffix (click)="openDateTimePicker()">
+      <mat-icon>today</mat-icon>
+    </button>
+  </mat-form-field>
+</form>

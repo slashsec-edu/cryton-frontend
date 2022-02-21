@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-introduction-page',
@@ -6,8 +6,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./introduction-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TemplateCreatorIntroductionComponent implements OnInit {
+export class TemplateCreatorIntroductionComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

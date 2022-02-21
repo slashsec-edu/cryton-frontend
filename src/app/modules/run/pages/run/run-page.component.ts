@@ -35,7 +35,7 @@ export class RunPageComponent implements OnInit {
         first(),
         delay(200),
         switchMapTo(this._runService.fetchReport(this.runID).pipe(first())),
-        catchError(() => throwError('Fetching report failed.'))
+        catchError(() => throwError(() => new Error('Fetching report failed.')))
       )
       .subscribe({
         next: report => {

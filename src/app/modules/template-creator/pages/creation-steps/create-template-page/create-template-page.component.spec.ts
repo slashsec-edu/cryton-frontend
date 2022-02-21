@@ -1,29 +1,29 @@
+import { PortalModule } from '@angular/cdk/portal';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AlertService } from 'src/app/services/alert.service';
-import { TemplateService } from 'src/app/services/template.service';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { CreateTemplatePageComponent } from './create-template-page.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { PortalModule } from '@angular/cdk/portal';
-import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { DependencyGraph } from '../../../classes/dependency-graph/dependency-graph';
-import { NodeType } from '../../../models/enums/node-type';
-import { StageNodeUtils } from 'src/app/testing/utility/stage-node-utils';
-import { TemplateTimeline } from '../../../classes/timeline/template-timeline';
-import { DependencyGraphManagerService } from '../../../services/dependency-graph-manager.service';
-import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
-import { TemplateConverterService } from '../../../services/template-converter.service';
-import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
+import { CrytonButtonComponent } from 'src/app/modules/shared/components/cryton-button/cryton-button.component';
+import { AlertService } from 'src/app/services/alert.service';
+import { TemplateService } from 'src/app/services/template.service';
+import { basicTemplateDescription } from 'src/app/testing/mockdata/cryton-templates/basic-template';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { StageNodeUtils } from 'src/app/testing/utility/stage-node-utils';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { DependencyGraph } from '../../../classes/dependency-graph/dependency-graph';
+import { TemplateTimeline } from '../../../classes/timeline/template-timeline';
+import { NodeType } from '../../../models/enums/node-type';
+import { DependencyGraphManagerService } from '../../../services/dependency-graph-manager.service';
+import { TemplateConverterService } from '../../../services/template-converter.service';
+import { TemplateCreatorStateService } from '../../../services/template-creator-state.service';
+import { CreateTemplatePageComponent } from './create-template-page.component';
 
 describe('CreateTemplatePageComponent', () => {
   let component: CreateTemplatePageComponent;
@@ -49,7 +49,7 @@ describe('CreateTemplatePageComponent', () => {
 
   graphManagerStub.getCurrentGraph.and.returnValue({ value: correctGraph });
 
-  const tcState = new TemplateCreatorStateService((graphManagerStub as unknown) as DependencyGraphManagerService);
+  const tcState = new TemplateCreatorStateService(graphManagerStub as unknown as DependencyGraphManagerService);
 
   const templateConverterStub = jasmine.createSpyObj('TemplateConverterService', [
     'exportYAMLTemplate'

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { Alert } from '../../models/interfaces/alert.interface';
 
@@ -7,10 +7,8 @@ import { Alert } from '../../models/interfaces/alert.interface';
   templateUrl: './cryton-snackbar-alert.component.html',
   styleUrls: ['./cryton-snackbar-alert.component.scss']
 })
-export class CrytonSnackbarAlertComponent implements OnInit {
+export class CrytonSnackbarAlertComponent {
   constructor(@Inject(MAT_SNACK_BAR_DATA) public data: Alert) {}
-
-  ngOnInit(): void {}
 
   getAlertIcon(alertType: string): string {
     switch (alertType) {

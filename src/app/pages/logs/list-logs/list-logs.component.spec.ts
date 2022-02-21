@@ -1,26 +1,25 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LogService, LogsResponse } from 'src/app/services/log.service';
-
-import { ListLogsComponent } from './list-logs.component';
-import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
-import { AlertService } from 'src/app/services/alert.service';
-import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { mockLogs } from 'src/app/testing/mockdata/logs.mockdata';
-import { Spied } from 'src/app/testing/utility/utility-types';
 import { of } from 'rxjs';
 import { CrytonLogComponent } from 'src/app/modules/shared/components/cryton-log/cryton-log.component';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { CrytonLogHarness } from 'src/app/modules/shared/components/cryton-log/cryton-log.harness';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { AlertService } from 'src/app/services/alert.service';
+import { LogService, LogsResponse } from 'src/app/services/log.service';
+import { mockLogs } from 'src/app/testing/mockdata/logs.mockdata';
+import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { ListLogsComponent } from './list-logs.component';
 
 describe('ListLogsComponent', () => {
   let component: ListLogsComponent;

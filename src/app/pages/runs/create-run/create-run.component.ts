@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
+import { Component } from '@angular/core';
 import { StepType } from 'src/app/models/cryton-editor/enums/step-type.enum';
 import { StepOverviewItem } from 'src/app/models/cryton-editor/interfaces/step-overview-item.interface';
 import { RunCreationStepsComponent } from 'src/app/models/cryton-editor/steps/run-creation-steps/run-creation-steps.component';
+import { renderComponentTrigger } from 'src/app/modules/shared/animations/render-component.animation';
 
 @Component({
   selector: 'app-create-run',
@@ -10,7 +10,7 @@ import { RunCreationStepsComponent } from 'src/app/models/cryton-editor/steps/ru
   styleUrls: ['./create-run.component.scss'],
   animations: [renderComponentTrigger]
 })
-export class CreateRunComponent implements OnInit {
+export class CreateRunComponent {
   editorSteps = RunCreationStepsComponent;
   stepOverviewItems: StepOverviewItem[] = [
     { name: 'Plan', type: StepType.SELECTABLE, required: true },
@@ -19,6 +19,4 @@ export class CreateRunComponent implements OnInit {
   ];
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

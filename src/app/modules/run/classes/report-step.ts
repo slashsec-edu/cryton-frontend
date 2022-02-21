@@ -33,6 +33,13 @@ export class ReportStep extends Konva.Group implements TimelineShape {
   // Step's body.
   private _body: Konva.Rect | Konva.Circle;
 
+  constructor(config: ReportStepConfig) {
+    super(config);
+
+    this._initKonvaObject(config);
+    this._initKonvaEvents(config.cursorState);
+  }
+
   // Step's duration.
   get duration(): number {
     const startSeconds = this.getAttr('startSeconds') as number;
@@ -42,13 +49,6 @@ export class ReportStep extends Konva.Group implements TimelineShape {
       return 0;
     }
     return endSeconds - startSeconds;
-  }
-
-  constructor(config: ReportStepConfig) {
-    super(config);
-
-    this._initKonvaObject(config);
-    this._initKonvaEvents(config.cursorState);
   }
 
   /**

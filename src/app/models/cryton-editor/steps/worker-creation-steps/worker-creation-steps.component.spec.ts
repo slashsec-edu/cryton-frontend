@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { WorkerCreationStepsComponent } from './worker-creation-steps.component';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { InputChange } from '../../../cryton-editor/interfaces/input-change.interface';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { WorkersService } from 'src/app/services/workers.service';
 import { Spied } from 'src/app/testing/utility/utility-types';
+import { InputChange } from '../../../cryton-editor/interfaces/input-change.interface';
+import { WorkerCreationStepsComponent } from './worker-creation-steps.component';
 
 describe('WorkerCreationStepsComponent', () => {
   let component: WorkerCreationStepsComponent;
@@ -87,7 +87,7 @@ describe('WorkerCreationStepsComponent', () => {
 
     fillWorkerForm(component.workerForm);
 
-    spyService.postItem.and.callFake((data: Record<string, any>) => {
+    spyService.postItem.and.callFake((data: Record<string, unknown>) => {
       expect(data['name']).toEqual('name');
       expect(data['address']).toEqual('ip');
       expect(data['q_prefix']).toEqual('qPrefix');

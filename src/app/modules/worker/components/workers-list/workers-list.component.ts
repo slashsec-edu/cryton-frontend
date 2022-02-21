@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { WorkersService } from 'src/app/services/workers.service';
-import { Subject } from 'rxjs';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { tap, takeUntil } from 'rxjs/operators';
-import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-dahboard.data-source';
+import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { TableDataSource } from 'src/app/generics/table.datasource';
 import { Worker } from 'src/app/models/api-responses/worker.interface';
+import { WorkersDashboardDataSource } from 'src/app/models/data-sources/workers-dahboard.data-source';
 import { stagedRenderTrigger } from 'src/app/modules/shared/animations/staged-render.animation';
+import { WorkersService } from 'src/app/services/workers.service';
 import { environment } from 'src/environments/environment';
 
 @Component({

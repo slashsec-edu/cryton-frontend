@@ -45,7 +45,7 @@ export class DeltaForm implements TriggerForm {
 
   copy(): DeltaForm {
     const copyForm = new DeltaForm();
-    copyForm._triggerArgsForm.setValue(this._triggerArgsForm.value);
+    copyForm._triggerArgsForm.setValue(this._triggerArgsForm.value as DeltaArgs);
     return copyForm;
   }
 
@@ -54,6 +54,6 @@ export class DeltaForm implements TriggerForm {
   }
 
   isNotEmpty(): boolean {
-    return FormUtils.someValueOtherThan(this._triggerArgsForm.value, 0);
+    return FormUtils.someValueOtherThan(this._triggerArgsForm.value as Record<string, string>, 0);
   }
 }

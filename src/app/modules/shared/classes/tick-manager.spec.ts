@@ -1,11 +1,11 @@
 import Konva from 'konva';
-import { TickManager } from './tick-manager';
 import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
-import { LTICK_DIST, RECYCLER_RADIUS, TICK_WIDTH } from './timeline-constants';
-import { Tick, TICK_NAME } from './tick';
-import { TimelineParams } from '../models/interfaces/timeline-params.interface';
-import { TimeMark, TIME_MARK_NAME } from './time-mark';
 import { Theme } from '../../template-creator/models/interfaces/theme';
+import { TimelineParams } from '../models/interfaces/timeline-params.interface';
+import { Tick, TICK_NAME } from './tick';
+import { TickManager } from './tick-manager';
+import { TimeMark, TIME_MARK_NAME } from './time-mark';
+import { LTICK_DIST, RECYCLER_RADIUS, TICK_WIDTH } from './timeline-constants';
 
 const DEFAULT_TIMELINE_PADDING: [number, number, number, number] = [0, 0, 0, 0];
 const DEFAULT_TICK_SECONDS = 1;

@@ -8,7 +8,7 @@
   <mat-form-field appearance="fill">
     <mat-label>Trigger type</mat-label>
     <mat-select formControlName="triggerType">
-      <mat-option *ngFor="let type of triggerTypes" [value]="type">{{ type }}</mat-option>
+      <mat-option *ngFor="let type of triggerTypeOpts" [value]="type.value">{{ type.name }}</mat-option>
     </mat-select>
     <mat-error>{{ getControlError('triggerType', stageFormGroup) }}</mat-error>
   </mat-form-field>

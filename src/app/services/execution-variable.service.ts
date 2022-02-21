@@ -1,14 +1,15 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, mapTo } from 'rxjs/operators';
+import { CrytonRESTApiService } from '../generics/cryton-rest-api-service';
+import { ExecutionVariable } from '../models/api-responses/execution-variable.interface';
 import { Endpoint } from '../models/enums/endpoint.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExecutionVariableService extends CrytonRESTApiService<Record<string, any>> {
+export class ExecutionVariableService extends CrytonRESTApiService<ExecutionVariable> {
   endpoint = CrytonRESTApiService.buildEndpointURL(Endpoint.EXECUTION_VARS, 'v1');
 
   constructor(protected http: HttpClient) {
@@ -25,7 +26,7 @@ export class ExecutionVariableService extends CrytonRESTApiService<Record<string
   uploadVariables(executionId: number, files: File[]): Observable<string> {
     const formData = this._createFormData(executionId, files);
     return this.http.post<{ detail: string }>(this.endpoint, formData).pipe(
-      catchError(err => this.handleItemError(err, 'File upload failed.')),
+      catchError((err: HttpErrorResponse) => this.handleItemError(err, 'File upload failed.')),
       mapTo('File uploaded successfully.')
     );
   }

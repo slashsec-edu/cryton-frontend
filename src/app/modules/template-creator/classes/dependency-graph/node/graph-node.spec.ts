@@ -1,20 +1,16 @@
-import Konva from 'konva';
-import { NodeType } from '../../../models/enums/node-type';
-import { DependencyGraph } from '../dependency-graph';
-import { CONNECTOR_CIRCLE_NAME, CONNECTOR_NAME } from '../node-connector';
-import { NODE_HEIGHT, NODE_WIDTH, GraphNode, GRAPH_NODE_RECT_NAME, GRAPH_NODE_TEXT_NAME } from './graph-node';
-import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
-import { Theme } from '../../../models/interfaces/theme';
-import { SETTINGS_BTN_NAME } from '../settings-button';
-import { TemplateTimeline } from '../../timeline/template-timeline';
-import { TriggerFactory } from '../../triggers/trigger-factory';
-import { TriggerType } from '../../../models/enums/trigger-type';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
+import Konva from 'konva';
 import { of } from 'rxjs';
+import { KonvaContainerComponent } from 'src/app/testing/components/konva-container.component';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { NodeType } from '../../../models/enums/node-type';
+import { Theme } from '../../../models/interfaces/theme';
+import { DependencyGraph } from '../dependency-graph';
 import { StepEdge } from '../edge/step-edge';
+import { CONNECTOR_CIRCLE_NAME, CONNECTOR_NAME } from '../node-connector';
+import { SETTINGS_BTN_NAME } from '../settings-button';
+import { GraphNode, GRAPH_NODE_RECT_NAME, GRAPH_NODE_TEXT_NAME, NODE_HEIGHT, NODE_WIDTH } from './graph-node';
 import { StepNode } from './step-node';
-import { StageNode } from './stage-node';
 
 const DEFAULT_NAME = 'test';
 
@@ -34,15 +30,15 @@ describe('GraphNode', () => {
     graphNode.setParentDepGraph(dependencyGraph);
   };
 
-  const createStage = (name: string) => {
-    graphNode = new StageNode({
-      name,
-      childDepGraph: new DependencyGraph(NodeType.CRYTON_STEP),
-      timeline: new TemplateTimeline(),
-      trigger: TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 })
-    });
-    graphNode.setParentDepGraph(dependencyGraph);
-  };
+  // const createStage = (name: string) => {
+  //   graphNode = new StageNode({
+  //     name,
+  //     childDepGraph: new DependencyGraph(NodeType.CRYTON_STEP),
+  //     timeline: new TemplateTimeline(),
+  //     trigger: TriggerFactory.createTrigger(TriggerType.DELTA, { hours: 0, minutes: 0, seconds: 0 })
+  //   });
+  //   graphNode.setParentDepGraph(dependencyGraph);
+  // };
 
   const getNameText = (): Konva.Text => graphNode.konvaObject.findOne(`.${GRAPH_NODE_TEXT_NAME}`);
   const getNodeRect = (): Konva.Rect => graphNode.konvaObject.findOne(`.${GRAPH_NODE_RECT_NAME}`);

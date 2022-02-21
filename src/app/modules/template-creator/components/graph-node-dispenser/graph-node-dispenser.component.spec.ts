@@ -1,17 +1,17 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { GraphNodeDispenserComponent } from './graph-node-dispenser.component';
-import { TemplateCreatorModule } from '../../template-creator.module';
-import { DependencyGraphManagerService } from '../../services/dependency-graph-manager.service';
-import { Spied } from 'src/app/testing/utility/utility-types';
-import { BehaviorSubject, of, Subject } from 'rxjs';
-import { ChangeDetectionStrategy } from '@angular/core';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
-import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { AlertService } from 'src/app/services/alert.service';
+import { mockTheme } from 'src/app/testing/mockdata/theme.mockdata';
 import { alertServiceStub } from 'src/app/testing/stubs/alert-service.stub';
+import { Spied } from 'src/app/testing/utility/utility-types';
+import { GraphNode } from '../../classes/dependency-graph/node/graph-node';
+import { DependencyGraphManagerService } from '../../services/dependency-graph-manager.service';
+import { TemplateCreatorModule } from '../../template-creator.module';
+import { GraphNodeDispenserComponent } from './graph-node-dispenser.component';
 
 describe('GraphNodeDispenserComponent', () => {
   let component: GraphNodeDispenserComponent;
@@ -92,7 +92,7 @@ describe('GraphNodeDispenserComponent', () => {
 
   it('should show nodes if there are some', () => {
     for (let i = 1; i < 4; i++) {
-      const nodeArray = Array(i).fill(fakeNode);
+      const nodeArray: GraphNode[] = Array<GraphNode>(i).fill(fakeNode);
       dispenser$.next(nodeArray);
       fixture.detectChanges();
       expectNodeCount(i);

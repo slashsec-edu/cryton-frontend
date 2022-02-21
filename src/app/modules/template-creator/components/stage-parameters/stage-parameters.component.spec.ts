@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NodeManager } from '../../classes/dependency-graph/node-manager';
-import { StageForm } from '../../classes/stage-creation/forms/stage-form';
-import { StageParametersComponent } from './stage-parameters.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentInputDirective } from 'src/app/modules/shared/directives/component-input.directive';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DependencyGraph } from '../../classes/dependency-graph/dependency-graph';
+import { NodeManager } from '../../classes/dependency-graph/node-manager';
+import { StageForm } from '../../classes/stage-creation/forms/stage-form';
 import { NodeType } from '../../models/enums/node-type';
+import { StageParametersComponent } from './stage-parameters.component';
 
 describe('StageParametersComponent', () => {
   let component: StageParametersComponent;

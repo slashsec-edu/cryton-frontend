@@ -1,9 +1,9 @@
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { CrytonButtonComponent } from './cryton-button.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { CrytonButtonComponent } from './cryton-button.component';
 
 describe('CrytonButtonComponent', () => {
   let component: CrytonButtonComponent;

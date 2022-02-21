@@ -1,11 +1,12 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $warn: map-get($config, warn);
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+  $warn: map.get($color-config, warn);
 
   // LINK HIGHLIGHT COLOR
   .page-unavailable--error {
-    color: map-get($warn, default);
+    color: map.get($warn, default);
   }
 }

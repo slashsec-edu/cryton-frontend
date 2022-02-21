@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewChild } from '@angular/core';
 import { MatCalendar } from '@angular/material/datepicker';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertService } from 'src/app/services/alert.service';
 import { ComponentInputDirective } from '../../directives/component-input.directive';
 import { CrytonTimePickerComponent } from '../cryton-time-picker/cryton-time-picker.component';
@@ -20,12 +20,24 @@ export class CrytonDatetimePickerComponent implements AfterViewInit {
   private _today: Date = new Date(new Date().toDateString());
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) private _data: { blockPastDates?: boolean; selectedDate?: Date },
     public dialogRef: MatDialogRef<CrytonDatetimePickerComponent>,
     private _alertService: AlertService,
     private _cd: ChangeDetectorRef
-  ) {}
+  ) {
+    if (this._data?.selectedDate) {
+      this.selectDate(this._data.selectedDate);
+    }
+  }
 
   ngAfterViewInit(): void {
+    if (this._data?.selectedDate) {
+      const hours = this._data.selectedDate.getHours();
+      const minutes = this._data.selectedDate.getMinutes();
+      const seconds = this._data.selectedDate.getSeconds();
+
+      this.timePicker.setTime(hours, minutes, seconds);
+    }
     this._cd.detectChanges();
   }
 
@@ -36,7 +48,7 @@ export class CrytonDatetimePickerComponent implements AfterViewInit {
   selectDatetime(): void {
     const datetime = this.getDateTime();
 
-    if (datetime > new Date()) {
+    if (!this._data?.blockPastDates || datetime > new Date()) {
       this.dialogRef.close(datetime);
     } else {
       this._alertService.showError('Selected date must be greater than current date.');
@@ -73,7 +85,7 @@ export class CrytonDatetimePickerComponent implements AfterViewInit {
    *
    * @param date Date object.
    */
-  filterDates = (date: Date): boolean => date >= this._today;
+  filterDates = (date: Date): boolean => !this._data?.blockPastDates || date >= this._today;
 
   handleDayChange(increment: number): void {
     this.selectedDate.setDate(this.selectedDate.getDate() + increment);

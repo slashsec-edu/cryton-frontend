@@ -1,11 +1,11 @@
 import {
-  trigger,
-  transition,
+  AnimationTriggerMetadata,
   query,
-  style,
   stagger,
-  useAnimation,
-  AnimationTriggerMetadata
+  style,
+  transition,
+  trigger,
+  useAnimation
 } from '@angular/animations';
 import { renderComponentAnimation } from './render-component.animation';
 

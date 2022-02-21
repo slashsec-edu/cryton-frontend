@@ -1,4 +1,4 @@
-import { animation, style, animate, trigger, useAnimation, transition } from '@angular/animations';
+import { animate, animation, style, transition, trigger, useAnimation } from '@angular/animations';
 
 export const renderComponentAnimation = animation([
   style({ opacity: 0, transform: 'translateY(20px)' }),

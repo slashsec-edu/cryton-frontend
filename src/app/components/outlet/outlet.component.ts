@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-outlet',
@@ -6,8 +6,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   styleUrls: ['./outlet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OutletComponent implements OnInit {
+export class OutletComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

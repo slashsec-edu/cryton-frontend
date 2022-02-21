@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { CrytonTimePickerComponent } from 'src/app/modules/shared/components/cryton-time-picker/cryton-time-picker.component';
 
@@ -8,12 +8,10 @@ import { CrytonTimePickerComponent } from 'src/app/modules/shared/components/cry
   styleUrls: ['./postpone-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PostponeRunComponent implements OnInit {
+export class PostponeRunComponent {
   @ViewChild(CrytonTimePickerComponent) timePicker: CrytonTimePickerComponent;
 
   constructor(private _dialogRef: MatDialogRef<PostponeRunComponent>) {}
-
-  ngOnInit(): void {}
 
   postpone(): void {
     const { hours, minutes, seconds } = this.timePicker.time;

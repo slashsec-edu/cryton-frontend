@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { StageNode } from '../classes/dependency-graph/node/stage-node';
+import { StageForm } from '../classes/stage-creation/forms/stage-form';
 import { TemplateTimeline } from '../classes/timeline/template-timeline';
 import { BuildTemplateDisplay } from '../models/enums/build-template-display.enum';
-import { StageForm } from '../classes/stage-creation/forms/stage-form';
-import { StageNode } from '../classes/dependency-graph/node/stage-node';
 import { DependencyGraphManagerService, DepGraphRef } from './dependency-graph-manager.service';
 
 @Injectable({

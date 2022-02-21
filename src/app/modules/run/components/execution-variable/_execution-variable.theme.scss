@@ -1,11 +1,12 @@
-@import '~@angular/material/theming';
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@mixin color($config) {
-  $config: mat-get-color-config($config);
-  $background: map-get($config, background);
-  $primary: map-get($config, primary);
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+  $background: map.get($color-config, background);
+  $primary: map.get($color-config, primary);
 
   .execution-variable {
-    background: map-get($background, card);
+    background: map.get($background, card);
   }
 }

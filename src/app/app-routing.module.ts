@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
-import { PageUnavailableComponent } from './components/page-unavailable/page-unavailable.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { RouterModule, Routes } from '@angular/router';
 import { NavigationComponent } from './components/navigation/navigation.component';
-import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
 import { OutletComponent } from './components/outlet/outlet.component';
-import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
-import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
-import { CreateWorkerComponent } from './pages/workers/create-worker/create-worker.component';
-import { ListRunsComponent } from './pages/runs/list-runs/list-runs.component';
-import { CreateRunComponent } from './pages/runs/create-run/create-run.component';
-import { UploadTemplateComponent } from './pages/templates/upload-template/upload-template.component';
-import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
-import { RunPageComponent } from './modules/run/pages/run/run-page.component';
+import { PageUnavailableComponent } from './components/page-unavailable/page-unavailable.component';
 import { TimelineComponent } from './modules/run/components/timeline/timeline.component';
-import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component';
-import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
-import { PlanYamlComponent } from './pages/yaml/plan-yaml.component';
-import { TemplateYamlComponent } from './pages/yaml/template-yaml.component';
+import { RunPageComponent } from './modules/run/pages/run/run-page.component';
 import { TemplateCreatorPageComponent } from './modules/template-creator/pages/template-creator-page/template-creator-page.component';
+import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { ListLogsComponent } from './pages/logs/list-logs/list-logs.component';
+import { CreatePlanComponent } from './pages/plans/create-plan/create-plan.component';
+import { ListPlansComponent } from './pages/plans/list-plans/list-plans.component';
+import { CreateRunComponent } from './pages/runs/create-run/create-run.component';
+import { ListRunsComponent } from './pages/runs/list-runs/list-runs.component';
+import { ListTemplatesComponent } from './pages/templates/list-templates/list-templates.component';
+import { UploadTemplateComponent } from './pages/templates/upload-template/upload-template.component';
+import { CreateWorkerComponent } from './pages/workers/create-worker/create-worker.component';
+import { ListWorkersComponent } from './pages/workers/list-workers/list-workers.component';
+import { PlanYamlComponent } from './pages/yaml/plan-yaml.component';
+import { RunYamlPreviewComponent } from './pages/yaml/run-yaml-preview.component';
+import { TemplateYamlComponent } from './pages/yaml/template-yaml.component';
 
 const routes: Routes = [
   {

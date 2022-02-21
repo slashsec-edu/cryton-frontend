@@ -1,11 +1,11 @@
 import Konva from 'konva';
-import { Theme } from '../../template-creator/models/interfaces/theme';
-import { TICK_WIDTH, LTICK_DIST, RECYCLER_RADIUS } from './timeline-constants';
 import { TickLinkedList } from '../../template-creator/classes/timeline/tick-linked-list';
-import { TimeMark } from './time-mark';
-import { Tick } from './tick';
-import { TimelineUtils } from './timeline-utils';
+import { Theme } from '../../template-creator/models/interfaces/theme';
 import { TimelineParams } from '../models/interfaces/timeline-params.interface';
+import { Tick } from './tick';
+import { TimeMark } from './time-mark';
+import { LTICK_DIST, RECYCLER_RADIUS, TICK_WIDTH } from './timeline-constants';
+import { TimelineUtils } from './timeline-utils';
 
 export class TickManager {
   private _windowSize = 0;

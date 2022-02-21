@@ -1,14 +1,22 @@
-@import '~@angular/material/theming';
-@import './template-creator-theme.scss';
-@import './cryton-components.theme.scss';
+@use '@angular/material' as mat;
+@use './template-creator-theme.scss' as tc;
+@use './cryton-components.theme.scss' as components;
 
-$cryton-primary: mat-palette($mat-blue, A200);
-$cryton-accent: mat-palette($mat-grey, 900);
-$cryton-warn: mat-palette($mat-red, A200);
-$light-theme: mat-light-theme($cryton-primary, $cryton-accent, $cryton-warn);
+$cryton-primary: mat.define-palette(mat.$blue-palette, A200);
+$cryton-accent: mat.define-palette(mat.$grey-palette, 900);
+$cryton-warn: mat.define-palette(mat.$red-palette, A200);
+$light-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $cryton-primary,
+      accent: $cryton-accent,
+      warn: $cryton-warn
+    )
+  )
+);
 
 .light-theme {
-  @include angular-material-theme($light-theme);
-  @include template-creator-theme($light-theme);
-  @include cryton-components-theme($light-theme);
+  @include mat.all-component-themes($light-theme);
+  @include tc.template-creator-theme($light-theme);
+  @include components.cryton-components-theme($light-theme);
 }

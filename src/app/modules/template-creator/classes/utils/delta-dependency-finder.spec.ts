@@ -1,9 +1,9 @@
+import { StageNodeUtils } from 'src/app/testing/utility/stage-node-utils';
 import { NodeType } from '../../models/enums/node-type';
 import { DependencyGraph } from '../dependency-graph/dependency-graph';
 import { StageNode } from '../dependency-graph/node/stage-node';
 import { TemplateTimeline } from '../timeline/template-timeline';
 import { DeltaDependencyFinder } from './delta-dependency-finder';
-import { StageNodeUtils } from 'src/app/testing/utility/stage-node-utils';
 
 describe('DeltaDependencyFinder', () => {
   const parentDepGraph = new DependencyGraph(NodeType.CRYTON_STAGE);
